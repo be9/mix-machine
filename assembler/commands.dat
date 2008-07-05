@@ -1,0 +1,150 @@
+# commands.dat
+#
+# Description of all mixal commands (from Donald Knuth)
+#
+#	C	OP	F	t	description
+#
+	00	NOP	0	1	nothing do
+	01	ADD	5	2	rA <- rA + V
+	02	SUB	5	2	rA <- rA - V
+	03	MUL	5	10	rAX <- rA * V
+	04	DIV	5	12	rA <- rAX / V, rX <- rAX % V
+	05	NUM	0	10	rA <- NUM(rAX)
+	05	CHAR	1	10	rAX <- CHAR(rA)
+	05	HLT	2	10	halt program
+	06	SLA	0	2	shift rA left for M bytes
+	06	SRA	1	2	shift rA right for M bytes
+	06	SLAX	2	2	shift rAX left for M bytes
+	06	SRAX	3	2	shift rAX right for M bytes
+	06	SLC	4	2	shift rAX left for M bytes cyclic
+	06	SRC	5	2	shift rAX right for M bytes cyclic
+	07	MOVE	1	1+2F	move F words from M to rI1
+	08	LDA	5	2	rA <- V
+	09	LD1	5	2	rI1 <- V
+	10	LD2	5	2	rI2 <- V
+	11	LD3	5	2	rI3 <- V
+	12	LD4	5	2	rI4 <- V
+	13	LD5	5	2	rI5 <- V
+	14	LD6	5	2	rI6 <- V
+	15	LDX	5	2	rX <- V
+	16	LDAN	5	2	rA <- -V
+	17	LD1N	5	2	rI1 <- -V
+	18	LD2N	5	2	rI2 <- -V
+	19	LD3N	5	2	rI3 <- -V
+	20	LD4N	5	2	rI4 <- -V
+	21	LD5N	5	2	rI5 <- -V
+	22	LD6N	5	2	rI6 <- -V
+	23	LDXN	5	2	rX <- -V
+	24	STA	5	2	V <- rA
+	25	ST1	5	2	V <- rI1
+	26	ST2	5	2	V <- rI2
+	27	ST3	5	2	V <- rI3
+	28	ST4	5	2	V <- rI4
+	29	ST5	5	2	V <- rI5
+	30	ST6	5	2	V <- rI6
+	31	STX	5	2	V <- rX
+	32	STJ	5	2	V <- rJ
+	33	STZ	5	2	V <- 0
+	34	JBUS	0	1	jump if F-device is busy
+	35	IOC	0	1+T	control F-device
+	36	IN	0	1+T	in from F-device
+	37	OUT	0	1+T	out to F-device
+	38	JRED	0	1	jump if F-device is ready
+	39	JMP	0	1	jump, rJ <- *+1
+	39	JSJ	1	1	jump
+	39	JOV	2	1	jump if overflow trigger
+	39	JNOV	3	1	jump if not overflow trigger
+	39	JL	4	1	jump if comparison trigger is LESS
+	39	JE	5	1	jump if comparison trigger is EQUAL
+	39	JG	6	1	jump if comparison trigger is GREATER
+	39	JGE	7	1	jump if comparison trigger is not LESS
+	39	JNE	8	1	jump if comparison trigger is not EQUAL
+	39	JLE	9	1	jump if comparison trigger is not GREATER
+	40	JAN	0	1	jump if rA is negative
+	40	JAZ	1	1	jump if rA is zero
+	40	JAP	2	1	jump if rA is positive
+	40	JANN	3	1	jump if rA is not negative
+	40	JANZ	4	1	jump if rA is not zero
+	40	JANP	5	1	jump if rA is not positive
+	41	J1N	0	1	jump if rI1 is negative
+	41	J1Z	1	1	jump if rI1 is zero
+	41	J1P	2	1	jump if rI1 is positive
+	41	J1NN	3	1	jump if rI1 is not negative
+	41	J1NZ	4	1	jump if rI1 is not zero
+	41	JANP	5	1	jump if rI1 is not positive
+	42	J2N	0	1	jump if rI2 is negative
+	42	J2Z	1	1	jump if rI2 is zero
+	42	J2P	2	1	jump if rI2 is positive
+	42	J2NN	3	1	jump if rI2 is not negative
+	42	J2NZ	4	1	jump if rI2 is not zero
+	42	J2NP	5	1	jump if rI2 is not positive
+	43	J3N	0	1	jump if rI3 is negative
+	43	J3Z	1	1	jump if rI3 is zero
+	43	J3P	2	1	jump if rI3 is positive
+	43	J3NN	3	1	jump if rI3 is not negative
+	43	J3NZ	4	1	jump if rI3 is not zero
+	43	J3NP	5	1	jump if rI3 is not positive
+	44	J4N	0	1	jump if rI4 is negative
+	44	J4Z	1	1	jump if rI4 is zero
+	44	J4P	2	1	jump if rI4 is positive
+	44	J4NN	3	1	jump if rI4 is not negative
+	44	J4NZ	4	1	jump if rI4 is not zero
+	44	J4NP	5	1	jump if rI4 is not positive
+	45	J5N	0	1	jump if rI5 is negative
+	45	J5Z	1	1	jump if rI5 is zero
+	45	J5P	2	1	jump if rI5 is positive
+	45	J5NN	3	1	jump if rI5 is not negative
+	45	J5NZ	4	1	jump if rI5 is not zero
+	45	J5NP	5	1	jump if rI5 is not positive
+	46	J6N	0	1	jump if rI6 is negative
+	46	J6Z	1	1	jump if rI6 is zero
+	46	J6P	2	1	jump if rI6 is positive
+	46	J6NN	3	1	jump if rI6 is not negative
+	46	J6NZ	4	1	jump if rI6 is not zero
+	46	J6NP	5	1	jump if rI6 is not positive
+	47	JXN	0	1	jump if rX is negative
+	47	JXZ	1	1	jump if rX is zero
+	47	JXP	2	1	jump if rX is positive
+	47	JXNN	3	1	jump if rX is not negative
+	47	JXNZ	4	1	jump if rX is not zero
+	47	JXNP	5	1	jump if rX is not positive
+	48	INCA	0	1	rA <- rA + M
+	48	DECA	1	1	rA <- rA - M
+	48	ENTA	2	1	rA <- M
+	48	ENNA	3	1	rA <- -M
+	49	INC1	0	1	rI1 <- rI1 + M
+	49	DEC1	1	1	rI1 <- rI1 - M
+	49	ENT1	2	1	rI1 <- M
+	49	ENN1	3	1	rI1 <- -M
+	50	INC2	0	1	rI2 <- rI2 + M
+	50	DEC2	1	1	rI2 <- rI2 - M
+	50	ENT2	2	1	rI2 <- M
+	50	ENN2	3	1	rI2 <- -M
+	51	INC3	0	1	rI3 <- rI3 + M
+	51	DEC3	1	1	rI3 <- rI3 - M
+	51	ENT3	2	1	rI3 <- M
+	51	ENN3	3	1	rI3 <- -M
+	52	INC4	0	1	rI4 <- rI4 + M
+	52	DEC4	1	1	rI4 <- rI4 - M
+	52	ENT4	2	1	rI4 <- M
+	52	ENN4	3	1	rI4 <- -M
+	53	INC5	0	1	rI5 <- rI5 + M
+	53	DEC5	1	1	rI5 <- rI5 - M
+	53	ENT5	2	1	rI5 <- M
+	53	ENN5	3	1	rI5 <- -M
+	54	INC6	0	1	rI6 <- rI6 + M
+	54	DEC6	1	1	rI6 <- rI6 - M
+	54	ENT6	2	1	rI6 <- M
+	54	ENN6	3	1	rI6 <- -M
+	55	INCX	0	1	rX <- rX + M
+	55	DECX	1	1	rX <- rX - M
+	55	ENTX	2	1	rX <- M
+	55	ENNX	3	1	rX <- -M
+	56	CMPA	5	2	Cl <- rA ? V
+	57	CMP1	5	2	Cl <- rI1 ? V
+	58	CMP2	5	2	Cl <- rI2 ? V
+	59	CMP3	5	2	Cl <- rI3 ? V
+	60	CMP4	5	2	Cl <- rI4 ? V
+	61	CMP5	5	2	Cl <- rI5 ? V
+	62	CMP6	5	2	Cl <- rI6 ? V
+	63	CMPX	5	2	Cl <- rX ? V
