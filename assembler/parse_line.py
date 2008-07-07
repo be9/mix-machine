@@ -15,11 +15,17 @@ class Line:
 	def __str__(self):
 		return "%3i: %10s %4s %s" % (self.line_number, self.label, self.operand, self.address)
 
+def is_label(s):
+	has_alpha = False
+	for i in xrange(len(s)):
+		if (not s[i].isalnum()):
+			return False
+		has_alpha = has_alpha or s[i].isalpha()
+	return has_alpha
+
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):
-	text_line = text_line.upper()
-	
-	split_line = text_line.split()
+	split_line = text_line.upper().split()
 	
 	# empty line or comment line
 	if(len(split_line) == 0 or text_line[0] == '*'):
@@ -27,30 +33,26 @@ def parse_line(text_line):
 	
 	result = Line()
 	
-	if( text_line[0].isalnum() ): # check if line hasn't label
-		if( split_line[0].isalnum() and len(split_line[0]) <= 10): # good label
+	if( text_line[0].isalnum() ): # check if line has label
+		if( is_label(split_line[0]) and len(split_line[0]) <= 10): # good label
 			result.label = split_line[0]
 		else:
 			if(len(split_line[0]) > 10):
 				raise AssemblySyntaxError("Very long name \"%s\" for label" % (split_line[0]))
 			else:
 				raise AssemblySyntaxError("Invalid name \"%s\" for label" % (split_line[0]))
-		if(split_line[1] in mnemonics.cmds): # good operand
-			result.operand = split_line[1]
-		else:
-			raise AssemblySyntaxError("Unknown operand \"%s\"" % (split_line[1].upper()))
-		if(len(split_line) > 2):
-			result.address = split_line[2] # no check of address
-		else:
-			result.address = None
+		index = 1 # this is used later, operand in this case is second item in split_line
 	else:
 		result.label = None
-		if(split_line[0] in mnemonics.cmds): # good operand
-			result.operand = split_line[0]
-		else:
-			raise AssemblySyntaxError("Unknown operand \"%s\"" % (split_line[0].upper()))
-		if(len(split_line) > 1):
-			result.address = split_line[1] # no check of address
-		else:
-			result.address = None
+		index = 0 # this is used later, operand in this case is first item in split_line
+	
+	if(split_line[0 + index] in mnemonics.cmds): # good operand
+		result.operand = split_line[0+index]
+	else:
+		raise AssemblySyntaxError("Unknown operand \"%s\"" % (split_line[0 + index].upper()))
+	if(len(split_line) > (1 + index)):
+		result.address = split_line[1 + index] # no check of address
+	else:
+		result.address = None
+	
 	return result

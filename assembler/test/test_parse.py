@@ -2,32 +2,22 @@
 
 # tests correction of source lines parcing
 
+from __future__ import with_statement
 import unittest, sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from parse_line import *
 
-empties = ("", " ", "\t", "\t\t", " \t \t", "*", "* ", "* \t ab abc")
-errors = (" * a a a", " *", " label nop 1", "la#bel nop f", " nopp f")	
-
 class ParserTestCase(unittest.TestCase):
 	def testEmptyLine(self):
-		for line in empties:
-			self.assertEqual(parse_line(line), None)
+		with open("test/empties.dat","r") as file:
+			for line in file:
+				self.assertEqual(parse_line(line), None)
 
 	def testErrors(self):
-		for line in errors:
-			print "<",line,">"
-			# this fails!!! :(
-			self.assertRaises(AssemblySyntaxError, parse_line, line)
-			
-			# simply:
-			#try:
-			#	parse_line(line)
-			#except AssemblySyntaxError:
-			#	pass
-			#else:
-			#	self.fail("expected an AssemblySyntaxError")
+		with open("test/errors.dat","r") as file:
+			for line in file:
+				self.assertRaises(AssemblySyntaxError, parse_line, line)
 
 suite = unittest.makeSuite(ParserTestCase, 'test')
 

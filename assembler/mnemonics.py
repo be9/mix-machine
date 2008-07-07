@@ -1,4 +1,4 @@
-# commands.py
+# mnemonics.py
 
 # File for creating dictionary with commands
 
