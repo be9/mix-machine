@@ -2,7 +2,7 @@
 
 # parse one source line
 
-import commands
+import mnemonics
 
 class AssemblySyntaxError(Exception): pass
 
@@ -35,7 +35,7 @@ def parse_line(text_line):
 				raise AssemblySyntaxError("Very long name \"%s\" for label" % (split_line[0]))
 			else:
 				raise AssemblySyntaxError("Invalid name \"%s\" for label" % (split_line[0]))
-		if(split_line[1] in commands.cmds): # good operand
+		if(split_line[1] in mnemonics.cmds): # good operand
 			result.operand = split_line[1]
 		else:
 			raise AssemblySyntaxError("Unknown operand \"%s\"" % (split_line[1].upper()))
@@ -45,7 +45,7 @@ def parse_line(text_line):
 			result.address = None
 	else:
 		result.label = None
-		if(split_line[0] in commands.cmds): # good operand
+		if(split_line[0] in mnemonics.cmds): # good operand
 			result.operand = split_line[0]
 		else:
 			raise AssemblySyntaxError("Unknown operand \"%s\"" % (split_line[0].upper()))
