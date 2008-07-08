@@ -8,8 +8,10 @@ import unittest, sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from parse_line import *
 
-empties = """
-\t
+class ParserTestCase(unittest.TestCase):
+  def testEmptyLines(self):
+    empties = \
+"""\t
 \t\t
 \t \t
                 
@@ -20,25 +22,14 @@ empties = """
 * *
 *+*""".split("\n")
 
-errors = \
-"""	ENTU	100 comment
-label	EQUU	5
- * bad comment
-	* * bad comment
-VERYLONGLABEL ENTA	5
-6546	ENTA	3
-label*	ENTA	3
-%	ENTA	3
-#	ENTA	3
-label	EQUUUU""".split("\n")
-
-class ParserTestCase(unittest.TestCase):
-  def testEmptyLine(self):
     for line in empties:
       self.assertEqual(parse_line(line), None)
+    
+    bad_empties = \
+""" * bad comment
+  * * bad comment""".split("\n")
 
-  def testErrors(self):
-    for line in errors:
+    for line in bad_empties:
       self.assertRaises(AssemblySyntaxError, parse_line, line)
 
   def testLabels(self):
@@ -52,10 +43,27 @@ class ParserTestCase(unittest.TestCase):
 
       self.assertEqual(line.label, label.upper())
 
-    incorrect_labels = '123 1 2 a123456789aa'
+    incorrect_labels = '123 1 2 VERYLONGLABEL label* # %'
 
     for l,_ in lines(incorrect_labels):
       self.assertRaises(AssemblySyntaxError, parse_line, l)
+
+  def testFullLines(self):
+    self.checkLine(parse_line('label nop'),                   'LABEL', 'NOP', None)
+    self.checkLine(parse_line(' nop'),                        None, 'NOP', None)
+    self.checkLine(parse_line("\tnop"),                       None, 'NOP', None)
+    self.checkLine(parse_line("\tnop op"),                    None, 'NOP', 'OP')
+    self.checkLine(parse_line("\tnop op comment"),            None, 'NOP', 'OP')
+    self.checkLine(parse_line("label nop op comment"),        'LABEL', 'NOP', 'OP')
+    self.checkLine(parse_line("label\tmove\t123\t* comment"), 'LABEL', 'MOVE', '123')
+
+    self.assertRaises(AssemblySyntaxError, parse_line, "label qqq")
+    self.assertRaises(AssemblySyntaxError, parse_line, "\tqqq")
+    self.assertRaises(AssemblySyntaxError, parse_line, "\tqqq op")
+    self.assertRaises(AssemblySyntaxError, parse_line, " mov op comment")
+
+  def checkLine(self, line, label, mnemonic, operand):
+    self.assertEqual( (line.label, line.mnemonic, line.operand), (label, mnemonic, operand) )
 
 suite = unittest.makeSuite(ParserTestCase, 'test')
 
