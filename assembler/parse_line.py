@@ -16,13 +16,8 @@ class Line:
 		return "%3i: %10s %4s %s" % (self.line_number, self.label, self.operand, self.address)
 
 def is_label(s):
-	has_alpha = False
-	for i in xrange(len(s)):
-		if (not s[i].isalnum()):
-			return False
-		has_alpha = has_alpha or s[i].isalpha()
-	return has_alpha
-
+	return s.isalnum() and any(ch.isalpha() for ch in s)
+  
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):
 	split_line = text_line.upper().split()
