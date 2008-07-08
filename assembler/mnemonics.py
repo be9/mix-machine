@@ -12,12 +12,8 @@ class Cmd:
     return "%s %i %i" % (self.mnemonic, self.c_code, self.f_code)
 
 # commands dictionary with mnemonic as a key
-__cmds = {
-"EQU" :   Cmd("EQU"),
-"ORIG" :  Cmd("ORIG"),
-"END" :   Cmd("END"),
-"CON" :   Cmd("CON"),
-"ALF" :   Cmd("ALF"),
+
+__operands = {
 "NOP" :   Cmd("NOP", 0, 0),
 "ADD" :   Cmd("ADD", 1, 5),
 "SUB" :   Cmd("SUB", 2, 5),
@@ -163,6 +159,17 @@ __cmds = {
 "CMP6" :  Cmd("CMP6", 62, 5),
 "CMPX" :  Cmd("CMPX", 63, 5)
 }
+__directives = ("EQU","ORIG","END","CON","ALF")
+
+
+# real operands
+__cmds = dict(operands)
+
+# directives
+for s in __directives:
+	__cmds[s] = Cmd(s)
+
+
 
 def is_valid_mnemonic(mnemonic):
   return mnemonic in __cmds
