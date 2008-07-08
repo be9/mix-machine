@@ -42,17 +42,20 @@ class ParserTestCase(unittest.TestCase):
       self.assertRaises(AssemblySyntaxError, parse_line, line)
 
   def testLabels(self):
-    correct_labels = 'blah a z 123y321 1a1 a1 1a 123456789a'.split(' ')
+    def lines(labels):
+      return [ (l + ' nop', l) for l in labels.split(' ') ]
+    
+    correct_labels = 'blah a z 123y321 1a1 a1 1a 123456789a'
 
-    for label in correct_labels:
-      line = parse_line(label + ' nop')
+    for l,label in lines(correct_labels):
+      line = parse_line(l)
 
       self.assertEqual(line.label, label.upper())
 
-    incorrect_labels = '123 1 2 a123456789aa'.split(' ')
+    incorrect_labels = '123 1 2 a123456789aa'
 
-    for label in incorrect_labels:
-      self.assertRaises(AssemblySyntaxError, parse_line, label + ' nop')
+    for l,_ in lines(incorrect_labels):
+      self.assertRaises(AssemblySyntaxError, parse_line, l)
 
 suite = unittest.makeSuite(ParserTestCase, 'test')
 
