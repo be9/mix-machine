@@ -8,16 +8,27 @@ import unittest, sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from parse_line import *
 
-class ParserTestCase(unittest.TestCase):
-	def testEmptyLine(self):
-		with open("test/empties.dat","r") as file:
-			for line in file:
-				self.assertEqual(parse_line(line), None)
+empties = """
+\t
+\t\t
+\t \t
+                
+  \t
+*
+* 
+* \t ab abc
+* *
+*+*"""
 
-	def testErrors(self):
-		with open("test/errors.dat","r") as file:
-			for line in file:
-				self.assertRaises(AssemblySyntaxError, parse_line, line)
+class ParserTestCase(unittest.TestCase):
+  def testEmptyLine(self):
+    for line in empties.split("\n"):
+      self.assertEqual(parse_line(line), None)
+
+  def testErrors(self):
+    with open("test/errors.dat","r") as file:
+      for line in file:
+        self.assertRaises(AssemblySyntaxError, parse_line, line)
 
 suite = unittest.makeSuite(ParserTestCase, 'test')
 
