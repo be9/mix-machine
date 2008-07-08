@@ -4,8 +4,31 @@
 
 import mnemonics
 
-class AssemblySyntaxError(Exception): pass
+class AssemblySyntaxError(Exception):
+  def __init__(self, info = None):
+    self.info = info
 
+  def __str__(self):
+    if self.__doc__ is not None:
+      return self.__doc__ % self.info
+    else:
+      return str(self.info)
+
+class MissingMnemonicError(AssemblySyntaxError):
+  """Syntax error, mnemonic missing"""
+
+class InvalidLabelError(AssemblySyntaxError):
+  """Invalid label name (%s)"""
+
+class TooLongLabelError(AssemblySyntaxError):
+  """Too long label name (%s)"""
+    
+class UnknownMnemonicError(AssemblySyntaxError):
+  """Unknown mnemonic: %s"""
+
+class MissingOperandError(AssemblySyntaxError):
+  """Missing operand for %s"""
+    
 class Line:
   def __init__(self, label, mnemonic, operand):
     self.label, self.mnemonic, self.operand = label, mnemonic, operand
@@ -26,11 +49,11 @@ def parse_line(text_line):
     return None
 
   # line without a label
-  if not text_line[0].isalnum():
+  if text_line[0].isspace():
     split_line.insert(0, None)
 
   if len(split_line) < 2:
-    raise AssemblySyntaxError('Syntax error, mnemonics missing')
+    raise MissingMnemonicError
 
   # line without an operand
   if len(split_line) < 3:
@@ -41,17 +64,17 @@ def parse_line(text_line):
   # check label
   if label is not None:
     if not is_label(label):
-      raise AssemblySyntaxError('Invalid name "%s" for label' % label)
+      raise InvalidLabelError(label)
     
     if len(label) > 10:
-      raise AssemblySyntaxError('Very long name "%s" for label' % label)
+      raise TooLongLabelError(label)
    
   # check mnemonic 
   if not mnemonics.is_valid_mnemonic(mnemonic):
-    raise AssemblySyntaxError('Unknown mnemonic "%s"' % mnemonic)
+    raise UnknownMnemonicError(mnemonic)
 
   # check operand
   if operand is None and mnemonics.must_have_operand(mnemonic):
-    raise AssemblySyntaxError('No operand for "%s"' % mnemonic)
+    raise MissingOperandError(mnemonic)
   
   return Line(label, mnemonic, operand)

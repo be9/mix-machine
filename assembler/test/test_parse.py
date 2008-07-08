@@ -43,10 +43,12 @@ class ParserTestCase(unittest.TestCase):
 
       self.assertEqual(line.label, label.upper())
 
-    incorrect_labels = '123 1 2 VERYLONGLABEL label* # %'
+    incorrect_labels = '123 1 2 label* # %'
 
     for l,_ in lines(incorrect_labels):
-      self.assertRaises(AssemblySyntaxError, parse_line, l)
+      self.assertRaises(InvalidLabelError, parse_line, l)
+
+    self.assertRaises(TooLongLabelError, parse_line, 'VERYLONGLABEL NOP')
 
   def testFullLines(self):
     self.checkLine(parse_line('label nop'),                   'LABEL', 'NOP', None)
@@ -57,10 +59,11 @@ class ParserTestCase(unittest.TestCase):
     self.checkLine(parse_line("label nop op comment"),        'LABEL', 'NOP', 'OP')
     self.checkLine(parse_line("label\tmove\t123\t* comment"), 'LABEL', 'MOVE', '123')
 
-    self.assertRaises(AssemblySyntaxError, parse_line, "label qqq")
-    self.assertRaises(AssemblySyntaxError, parse_line, "\tqqq")
-    self.assertRaises(AssemblySyntaxError, parse_line, "\tqqq op")
-    self.assertRaises(AssemblySyntaxError, parse_line, " mov op comment")
+    self.assertRaises(MissingMnemonicError, parse_line, "labelonly")
+    self.assertRaises(UnknownMnemonicError, parse_line, "label qqq")
+    self.assertRaises(UnknownMnemonicError, parse_line, "\tqqq")
+    self.assertRaises(UnknownMnemonicError, parse_line, "\tqqq op")
+    self.assertRaises(UnknownMnemonicError, parse_line, " mov op comment")
 
   def checkLine(self, line, label, mnemonic, operand):
     self.assertEqual( (line.label, line.mnemonic, line.operand), (label, mnemonic, operand) )
