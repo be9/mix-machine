@@ -13,6 +13,9 @@ class Line:
   def __str__(self):
     return "%3i: (%10s) %4s %s" % (self.line_number, self.label, self.operation, self.argument)
 
+  def __cmp__(self, another):
+    return cmp(self.__str__(), another.__str__())
+
 def is_label(s):
   return s.isalnum() and any(ch.isalpha() for ch in s)
   

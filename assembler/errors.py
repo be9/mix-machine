@@ -21,6 +21,9 @@ class AssemblySyntaxError(Exception):
     else:
       return str(self.info)
 
+  def __cmp__(self, another):
+    return cmp(self.__str__(), another.__str__())
+
 class MissingOperationError(AssemblySyntaxError):
   """Syntax error, operation missing"""
 
