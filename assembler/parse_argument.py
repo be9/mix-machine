@@ -3,4 +3,7 @@
 # parses third part of line
 
 def parse_argument(s):
-  return int(s)
+  if s is not None:
+    return int(s)
+  else:
+    return 0

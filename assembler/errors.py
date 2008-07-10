@@ -38,3 +38,10 @@ class TooLongLabelError(AssemblySyntaxError):
 
 class UnknownOperationError(AssemblySyntaxError):
   """Unknown operation: %s"""
+
+class RepeatedLabelError(AssemblySyntaxError):
+  """This label name used twice (%s)"""
+
+class LineNumberError(AssemblySyntaxError):
+  """This address (%s) is invalid in MIX computer"""
+
