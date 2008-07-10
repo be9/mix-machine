@@ -9,7 +9,7 @@ from parse_argument import *
 def is_local_label(label):
   return len(label) == 2 and label[0].isdigit() and label[1] == 'H'
 
-def create_label_table(lines):
+def create_symbol_table(lines):
   labels = {} # {"LABEL" : address, ...}
   local_labels = {} # {"dH" : [address1, address2, ...], ...}
   errors = []
@@ -48,7 +48,7 @@ def create_label_table(lines):
       set_label(line, ca)
       ca = parse_argument(line.argument)
       check_address(ca)
-    elif line.operation == "CON" or line.operation == "ALF": # can be combined with first case
+    elif line.operation in ("CON", "ALF"): # can be combined with first case
       check_address(ca)
       set_label(line, ca)
       ca += 1
