@@ -11,7 +11,7 @@
 
 import sys
 from errors import *
-from parse_lines import *
+from parse_line import *
 import main_cycle
 
 DEFAULT_OUT_NAME = "out.ma"

@@ -48,13 +48,24 @@ def parse_line(text_line):
     if len(label) > 10:
       raise TooLongLabelError(label)
    
-   
   # check operation 
   if not operations.is_valid_operation(operation):
     raise UnknownOperationError(operation)
 
-
-  # check argument
-  # no check
-  
   return Line(label, operation, argument)
+
+def parse_lines(lines):
+  errors = []           # array for (line_numbers, error_messages)
+  result = []
+
+  for i in xrange(len(lines)):
+    try:
+      line = parse_line(lines[i])
+    except AssemblySyntaxError, error:
+      errors.append( (i + 1, error) )
+    else:
+      if line is not None:
+        line.line_number = i + 1
+        result.append(line)
+
+  return (result, errors)
