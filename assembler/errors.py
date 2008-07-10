@@ -10,16 +10,15 @@ ERR_FILE = (3, "Fatal error with working with files")
 # error codes of assembler
 ERR_SYNTAX = (1000, "Syntax errors in source file")
 
-
 class AssemblySyntaxError(Exception):
   def __init__(self, info = None):
     self.info = info
 
   def __str__(self):
     if self.__doc__ is not None:
-      if self.__doc__.find("%s") != -1:
+      try:
         return self.__doc__ % self.info
-      else:
+      except:
         return self.__doc__
     else:
       return str(self.info)
