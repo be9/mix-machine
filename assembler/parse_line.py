@@ -59,6 +59,7 @@ def parse_lines(lines):
   errors = []           # array for (line_numbers, error_messages)
   result = []
 
+  has_end = False
   for i in xrange(len(lines)):
     try:
       line = parse_line(lines[i])
@@ -68,5 +69,11 @@ def parse_lines(lines):
       if line is not None:
         line.line_number = i + 1
         result.append(line)
+        if line.operation == "END":
+          has_end = True
+          break
+
+  if not has_end:
+    errors.append( (len(lines), NoEndError()) )
 
   return (result, errors)

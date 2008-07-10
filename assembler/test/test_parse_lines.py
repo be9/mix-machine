@@ -33,7 +33,10 @@ LABEL1 \tStA LABEL1 sample of self modified code
 \toRIg 1000
  equ 18 device
 9H hlt
- eND 0""",
+ eND 0
+ and this is my
+ long
+ long poem""",
       [
         Line("START", "ENTA", "3", 1),
         Line("LABEL1", "STA", "LABEL1", 2),
@@ -55,7 +58,21 @@ LABELLONG44 enta 5
       [
         (1, UnknownOperationError("NOPP")),
         (3, TooLongLabelError("LABELLONG44")),
-        (4, UnknownOperationError("*"))
+        (4, UnknownOperationError("*")),
+        (4, NoEndError())
+      ])
+
+    self.check("""\
+ nopp
+ sta 5
+LABELLONG44 enta 5""",
+      [
+        Line(None, "STA", "5", 2),
+      ],
+      [
+        (1, UnknownOperationError("NOPP")),
+        (3, TooLongLabelError("LABELLONG44")),
+        (3, NoEndError())
       ])
     
     self.check("""\
