@@ -12,7 +12,7 @@
 import sys
 from errors import *
 from parse_line import *
-import main_cycle
+import main_loop
 
 DEFAULT_OUT_NAME = "out.ma"
 
@@ -62,7 +62,7 @@ def main():
     return ERR_SYNTAX[0]
 
   # now we have list of lines with correct labels and operations
-  memory_table = main_cycle.main_cycle(lines)
+  memory_table = main_loop.main_loop(lines)
 
   #write_ma(file_out, [23,453,124])
   file_out.close()
