@@ -46,7 +46,7 @@ class ParserTestCase(unittest.TestCase):
     for src_line,label in lines(correct_labels):
       self.assertEqual(parse_line(src_line).label, label.upper())
 
-    incorrect_labels = '123 1 2 label* # % label,'
+    incorrect_labels = '4F 4B 123 1 2 label* # % label,'
 
     for l,_ in lines(incorrect_labels):
       self.assertRaises(InvalidLabelError, parse_line, l)
