@@ -173,3 +173,6 @@ for s in __directives:
 
 def is_valid_operation(operation):
   return operation in __ops
+
+def is_function(operation):
+  return operation in __functions

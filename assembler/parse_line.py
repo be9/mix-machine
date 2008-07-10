@@ -3,36 +3,18 @@
 # parse one source line
 
 import operations
+from errors import *
 
-class AssemblySyntaxError(Exception):
-  def __init__(self, info = None):
-    self.info = info
-
-  def __str__(self):
-    if self.__doc__ is not None:
-      return self.__doc__ % self.info
-    else:
-      return str(self.info)
-
-class MissingOperationError(AssemblySyntaxError):
-  """Syntax error, operation missing"""
-
-class InvalidLabelError(AssemblySyntaxError):
-  """Invalid label name (%s)"""
-
-class TooLongLabelError(AssemblySyntaxError):
-  """Too long label name (%s)"""
-
-class UnknownOperationError(AssemblySyntaxError):
-  """Unknown operation: %s"""
 
 class Line:
-  def __init__(self, label, operation, argument):
-    self.label, self.operation, self.argument = label, operation, argument
-    self.line_number = 0
+  def __init__(self, label, operation, argument, line_number = 0):
+    self.label, self.operation, self.argument, self.line_number = label, operation, argument, line_number
 
   def __str__(self):
     return "%3i: (%10s) %4s %s" % (self.line_number, self.label, self.operation, self.argument)
+
+  def __cmp__(self, another):
+    return cmp(self.__str__(), another.__str__())
 
 def is_label(s):
   return s.isalnum() and any(ch.isalpha() for ch in s)
@@ -66,13 +48,24 @@ def parse_line(text_line):
     if len(label) > 10:
       raise TooLongLabelError(label)
    
-   
   # check operation 
   if not operations.is_valid_operation(operation):
     raise UnknownOperationError(operation)
 
-
-  # check argument
-  # no check
-  
   return Line(label, operation, argument)
+
+def parse_lines(lines):
+  errors = []           # array for (line_numbers, error_messages)
+  result = []
+
+  for i in xrange(len(lines)):
+    try:
+      line = parse_line(lines[i])
+    except AssemblySyntaxError, error:
+      errors.append( (i + 1, error) )
+    else:
+      if line is not None:
+        line.line_number = i + 1
+        result.append(line)
+
+  return (result, errors)
