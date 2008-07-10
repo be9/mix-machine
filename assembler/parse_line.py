@@ -3,33 +3,12 @@
 # parse one source line
 
 import operations
+from errors import *
 
-class AssemblySyntaxError(Exception):
-  def __init__(self, info = None):
-    self.info = info
-
-  def __str__(self):
-    if self.__doc__ is not None:
-      return self.__doc__ % self.info
-    else:
-      return str(self.info)
-
-class MissingOperationError(AssemblySyntaxError):
-  """Syntax error, operation missing"""
-
-class InvalidLabelError(AssemblySyntaxError):
-  """Invalid label name (%s)"""
-
-class TooLongLabelError(AssemblySyntaxError):
-  """Too long label name (%s)"""
-
-class UnknownOperationError(AssemblySyntaxError):
-  """Unknown operation: %s"""
 
 class Line:
-  def __init__(self, label, operation, argument):
-    self.label, self.operation, self.argument = label, operation, argument
-    self.line_number = 0
+  def __init__(self, label, operation, argument, line_number = 0):
+    self.label, self.operation, self.argument, self.line_number = label, operation, argument, line_number
 
   def __str__(self):
     return "%3i: (%10s) %4s %s" % (self.line_number, self.label, self.operation, self.argument)

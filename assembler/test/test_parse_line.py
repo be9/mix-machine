@@ -1,12 +1,12 @@
-# test_parse.py
+# test_parse_line.py
 
 # tests correction of source lines parcing
 
-from __future__ import with_statement
 import unittest, sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from parse_line import *
+from errors import *
 
 class ParserTestCase(unittest.TestCase):
   def testEmptyLines(self):

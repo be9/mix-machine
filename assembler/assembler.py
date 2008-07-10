@@ -1,4 +1,4 @@
-# mixm_asm.py
+# assembler.py
 
 # Assembler - one of the parts of MixMachine,
 # which assemles mix source code ("*.mix") to
@@ -11,7 +11,7 @@
 
 import sys
 from errors import *
-from parse_file import *
+from parse_lines import *
 import commands
 
 DEFAULT_OUT_NAME = "out.ma"
@@ -53,15 +53,18 @@ def main():
     print strerror
     return ERR_FILE[0]
 
-  lines = parse_file(file_in)
+  lines, errors = parse_lines(file_in.readlines())
   file_in.close()
-  if(lines[0] == 0): # we have errors
+  if len(errors) > 0: # we have errors
     print "Syntax errors in source file:"
-    print_syntax_errors(lines[1])
+    print_syntax_errors(errors)
     file_out.close()
     return ERR_SYNTAX[0]
-  else:
-    lines = lines[1]
+
+  # now we have list of lines with correct labels and operations
+
+
+
 
   #write_ma(file_out, [23,453,124])
   file_out.close()
