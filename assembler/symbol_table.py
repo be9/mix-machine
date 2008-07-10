@@ -34,6 +34,7 @@ def create_label_table(lines):
   for line in lines:
     # all by 10th and 11th rules from Donald Knuth's book
     if is_function(line.operation):
+      check_address(ca)
       set_label(line, ca)
       ca += 1
     elif line.operation == "EQU":
@@ -43,16 +44,18 @@ def create_label_table(lines):
     elif line.operation == "ORIG":
       # have bug in Knuth's book. There TABLE must be current address, but there ca+100
       # it's follow from rules and tested in mdk
+      check_address(ca)
       set_label(line, ca)
       ca = parse_argument(line.argument)
+      check_address(ca)
     elif line.operation == "CON" or line.operation == "ALF": # can be combined with first case
+      check_address(ca)
       set_label(line, ca)
       ca += 1
     elif line.operation == "END":
       # FIX ME: here we put all CON's which comes from smth like "=3="
       set_label(line, ca)
       break # assemblying finished
-    check_address(ca)
 
   for label in local_labels:
     local_labels[label].sort()

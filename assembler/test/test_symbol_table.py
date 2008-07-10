@@ -6,7 +6,7 @@ import unittest, sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from parse_line import Line
-from label_table import *
+from symbol_table import *
 
 class LabelsTestCase(unittest.TestCase):
   def check(self, lines, expected_labels, expected_local_labels = {}, expected_errors = []):
@@ -58,11 +58,15 @@ class LabelsTestCase(unittest.TestCase):
     Line("NULL","ORIG","3000",1),
     Line("START","ENTA","4",2),
     Line("START","NOP",None,3),
-    Line(None,"END","START",4)
+    Line(None, "ORIG", "5000", 4),
+    Line(None,"END","START",5)
     ],
     {"NULL" : 0, "START" : 3000},
     {},
-    [ (3, RepeatedLabelError("START")) ]
+    [
+    (3, RepeatedLabelError("START")),
+    (4, LineNumberError(5000))
+    ]
     )
 
     self.check(
@@ -89,6 +93,40 @@ class LabelsTestCase(unittest.TestCase):
     "9H" : [100, 1000]
     },
     [ (6, RepeatedLabelError("123456789L")) ]
+    )
+
+    self.check(
+    [
+    Line("PRINTER666",  "EQU",  "18",         1),
+    Line("OLABEL",      "CON",  "19",         2),
+    Line("123456789L",  "ALF",  "HELLO",      3),
+    Line("9L",          "ORIG", "1000",       4),
+    Line("9H",          "NOP",  None,         5),
+    Line("123456789L",  "NOP",  None,         6),
+    Line("0H",          "ENTA", "PRINTER666", 7),
+    Line(None,          "ORIG", "3998",       8),
+    Line("9H",          "NOP",  None,         9),
+    Line(None,          "NOP",  None,         10),
+    Line(None,          "NOP",  None,         11),
+    Line("4001LABEL",   "NOP",  None,         12),
+    Line(None,          "END",  "1000",       13),
+    ],
+    {
+    "PRINTER666" : 18,
+    "OLABEL" : 0,
+    "9L" : 2,
+    "123456789L" : 1,
+    "4001LABEL" : 4001
+    },
+    {
+    "0H" : [1002],
+    "9H" : [1000, 3998]
+    },
+    [
+    (6, RepeatedLabelError("123456789L")),
+    (11, LineNumberError(4000)),
+    (12, LineNumberError(4001))
+    ]
     )
 
 suite = unittest.makeSuite(LabelsTestCase, 'test')
