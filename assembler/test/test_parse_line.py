@@ -40,13 +40,13 @@ class ParserTestCase(unittest.TestCase):
     def lines(labels):
       return [ (l + ' nop', l) for l in labels.split(' ') ]
     
-    correct_labels = 'blah a z 123y321 1a1 a1 1a 123456789a 9H labellabel'
+    correct_labels = 'blah a z 123y321 1a1 a1 1a 123456789a 9H labellabel 40F 40B F B'
 
     # l - source line, label - label of this line
     for src_line,label in lines(correct_labels):
       self.assertEqual(parse_line(src_line).label, label.upper())
 
-    incorrect_labels = '4F 4B 123 1 2 label* # % label,'
+    incorrect_labels = '4F 4B 0F 0B 9F 9B 123 1 2 label* # % label,'
 
     for l,_ in lines(incorrect_labels):
       self.assertRaises(InvalidLabelError, parse_line, l)
