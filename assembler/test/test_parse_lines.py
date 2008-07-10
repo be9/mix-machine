@@ -5,7 +5,6 @@
 import unittest, sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from parse_lines import *
 from parse_line import *
 from errors import *
 
