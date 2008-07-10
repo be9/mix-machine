@@ -1,3 +1,7 @@
+# all.py
+
+# run all tests
+
 import unittest
 import test_parse_line
 import test_parse_lines
