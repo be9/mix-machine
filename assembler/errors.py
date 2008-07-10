@@ -16,8 +16,11 @@ class AssemblySyntaxError(Exception):
     self.info = info
 
   def __str__(self):
-    if self.__doc__ is not None and self.__doc__.find("%s") != -1:
-      return self.__doc__ % self.info
+    if self.__doc__ is not None:
+      if self.__doc__.find("%s") != -1:
+        return self.__doc__ % self.info
+      else:
+        return self.__doc__
     else:
       return str(self.info)
 
