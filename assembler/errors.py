@@ -43,4 +43,3 @@ class RepeatedLabelError(AssemblySyntaxError):
 
 class LineNumberError(AssemblySyntaxError):
   """This address (%s) is invalid in MIX computer"""
-
