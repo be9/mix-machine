@@ -18,7 +18,7 @@ class Line:
 
 def is_label(s):
   return s.isalnum() and any(ch.isalpha() for ch in s) and\
-    not (len(s) == 2 and s[0].isdigit() and (s[1] == 'F' or s[0] == 'B'))
+    not (len(s) == 2 and s[0].isdigit() and (s[1] == 'F' or s[1] == 'B'))
   
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):
