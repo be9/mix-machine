@@ -40,7 +40,7 @@ class ParserTestCase(unittest.TestCase):
     def lines(labels):
       return [ (l + ' nop', l) for l in labels.split(' ') ]
     
-    correct_labels = 'blah a z 123y321 1a1 a1 1a 123456789a 9H 9B 9F labellabel'
+    correct_labels = 'blah a z 123y321 1a1 a1 1a 123456789a 9H labellabel'
 
     # l - source line, label - label of this line
     for src_line,label in lines(correct_labels):
@@ -55,7 +55,7 @@ class ParserTestCase(unittest.TestCase):
 
   def testFullLines(self):
     self.checkLine(parse_line('label nop'),                   'LABEL', 'NOP', None)
-    self.checkLine(parse_line('9f nop'),                      '9F', 'NOP', None)
+    self.checkLine(parse_line('9H nop'),                      '9H', 'NOP', None)
     self.checkLine(parse_line(' nop'),                        None, 'NOP', None)
     self.checkLine(parse_line("\tnop"),                       None, 'NOP', None)
     self.checkLine(parse_line("\tnop arg"),                   None, 'NOP', 'ARG')
