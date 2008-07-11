@@ -47,8 +47,8 @@ class LabelsTestCase(unittest.TestCase):
         "123456789L" : 1001
       },
       {
-        "0H" : [1002],
-        "9H" : [100, 1000]
+        "0H" : [(1002, 7)],
+        "9H" : [(1000, 5), (100, 9)]
       }
     )
 
@@ -89,8 +89,8 @@ class LabelsTestCase(unittest.TestCase):
         "123456789L" : 1
       },
       {
-        "0H" : [1002],
-        "9H" : [100, 1000]
+        "0H" : [(1002, 7)],
+        "9H" : [(1000, 5), (100, 9)]
       },
       [ (6, RepeatedLabelError("123456789L")) ]
     )
@@ -119,8 +119,8 @@ class LabelsTestCase(unittest.TestCase):
         "4001LABEL" : 4001
       },
       {
-        "0H" : [1002],
-        "9H" : [1000, 3998]
+        "0H" : [(1002, 7)],
+        "9H" : [(1000, 5), (3998, 9)]
       },
       [
         (6, RepeatedLabelError("123456789L")),
