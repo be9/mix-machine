@@ -38,7 +38,10 @@ def create_symbol_table(lines):
       set_label(line, ca)
       ca += 1
     elif line.operation == "EQU":
-      address = parse_argument(line.argument)
+      try:
+        address = parse_argument(line, labels, local_labels)
+      except AssemblySyntaxError, err:
+        errors.append( (line.line_number, err) )
       check_address(address)
       set_label(line, address)
     elif line.operation == "ORIG":
@@ -46,7 +49,10 @@ def create_symbol_table(lines):
       # it's follow from rules and tested in mdk
       check_address(ca)
       set_label(line, ca)
-      ca = parse_argument(line.argument)
+      try:
+        ca = parse_argument(line, labels, local_labels)
+      except AssemblySyntaxError, err:
+        errors.append( (line.line_number, err) )
       check_address(ca)
     elif line.operation in ("CON", "ALF"): # can be combined with first case
       check_address(ca)

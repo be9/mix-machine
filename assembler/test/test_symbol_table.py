@@ -18,37 +18,67 @@ class LabelsTestCase(unittest.TestCase):
   def testNoErrors(self):
     self.check(
       [
-        Line("NULL","ORIG","3000",1),
-        Line("START","ENTA","4",2),
-        Line(None,"NOP",None,3),
-        Line(None,"END","START",4)
+        Line("PRINTER","EQU","18",1),
+        Line("NULL","ORIG","PRINTER",2),
+        Line("START","ENTA","4",3),
+        Line(None,"NOP",None,4),
+        Line(None,"END","START",5)
       ],
-      {"NULL" : 0, "START" : 3000}
+      {"NULL" : 0, "START" : 18, "PRINTER" : 18}
+    )
+
+    # test locals
+    self.check(
+      [
+        Line("PRINTER","EQU","18",1),
+        Line("NULL","ORIG","PRINTER",2),
+        Line("START","ENTA","4",3),
+        Line("9H","EQU","547",4),
+        Line(None,"ORIG","9B",5),
+        Line("TESTLABEL","NOP",None,6),
+        Line(None,"ORIG","TESTLABEL",7),
+        Line("TESTLABEL3","NOP",None,8),
+        Line("9H","EQU","745",9),
+        Line(None,"ORIG","9B",10),
+        Line("TESTLABEL2","NOP",None,11),
+        Line(None,"END","START",12)
+      ],
+      {
+        "NULL" : 0,
+        "START" : 18,
+        "PRINTER" : 18,
+        "TESTLABEL" : 547,
+        "TESTLABEL2" : 745,
+        "TESTLABEL3" : 547
+      },
+      {
+        "9H" : [(547, 4), (745, 9)]
+      }
     )
 
     self.check(
       [
         Line("PRINTER666",  "EQU",  "18",         1),
-        Line("OLABEL",      "CON",  "19",         2),
+        Line("0LABEL",      "CON",  "19",         2),
         Line("1LABEL",      "ALF",  "HELLO",      3),
-        Line("9L",          "ORIG", "1000",       4),
+        Line("9L",          "ORIG", "0LABEL",     4),
         Line("9H",          "NOP",  None,         5),
         Line("123456789L",  "NOP",  None,         6),
-        Line("0H",          "ENTA", "PRINTER666", 7),
+        Line("0H",          "ENTA", "9B",         7),
         Line(None,          "ORIG", "100",        8),
         Line("9H",          "HLT",  None,         9),
         Line(None,          "END",  "1000",       10),
       ],
       {
         "PRINTER666" : 18,
-        "OLABEL" : 0,
+        "0LABEL" : 0,
         "1LABEL" : 1,
         "9L" : 2,
-        "123456789L" : 1001
+        "123456789L" : 1
       },
       {
-        "0H" : [(1002, 7)],
-        "9H" : [(1000, 5), (100, 9)]
+        "0H" : [(2, 7)],
+        "9H" : [(0, 5), (100, 9)]
       }
     )
 
@@ -78,9 +108,11 @@ class LabelsTestCase(unittest.TestCase):
         Line("9H",          "NOP",  None,         5),
         Line("123456789L",  "NOP",  None,         6),
         Line("0H",          "ENTA", "PRINTER666", 7),
-        Line(None,          "ORIG", "100",        8),
-        Line("9H",          "HLT",  None,         9),
-        Line(None,          "END",  "1000",       10),
+        Line(None,          "ORIG", "3B",         8),
+        Line(None,          "ORIG", "UNKNWN",     9),
+        Line(None,          "ORIG", "18%",        10),
+        Line("9H",          "HLT",  None,         11),
+        Line(None,          "END",  "1000",       12),
       ],
       {
         "PRINTER666" : 18,
@@ -90,9 +122,14 @@ class LabelsTestCase(unittest.TestCase):
       },
       {
         "0H" : [(1002, 7)],
-        "9H" : [(1000, 5), (100, 9)]
+        "9H" : [(1000, 5), (1003, 11)]
       },
-      [ (6, RepeatedLabelError("123456789L")) ]
+      [
+        (6, RepeatedLabelError("123456789L")),
+        (8, InvalidLocalLabelError("3B")),
+        (9, InvalidExpressionError("UNKNWN")),
+        (10, InvalidExpressionError("18%"))
+      ]
     )
 
     self.check(

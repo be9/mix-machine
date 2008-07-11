@@ -22,8 +22,51 @@
 #                      W_EXP |                        # if operation in ("EQU", "ORIG", "CON", "END")
 #                      ALF_WORD                       # if operation == "ALF"
 
-def parse_argument(s):
-  if s is not None:
-    return int(s)
-  else:
+from operations import *
+from errors import *
+
+def parse_argument(line, labels, local_labels):
+  arg = line.argument
+
+  # instruction:  number, any symbol (if this function calles for instruction => all symbols were found yet)
+  # directives:   number, defined symbol (and only defined symbols are in labels and local_labels)
+
+  if arg is None:
     return 0
+
+  try:
+    return int(arg)
+  except:
+    pass
+
+  # it's SYMBOL
+
+  # find in labels
+  if arg in labels:
+    return labels[arg]
+
+  # find in local_labels
+  #
+  # MAY BE CAN BE OPTIMIZED
+  #
+  if len(arg) == 2 and arg[0].isdigit() and arg[1] in ('F', 'B'):
+    label = arg[0] + 'H'
+    if label in local_labels:
+
+      if arg[1] == 'B':
+        loop = range(len(local_labels[label])-1, -1, -1) # reversed loop
+      else: # 'F'
+        loop = range(len(local_labels[label])) # normal loop
+
+      # we go and break at first good label, if all loop passed and no good label - raise error
+      for i in loop:
+        if (arg[1] == 'B' and local_labels[label][i][1] < line.line_number) or\
+           (arg[1] == 'F' and local_labels[label][i][1] > line.line_number):
+          break
+      else:
+        raise InvalidLocalLabelError(line.argument)
+      return local_labels[label][i][0]
+    else:
+      raise InvalidLocalLabelError(line.argument)
+
+  raise InvalidExpressionError(arg)
