@@ -13,7 +13,7 @@ class Op:
 
 # operations dictionary with operation's mnemonic as a key
 
-__functions = {
+__instructions = {
 "NOP" :   Op("NOP", 0, 0),
 "ADD" :   Op("ADD", 1, 5),
 "SUB" :   Op("SUB", 2, 5),
@@ -163,7 +163,7 @@ __directives = ("EQU","ORIG","END","CON","ALF")
 
 
 # real functions
-__ops = dict(__functions)
+__ops = dict(__instructions)
 
 # directives
 for s in __directives:
@@ -174,5 +174,5 @@ for s in __directives:
 def is_valid_operation(operation):
   return operation in __ops
 
-def is_function(operation):
-  return operation in __functions
+def is_instruction(operation):
+  return operation in __instructions

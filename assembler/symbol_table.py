@@ -33,7 +33,7 @@ def create_symbol_table(lines):
   ca = 0 # current address (*)
   for line in lines:
     # all by 10th and 11th rules from Donald Knuth's book
-    if is_function(line.operation):
+    if is_instruction(line.operation):
       check_address(ca)
       set_label(line, ca)
       ca += 1
