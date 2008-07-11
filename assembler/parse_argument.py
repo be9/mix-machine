@@ -16,7 +16,11 @@
 # IND_PART        ::==  "" | ( "," EXP )
 # F_PART          ::==  "" | ( "(" EXP ")" )
 # W_EXP           ::==  EXP F_PART [ "," EXP F_PART ]*
-
+# ALF_WORD        ::==  exactly five mix-chars
+#
+# ARGUMENT        ::== ( ADR_PART IND_PART F_PART ) | # if is_instruction(operation)
+#                      W_EXP |                        # if operation in ("EQU", "ORIG", "CON", "END")
+#                      ALF_WORD                       # if operation == "ALF"
 
 def parse_argument(s):
   if s is not None:
