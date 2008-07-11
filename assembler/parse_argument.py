@@ -46,27 +46,23 @@ def parse_argument(line, labels, local_labels):
     return labels[arg]
 
   # find in local_labels
-  #
-  # MAY BE CAN BE OPTIMIZED
-  #
   if len(arg) == 2 and arg[0].isdigit() and arg[1] in ('F', 'B'):
     label = arg[0] + 'H'
     if label in local_labels:
 
-      if arg[1] == 'B':
-        loop = range(len(local_labels[label])-1, -1, -1) # reversed loop
-      else: # 'F'
-        loop = range(len(local_labels[label])) # normal loop
-
-      # we go and break at first good label, if all loop passed and no good label - raise error
-      for i in loop:
-        if (arg[1] == 'B' and local_labels[label][i][1] < line.line_number) or\
-           (arg[1] == 'F' and local_labels[label][i][1] > line.line_number):
+      b_label, f_label = None, None
+      for x in local_labels[label]:
+        if x[1] < line.line_number:
+          b_label = x
+        if x[1] > line.line_number:
+          f_label = x
           break
-      else:
-        raise InvalidLocalLabelError(line.argument)
-      return local_labels[label][i][0]
-    else:
-      raise InvalidLocalLabelError(line.argument)
+
+      if arg[1] == 'B' and b_label is not None:
+        return b_label[0]
+      elif arg[1] == 'F' and f_label is not None:
+        return f_label[0]
+
+    raise InvalidLocalLabelError(line.argument)
 
   raise InvalidExpressionError(arg)
