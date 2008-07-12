@@ -6,12 +6,13 @@ from symbol_table import *
 from operations import *
 
 def mix2dec(word):
-  return word[0] * (word[5] + (word[4] << 6) + (word[3] << 12) + (word[2] << 18) + (word[1] << 24))
+  return word[0] * reduce(lambda x,y: (x << 6) | y, word[1:], 0)
 
 def dec2mix(num):
-  mask = (1 << 6) - 1
-  u_num = num * sign(num)
-  return [sign(num), (u_num & (mask << 24)) >> 24, (u_num & (mask << 18)) >> 18, (u_num & (mask << 12)) >> 12, (u_num & (mask << 6)) >> 6, u_num & mask]
+  mask = 63     # 1<<6 - 1
+  u_num = abs(num)
+
+  return [sign(num)] + [ (u_num >> shift) & mask for shift in xrange(24, -1, -6) ]
 
 class Memory():
   def __init__(self):
