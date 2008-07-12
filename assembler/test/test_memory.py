@@ -28,8 +28,8 @@ class MemoryTestCase(unittest.TestCase):
       ([+1, 00, 00, 00, 00, 00], -0)
     ]
     for word, dec in tests:
-      self.assertEqual(mix2dec(word), dec)
-      self.checkWords(dec2mix(dec), word)
+      self.assertEqual(Memory.mix2dec(word), dec)
+      self.checkWords(Memory.dec2mix(dec), word)
 
   def testMemory_set_byte(self):
     memory = Memory()
@@ -61,7 +61,7 @@ class MemoryTestCase(unittest.TestCase):
       (3999, +113, [+1, 0, 0, 0, 1, 49]),
     ]
     for word_index, value, word in value_tests:
-      memory.set_value(word_index, value)
+      memory.set_word(word_index, value)
       self.assertEqual(memory.memory[word_index], word)
 
 
