@@ -46,10 +46,10 @@ class SymbolTable():
       elif line.operation == "EQU":
         try:
           address = parse_argument(line, self)
+          check_address(address)
+          set_label(line, address)
         except AssemblySyntaxError, err:
           self.errors.append( (line.line_number, err) )
-        check_address(address)
-        set_label(line, address)
       elif line.operation == "ORIG":
         # have bug in Knuth's book. There TABLE must be current address, but there ca+100
         # it's follow from rules and tested in mdk
