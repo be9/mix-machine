@@ -7,12 +7,16 @@ from operations import *
 from errors import *
 
 def is_local_label(label):
-  return len(label) == 2 and label[0].isdigit() and label[1] == 'H'
+  return len(label) == 2 and label[0].isdigit() and label[1] in ('H', 'h')
 
 def is_local_label_reference(label):
-  return len(label) == 2 and label[0].isdigit() and label[1] in ('F', 'B')
+  return len(label) == 2 and label[0].isdigit() and label[1] in ('F', 'B', 'f', 'b')
 
-class SymbolTable():
+def is_label(s):
+  return s.isalnum() and any(ch.isalpha() for ch in s) and \
+    not is_local_label_reference(s)
+  
+class SymbolTable:
   def __init__(self, lines):
     self.labels = {} # {"LABEL" : address, ...}
     self.local_labels = {} # {"dH" : [(address1, line1), (address2, line2), ...], ...}

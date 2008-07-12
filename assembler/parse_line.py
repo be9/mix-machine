@@ -14,12 +14,9 @@ class Line:
     return "%3i: (%10s) %4s %s" % (self.line_number, self.label, self.operation, self.argument)
 
   def __cmp__(self, another):
+    """ Mostly needed for tests """
     return cmp(self.__str__(), another.__str__())
 
-def is_label(s):
-  return s.isalnum() and any(ch.isalpha() for ch in s) and \
-    not is_local_label_reference(s)
-  
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):
   split_line = text_line.upper().split()
