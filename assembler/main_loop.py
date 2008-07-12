@@ -56,13 +56,15 @@ def main_loop(lines, symbol_table):
       c_code, f_code_default = get_codes(line.operation)
 
       # (in the future) a_code, i_code, f_code = parse_argument(line, symbol_table)
-      a_part = parse_argument(line, symbol_table)
-      i_code = 0
-      f_code = f_code_default
-
-      memory.set_instruction(ca, a_part, i_code, f_code, c_code)
-
-      ca += 1
+      try:
+        a_part = parse_argument(line, symbol_table)
+      except AssemblySyntaxError, err:
+        errors.append( (line.line_number, err) )
+      else:
+        i_code = 0
+        f_code = f_code_default
+        memory.set_instruction(ca, a_part, i_code, f_code, c_code)
+        ca += 1
     elif line.operation == "EQU":
       pass
     elif line.operation == "ORIG":
