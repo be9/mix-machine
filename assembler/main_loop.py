@@ -10,7 +10,8 @@ def mix2dec(word):
 
 def dec2mix(num):
   mask = (1 << 6) - 1
-  return [sign(num), (num & (mask << 24)) >> 24, (num & (mask << 18)) >> 18, (num & (mask << 12)) >> 12, (num & (mask << 6)) >> 6, num & mask]
+  u_num = num * sign(num)
+  return [sign(num), (u_num & (mask << 24)) >> 24, (u_num & (mask << 18)) >> 18, (u_num & (mask << 12)) >> 12, (u_num & (mask << 6)) >> 6, u_num & mask]
 
 class Memory():
   def __init__(self):
@@ -22,19 +23,16 @@ class Memory():
 
   def set_instruction(self, word_index, a_code, i_code, f_code, c_code):
     self.set_byte(word_index, 0, sign(a_code))
-    self.set_byte(word_index, 1, a_code / 64)
-    self.set_byte(word_index, 2, a_code % 64)
+    self.set_byte(word_index, 1, (sign(a_code) * a_code) / 64)
+    self.set_byte(word_index, 2, (sign(a_code) * a_code) % 64)
     self.set_byte(word_index, 3, i_code)
     self.set_byte(word_index, 4, f_code)
     self.set_byte(word_index, 5, c_code)
 
-  def set_word(self, word_index, value):
-    self.set_byte(word_index, 0, sign(value))
-    abs_value = value * sign(value)
-    mask = (1 << 6) - 1 # mask for 5th byte
-    for i in xrange(5, 0, -1): # [5, 4, 3, 2, 1]
-      self.set_byte(word_index, i, (abs_value & mask) >> (6*(5 - i)) )
-      mask <<= 6 # shift mask to previous byte
+  def set_value(self, word_index, value):
+    word = dec2mix(value)
+    for i in xrange(6):
+      self.set_byte(word_index, i, word[i])
 
 def sign(x):
   if x >= 0:
@@ -77,13 +75,14 @@ def main_loop(lines):
       ca = parse_argument(line, symbol_table)
     elif line.operation == "CON":
       try:
-        memory.set_word(ca, parse_argument(line, symbol_table))
+        memory.set_value(ca, parse_argument(line, symbol_table))
       except AssemblySyntaxError, err:
         errors.append( (line.line_number, err) )
-      ca += 1
+      else:
+        ca += 1
     elif line.operation == "ALF":
       # FIX ME
-      memory.set_word(ca, 20210054) # 20210054 = "ALFFF" = (+1, 1, 13, 6, 6, 6,)
+      memory.set_value(ca, 20210054) # 20210054 = "ALFFF" = (+1, 1, 13, 6, 6, 6,)
       ca += 1
     elif line.operation == "END":
       # FIX ME: here we put all CON's which comes from smth like "=3="
