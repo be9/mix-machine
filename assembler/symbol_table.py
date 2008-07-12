@@ -2,10 +2,9 @@
 
 # module for find labels and creating table of them
 
+from parse_argument import parse_argument
 from operations import *
 from errors import *
-from parse_argument import *
-
 
 def is_local_label(label):
   return len(label) == 2 and label[0].isdigit() and label[1] == 'H'

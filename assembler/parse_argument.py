@@ -24,7 +24,6 @@
 
 from operations import *
 from errors import *
-from symbol_table import *
 
 def parse_argument(line, symbol_table):
   arg = line.argument
@@ -40,7 +39,7 @@ def parse_argument(line, symbol_table):
   except:
     pass
 
-  addr =  symbol_table.find(line.argument, line.line_number)
+  addr = symbol_table.find(line.argument, line.line_number)
   if addr is not None:
     return addr
 
