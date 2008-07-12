@@ -61,8 +61,15 @@ def main():
     file_out.close()
     return ERR_SYNTAX[0]
 
-  # now we have list of lines with correct labels and operations
-  memory_table, start_address, errors = main_loop(lines)
+  
+  # first we need to create table of labels
+  symbol_table = SymbolTable(lines)
+
+  if len(symbol_table.errors) > 0:
+    return (None, None, symbol_table.errors)
+  else:
+    # now we have list of lines with correct labels and operations
+    memory_table, start_address, errors = main_loop(lines, symbol_table)
 
   print "Errors:"
   print_syntax_errors(errors)

@@ -41,14 +41,8 @@ def sign(x):
     return -1
 
 
-def main_loop(lines):
-  # first we need to create table of labels
-  symbol_table = SymbolTable(lines)
-
-  if len(symbol_table.errors) > 0:
-    return (None, None, symbol_table.errors)
-
-  # now we need to assemble program
+def main_loop(lines, symbol_table):
+  """Now we need to assemble program"""
   def check_address(address):
       if not (0 <= address < 4000):
         self.errors.append( (line.line_number, LineNumberError(address)) )
