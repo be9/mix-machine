@@ -171,10 +171,14 @@ for s in __directives:
 
 
 def get_codes(instruction):
-  return (__instructions[instruction].c_code, __instructions[instruction].f_code)
+  if is_instruction(instruction):
+    instr = __instructions[instruction]
+    return (instr.c_code, instr.f_code)
+  else:
+    return (None, None)
 
 def is_valid_operation(operation):
-  return operation in __ops
+  return operation.upper() in __ops
 
 def is_instruction(operation):
-  return operation in __instructions
+  return operation.upper() in __instructions
