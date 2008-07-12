@@ -9,11 +9,11 @@ from parse_line import Line
 from symbol_table import *
 
 class LabelsTestCase(unittest.TestCase):
-  def check(self, lines, expected_labels, expected_local_labels = {}, expected_errors = []):
-    labels, local_labels, errors = create_symbol_table(lines)
-    self.assertEqual(labels, expected_labels)
-    self.assertEqual(local_labels, expected_local_labels)
-    self.assertEqual(errors, expected_errors)
+  def check(self, lines, labels, local_labels = {}, errors = []):
+    symbol_table = SymbolTable(lines)
+    self.assertEqual(symbol_table.labels, labels)
+    self.assertEqual(symbol_table.local_labels, local_labels)
+    self.assertEqual(symbol_table.errors, errors)
 
   def testNoErrors(self):
     self.check(

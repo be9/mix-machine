@@ -4,7 +4,7 @@
 
 import operations
 from errors import *
-
+from symbol_table import *
 
 class Line:
   def __init__(self, label, operation, argument, line_number = 0):
@@ -18,7 +18,7 @@ class Line:
 
 def is_label(s):
   return s.isalnum() and any(ch.isalpha() for ch in s) and \
-    not (len(s) == 2 and s[0].isdigit() and s[1] in ('F', 'B'))
+    not is_local_label_reference(s)
   
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):

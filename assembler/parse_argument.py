@@ -24,45 +24,24 @@
 
 from operations import *
 from errors import *
+from symbol_table import *
 
-def parse_argument(line, labels, local_labels):
+def parse_argument(line, symbol_table):
   arg = line.argument
 
   # instruction:  number, any symbol (if this function calles for instruction => all symbols were found yet)
   # directives:   number, defined symbol (and only defined symbols are in labels and local_labels)
 
-  if arg is None:
+  if line.argument is None:
     return 0
 
   try:
-    return int(arg)
+    return int(line.argument)
   except:
     pass
 
-  # it's SYMBOL
-
-  # find in labels
-  if arg in labels:
-    return labels[arg]
-
-  # find in local_labels
-  if len(arg) == 2 and arg[0].isdigit() and arg[1] in ('F', 'B'):
-    label = arg[0] + 'H'
-    if label in local_labels:
-
-      b_label, f_label = None, None
-      for x in local_labels[label]:
-        if x[1] < line.line_number:
-          b_label = x
-        if x[1] > line.line_number:
-          f_label = x
-          break
-
-      if arg[1] == 'B' and b_label is not None:
-        return b_label[0]
-      elif arg[1] == 'F' and f_label is not None:
-        return f_label[0]
-
-    raise InvalidLocalLabelError(line.argument)
+  addr =  symbol_table.find(line.argument, line.line_number)
+  if addr is not None:
+    return addr
 
   raise InvalidExpressionError(arg)
