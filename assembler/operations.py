@@ -170,6 +170,8 @@ for s in __directives:
   __ops[s] = Op(s)
 
 
+def get_codes(instruction):
+  return (__instructions[instruction].c_code, __instructions[instruction].f_code)
 
 def is_valid_operation(operation):
   return operation in __ops

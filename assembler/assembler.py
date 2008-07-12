@@ -12,7 +12,7 @@
 import sys
 from errors import *
 from parse_line import *
-import main_loop
+from main_loop import *
 
 DEFAULT_OUT_NAME = "out.ma"
 
@@ -62,7 +62,19 @@ def main():
     return ERR_SYNTAX[0]
 
   # now we have list of lines with correct labels and operations
-  memory_table = main_loop.main_loop(lines)
+  memory_table, start_address, errors = main_loop(lines)
+
+  print "Errors:"
+  print errors
+  print "Start address:", start_address
+  print "Memory:"
+  for i in xrange(len(memory_table.memory)):
+    word = memory_table.memory[i]
+    if word[0] > 0:
+      sign = "+"
+    else:
+      sign = "-"
+    print "%04i: %s %02i %02i %02i %02i %02i (%010i)" % tuple([i, sign] + word[1:] + [abs(mix2dec(word))])
 
   #write_ma(file_out, [23,453,124])
   file_out.close()
