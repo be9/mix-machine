@@ -6,7 +6,7 @@ import unittest, sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from parse_line import *
-from main_loop import *
+from memory import *
 
 class MemoryTestCase(unittest.TestCase):
   def checkWords(self, word1, word2):

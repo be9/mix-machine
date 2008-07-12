@@ -1,12 +1,12 @@
-# main_loop.py
+# assemble.py
 
-# main cycle of assembler
+# assemble parsed lines to memory
 
 from symbol_table import *
 from operations import *
 from memory import Memory
 
-def main_loop(lines, symbol_table):
+def assemble(lines, symbol_table):
   """Now we need to assemble program"""
   def check_address(address):
       if not (0 <= address < 4000):
