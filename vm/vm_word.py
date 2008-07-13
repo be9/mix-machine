@@ -1,6 +1,12 @@
+
+from vm_errors import VMError
+
 BYTE_SIZE = 6			# byte size in bits
 MAX_BYTE = 2 ** BYTE_SIZE - 1	# maximum value of one byte
 MAX_WORD = (MAX_BYTE+1) ** 5 - 1	# maximum value of one word
+
+class WordError(VMError):
+	pass
 
 class Word:
 	def __init__(self, obj):
@@ -9,7 +15,7 @@ class Word:
 		if isinstance(obj, int):
 			self.__val = self._int2val(obj)
 			
-		elif isinstance(obj, list):
+		elif isinstance(obj, list) or isinstance(obj, tuple):
 			self.__val = self._bytes2val(obj)
 			
 		elif isinstance(obj, float):
@@ -19,12 +25,15 @@ class Word:
 			self.__val = self.str2str(obj)
 			
 		elif isinstance(obj, Word):
-			self.__val = obj.__val
+			self.__val = copy(obj.__val)
 			
 		else:
-			pass	#error
+			raise WordError("Incompartible type for 'Word' constructor")
 
+	# convert different types into private data type
 	def _int2val(self, int):
+		if abs(int) > MAX_WORD:
+			raise WordError("Integer initializator for 'Word' must be between -" + str(MAX_WORD) + " and " + str(MAX_WORD))
 		if int >= 0:
 			res = [1,0,0,0,0,0]
 		else:
@@ -35,6 +44,13 @@ class Word:
 		return res
 
 	def _bytes2val(self, bytes):
+		if len(bytes) != 6:
+			raise WordError("Bytes initializator for 'Word' must contain 6 bytes")
+		if bytes[0] not in (1, -1):
+			raise WordError("Bytes initializator for 'Word' must have first byte equal 1 or -1")
+		for byte in bytes[1:6]:
+			if not isinstance(byte, int) or byte > MAX_BYTE or byte < 0:
+				raise WordError("Bytes initializator for 'Word' must have integer bytes between 0 and " + str(MAX_BYTE))
 		return bytes
 	
 	def _float2val(self, float):
@@ -42,11 +58,19 @@ class Word:
 	def _str2val(self, str):
 		return [1,0,0,0,0,0]
 
+	# user operations with words
 	def set_bytes(self, bytes, fmt=(0,5)):
-		self.__val[fmt[0]: fmt[1]+1] = bytes[0: fmt[1]-fmt[0]+1]
-		pass
+		if not isinstance(fmt, list) and not isinstance(fmt, tuple) or (fmt[0] < 0 or fmt[1] < fmt[0] or fmt[1] > 5):
+			raise WordError("Wrong format")
+		if not isinstance(bytes, list) and not isinstance(bytes, tuple) or len(bytes) != fmt[1] - fmt[0] + 1:
+			raise WordError("Bytes do not match to format")
+		#self.__val[fmt[0]: fmt[1]+1] = bytes[0: fmt[1]-fmt[0]+1]
+		self.__val = self._bytes2val(list(self.__val[0:fmt[0]] + bytes + self.__val[fmt[1] + 1: 6]))
+		return self
 	
 	def get_bytes(self, fmt=(0,5)):
+		if not isinstance(fmt, list) and not isinstance(fmt, tuple) or (fmt[0] < 0 or fmt[1] < fmt[0] or fmt[1] > 5):
+			raise WordError("Wrong format")
 		return self.__val[fmt[0]: fmt[1]+1]
 	
 	def int(self, fmt=(0,5)):
@@ -63,11 +87,28 @@ class Word:
 	def str(self):
 		return "00000"
 		
-	#def __int__(self):
-	#	return self.int();
+	def __int__(self):
+		return self.int()
 	
-		return "00000"
-	
+	def __float__(self):
+		return self.float()
 	# debug
 	def __str__(self):
+		#return self.str()
 		return str(self.__val)
+	
+	#def __neg__(self):
+	#	return Word( [self.get_bytes((0,0))*-1, self.get_bytes((1,5))] )
+	#def __pos__(self):
+	#	return self
+	#def __abs__(self):
+	#	return Word( self.get_bytes((1,5)) )
+		
+	#def __add__(self, other):
+	#	return Word(int(self) + int(other))
+	#def __sub__(self, other):
+	#def __mul__(self, other):
+	#def __mod__(self, other):
+	#def __divmod__(self, other):
+	#def __lshift__(self, other):
+	#def __rshift__(self, other):
