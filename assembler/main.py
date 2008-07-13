@@ -1,4 +1,4 @@
-# assembler.py
+# main.py
 
 # Assembler - one of the parts of MixMachine,
 # which assemles mix source code ("*.mix") to
@@ -12,7 +12,7 @@
 import sys
 from errors import *
 from parse_line import *
-from main_loop import *
+from assemble import *
 
 DEFAULT_OUT_NAME = "out.ma"
 
@@ -66,21 +66,21 @@ def main():
   symbol_table = SymbolTable(lines)
 
   if len(symbol_table.errors) > 0:
-    return (None, None, symbol_table.errors)
+    print_syntax_errors(symbol_table.errors)
   else:
     # now we have list of lines with correct labels and operations
-    memory_table, start_address, errors = main_loop(lines, symbol_table)
+    memory_table, start_address, errors = assemble(lines, symbol_table)
 
-  print "Errors:"
-  print_syntax_errors(errors)
-  if start_address is not None:
-    print "Start address:", start_address
-  if memory_table is not None:
-    print "Memory:"
-    for i in xrange(len(memory_table.memory)):
-      word = memory_table.memory[i]
-      # print "%04i: %s %02i %02i %02i %02i %02i (%010i)" % tuple([i, sign] + word[1:] + [abs(mix2dec(word))])
-      print "%+2i %02i %02i %02i %02i %02i" % tuple(word)
+    print "Errors:"
+    print_syntax_errors(errors)
+    if start_address is not None:
+      print "Start address:", start_address
+    if memory_table is not None:
+      print "Memory:"
+      for i in xrange(len(memory_table.memory)):
+        word = memory_table.memory[i]
+        # print "%04i: %s %02i %02i %02i %02i %02i (%010i)" % tuple([i, sign] + word[1:] + [abs(mix2dec(word))])
+        print "%+2i %02i %02i %02i %02i %02i" % tuple(word)
   #write_ma(file_out, [23,453,124])
   file_out.close()
 	
