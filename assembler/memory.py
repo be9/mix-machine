@@ -3,6 +3,16 @@ class Memory:
     positive_zero = [+1] + [0] * 5
     self.memory = [ positive_zero[:] for _ in xrange(4000)]
 
+  def cmp_memory(self, memory_dict):
+    """Need for testing"""
+    positive_zero = [+1] + [0] * 5
+    for i in xrange(4000):
+      if (i in memory_dict and self.memory[i] != memory_dict[i]) or\
+         (i not in memory_dict and self.memory[i] != positive_zero):
+        return False
+
+    return True
+
   def set_byte(self, word_index, byte_index, value):
     """Get valid indexes!"""
     self.memory[word_index][byte_index] = value

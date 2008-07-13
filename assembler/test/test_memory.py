@@ -53,7 +53,7 @@ class MemoryTestCase(unittest.TestCase):
       memory.set_instruction(word_index, a_code, i_code, f_code, c_code)
       self.assertEqual(memory.memory[word_index], word)
 
-  def testMemory_set_value(self):
+  def testMemory_set_word(self):
     memory = Memory()
     value_tests = [ # (word_index, value, word)
       (0, 1073471232, [+1, 63, 62, 61, 60, 00]),
@@ -64,6 +64,65 @@ class MemoryTestCase(unittest.TestCase):
       memory.set_word(word_index, value)
       self.assertEqual(memory.memory[word_index], word)
 
+  def testMemory_cmp_memory(self):
+    memory = Memory()
+    test = ( # pairs (value, addr)
+      (1,           0),
+      (4096,        33),
+      (-4096,       77),
+      (-17314053,   999),
+      (1073471232,  2000),
+      (0,           3998),
+      (64,          3999)
+    )
+    memory_part = {
+      0:    [+1, 00, 00, 00, 00, 01],
+      1:    [+1, 00, 00, 00, 00, 00],
+      33:   [+1, 00, 00, 01, 00, 00],
+      77:   [-1, 00, 00, 01, 00, 00],
+      999:  [-1, 01, 02, 03, 04, 05],
+      2000: [+1, 63, 62, 61, 60, 00],
+      3998: [+1, 00, 00, 00, 00, 00],
+      3999: [+1, 00, 00, 00, 01, 00]
+    }
+    for value, addr in test:
+      memory.set_word(addr, value)
+    self.assertEqual(memory.cmp_memory(memory_part), True)
+
+
+    memory = Memory()
+    test = ( # pairs (value, addr)
+      (1,           0),
+      (4096,        33),
+      (-4096,       77),
+      (-17314053,   999),
+      (1073471232,  2000),
+      (0,           3998),
+      (64,          3999)
+    )
+    memory_part_1 = { # odd word#1
+      0:    [+1, 00, 00, 00, 00, 01],
+      1:    [+1, 00, 11, 11, 11, 11],
+      33:   [+1, 00, 00, 01, 00, 00],
+      77:   [-1, 00, 00, 01, 00, 00],
+      999:  [-1, 01, 02, 03, 04, 05],
+      2000: [+1, 63, 62, 61, 60, 00],
+      3998: [+1, 00, 00, 00, 00, 00],
+      3999: [+1, 00, 00, 00, 01, 00]
+    }
+    memory_part_2 = { # no word#33
+      0:    [+1, 00, 00, 00, 00, 01],
+      77:   [-1, 00, 00, 01, 00, 00],
+      999:  [-1, 01, 02, 03, 04, 05],
+      2000: [+1, 63, 62, 61, 60, 00],
+      3998: [+1, 00, 00, 00, 00, 00],
+      3999: [+1, 00, 00, 00, 01, 00]
+    }
+    for value, addr in test:
+      memory.set_word(addr, value)
+
+    self.assertEqual(memory.cmp_memory(memory_part_1), False)
+    self.assertEqual(memory.cmp_memory(memory_part_2), False)
 
 suite = unittest.makeSuite(MemoryTestCase, 'test')
 
