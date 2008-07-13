@@ -87,7 +87,7 @@ class MemoryTestCase(unittest.TestCase):
     }
     for value, addr in test:
       memory.set_word(addr, value)
-    self.assertEqual(memory.cmp_memory(memory_part), True)
+    self.assertTrue(memory.cmp_memory(memory_part))
 
 
     memory = Memory()
@@ -121,8 +121,8 @@ class MemoryTestCase(unittest.TestCase):
     for value, addr in test:
       memory.set_word(addr, value)
 
-    self.assertEqual(memory.cmp_memory(memory_part_1), False)
-    self.assertEqual(memory.cmp_memory(memory_part_2), False)
+    self.assertFalse(memory.cmp_memory(memory_part_1))
+    self.assertFalse(memory.cmp_memory(memory_part_2))
 
 suite = unittest.makeSuite(MemoryTestCase, 'test')
 

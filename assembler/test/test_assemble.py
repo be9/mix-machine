@@ -13,7 +13,7 @@ class AssembleTestCase(unittest.TestCase):
   def check(self, lines, labels, local_labels, memory_part, start_address, errors):
     symbol_table = SymbolTable(None, labels, local_labels)
     result = assemble(lines, symbol_table)
-    self.assertEqual(result[0].cmp_memory(memory_part), True)
+    self.assertTrue(result[0].cmp_memory(memory_part))
     self.assertEqual(result[1], start_address)
     self.assertEqual(result[2], errors)
 

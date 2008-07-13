@@ -8,10 +8,6 @@ from memory import Memory
 
 def assemble(lines, symbol_table):
   """Now we need to assemble program"""
-  def check_address(address):
-      if not (0 <= address < 4000):
-        self.errors.append( (line.line_number, LineNumberError(address)) )
-
   errors = []
   memory = Memory()
   ca = 0 # current address (*)
