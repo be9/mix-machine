@@ -17,10 +17,19 @@ def is_label(s):
     not is_local_label_reference(s)
   
 class SymbolTable:
-  def __init__(self, lines):
-    self.labels = {} # {"LABEL" : address, ...}
-    self.local_labels = {} # {"dH" : [(address1, line1), (address2, line2), ...], ...}
+  def __init__(self, lines, labels = None, local_labels = None):
+    if labels is not None:
+      self.labels = labels # {"LABEL" : address, ...}
+    else:
+      self.labels = {}
+    if local_labels is not None:
+      self.local_labels = local_labels
+    else:
+      self.local_labels = {} # {"dH" : [(address1, line1), (address2, line2), ...], ...}
     self.errors = []
+
+    if lines is None: # need for testing
+      return
 
     def set_label(line, address): 
       """Useful function"""
@@ -36,7 +45,7 @@ class SymbolTable:
           self.labels[line.label] = address
 
     def check_address(address):
-      if not (0 <= address < 4000):
+      if not (-4000 < address < 4000):
         self.errors.append( (line.line_number, LineNumberError(address)) )
 
     ca = 0 # current address (*)
