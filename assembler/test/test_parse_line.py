@@ -62,6 +62,8 @@ class ParserTestCase(unittest.TestCase):
     self.checkLine(parse_line("\tnop arg comment"),           None, 'NOP', 'ARG')
     self.checkLine(parse_line("label nop arg comment"),       'LABEL', 'NOP', 'ARG')
     self.checkLine(parse_line("label\tmove\t123\t* comment"), 'LABEL', 'MOVE', '123')
+    self.checkLine(parse_line(" equ arg"),                    None, 'EQU', 'ARG')
+    self.checkLine(parse_line(" equ arg comment"),            None, 'EQU', 'ARG')
 
     self.assertRaises(MissingOperationError, parse_line, "labelonly")
     self.assertRaises(UnknownOperationError, parse_line, "label $^%$")
@@ -70,6 +72,9 @@ class ParserTestCase(unittest.TestCase):
     self.assertRaises(UnknownOperationError, parse_line, "\tqq* arg")
     self.assertRaises(UnknownOperationError, parse_line, "\tqqq arg")
     self.assertRaises(UnknownOperationError, parse_line, " mov arg comment")
+    self.assertRaises(ArgumentRequiredError, parse_line, " equ")
+    self.assertRaises(ArgumentRequiredError, parse_line, " orig")
+
 
   def checkLine(self, line, label, operation, argument):
     self.assertEqual( (line.label, line.operation, line.argument), (label, operation, argument) )

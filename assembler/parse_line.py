@@ -49,6 +49,10 @@ def parse_line(text_line):
   # check operation 
   if not operations.is_valid_operation(operation):
     raise UnknownOperationError(operation)
+  
+  # check arg for directives
+  if operations.is_arg_required(operation) and argument is None:
+    raise ArgumentRequiredError(operation)
 
   return Line(label, operation, argument)
 

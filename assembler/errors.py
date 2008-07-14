@@ -52,3 +52,6 @@ class InvalidExpressionError(AssemblySyntaxError):
 
 class InvalidLocalLabelError(AssemblySyntaxError):
   """Invalid local label (%s) (no dH label found)"""
+
+class ArgumentRequiredError(AssemblySyntaxError):
+  """Argument required for this operation (%s)"""

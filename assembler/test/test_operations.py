@@ -19,17 +19,24 @@ class OperationsTestCase(unittest.TestCase):
 
   def test_is_valid_operation(self):
     for op in "LDA CMPX JAN ent4 cmpA EQU ORIG END CON ALF".split():
-      self.assertEqual(is_valid_operation(op), True)
+      self.assertTrue(is_valid_operation(op))
     
     for op in "BLAH QQQ".split():
-      self.assertEqual(is_valid_operation(op), False)
+      self.assertFalse(is_valid_operation(op))
 
   def test_is_instruction(self):
     for op in "LDA CMPX JAN ent4 cmpA".split():
-      self.assertEqual(is_instruction(op), True)
+      self.assertTrue(is_instruction(op))
     
     for op in " EQU ORIG END CON ALF BLAH QQQ".split():
-      self.assertEqual(is_instruction(op), False)
+      self.assertFalse(is_instruction(op))
+
+  def test_arg_required(self):
+    for op in " Equ orig enD CON".split():
+      self.assertTrue(is_arg_required(op))
+    
+    for op in " STA NOP ALF BLAH QQQ".split():
+      self.assertFalse(is_arg_required(op))
 
 suite = unittest.makeSuite(OperationsTestCase, 'test')
 

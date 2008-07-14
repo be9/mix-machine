@@ -158,6 +158,9 @@ def is_valid_operation(operation):
 def is_instruction(operation):
   return operation.upper() in _instructions
 
+def is_arg_required(operation):
+  return operation.upper() in _directives and operation.upper() != "ALF"
+
 def get_codes(instr):
   try:  
     return _instructions[instr]
