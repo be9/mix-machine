@@ -47,3 +47,16 @@ class Memory:
       return +1
     else:
       return -1
+
+  @staticmethod
+  def apply_to_word(value, word, field):
+    l = field / 8
+    r = field % 8
+    if not ( 0 <= l <= 5 and 0 <= r <= 5 and l <= r ):
+      return None
+    value_word = Memory.dec2mix(value)
+    for i in xrange(r, l - 1, -1): # [r, ..., l]
+      word[i] = value_word[5 - r + i]
+    if l == 0:
+      word[0] = value_word[0]
+    return Memory.mix2dec(word)

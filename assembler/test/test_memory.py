@@ -31,6 +31,28 @@ class MemoryTestCase(unittest.TestCase):
       self.assertEqual(Memory.mix2dec(word), dec)
       self.checkWords(Memory.dec2mix(dec), word)
 
+
+  def test_apply_to_word(self):
+    def colon(l, r):
+      return 8*l + r
+
+    word = [+1, 1, 2, 3, 4, 5]
+
+    self.assertTrue(Memory.apply_to_word(0, word, colon(2, 3)) is not None)
+    self.assertEqual(word, [+1, 1, 0, 0, 4, 5])
+
+    self.assertTrue(Memory.apply_to_word(153121157, word, colon(1, 4)) is not None)
+    self.assertEqual(word, [+1, 8, 7, 6, 5, 5])
+
+    self.assertTrue(Memory.apply_to_word(-433, word, colon(0, 0)) is not None)
+    self.assertEqual(word, [-1, 8, 7, 6, 5, 5])
+
+    self.assertTrue(Memory.apply_to_word(0, word, colon(-1, -1)) is None)
+    self.assertTrue(Memory.apply_to_word(0, word, colon(-1, 0)) is None)
+    self.assertTrue(Memory.apply_to_word(0, word, colon(6, 0)) is None)
+    self.assertTrue(Memory.apply_to_word(0, word, colon(0, -1)) is None)
+    self.assertTrue(Memory.apply_to_word(0, word, colon(3, 2)) is None)
+
   def testMemory_set_byte(self):
     memory = Memory()
     byte_tests = [ # (word_index, byte_index, value, word)
