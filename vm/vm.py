@@ -1,5 +1,6 @@
 from vm_word import *
 from vm_memory import *
+from vm_command import CommandList, cmdList
 
 class VMContext:
 	def __init__(self):
