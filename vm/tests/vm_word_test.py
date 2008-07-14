@@ -110,6 +110,9 @@ class WordTestCase(unittest.TestCase):
 
 	def testCasts(self):
 		pass
+	
+	def testShift(self):
+		pass
 
 suite = unittest.makeSuite(WordTestCase, 'test')
 

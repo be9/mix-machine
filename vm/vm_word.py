@@ -97,6 +97,56 @@ class Word:
 		#return self.str()
 		return str(self.__val)
 	
+	def shift_l(self, num=1, bytes=None):
+		if num < 0:
+			return self.shift_r(-num, bytes)
+		elif num == 0:
+			return []
+		else:
+			tmp = self.get_bytes((1,5))
+			
+			if num > 4:
+				num = 5
+			else:
+				self.set_bytes(tmp[num: 5], (1,5-num))
+			
+			if bytes:
+				self.set_bytes(bytes[0: num], (5-num+1, 5))
+			else:
+				self.set_bytes([0]*num, (5-num+1, 5))
+			
+			return tmp[0:num]
+			
+	def shift_r(self, num=1, bytes=None):
+		if num < 0:
+			return self.shift_l(-num, bytes)
+		elif num == 0:
+			return []
+		else:
+			tmp = self.get_bytes((1,5))
+			
+			if num > 4:
+				num = 5
+			else:
+				self.set_bytes(tmp[0: 5-num], (num+1,5))
+			
+			if bytes:
+				self.set_bytes(bytes[0: num], (1, num))
+			else:
+				self.set_bytes([0]*num, (1, num))
+			
+			return tmp[5-num: 5]
+			
+	def shift_cl(self, num=1):
+		num %= 5
+		self.shift_l(num, self.get_bytes((1,5)))
+		return self
+	
+	def shift_cr(self, num=1):
+		num %= 5
+		self.shift_r(num, self.get_bytes((1,5))[5-num:])
+		return self
+	
 	#def __neg__(self):
 	#	return Word( [self.get_bytes((0,0))*-1, self.get_bytes((1,5))] )
 	#def __pos__(self):
