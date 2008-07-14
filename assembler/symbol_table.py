@@ -84,7 +84,7 @@ class SymbolTable:
     for label in self.local_labels:
       self.local_labels[label].sort(None, lambda x: x[1]) # sort by line numbers
 
-  def find(self, label, line_number = 0):
+  def find(self, label, line_number):
     """Returns address or None"""
     if label in self.labels:
       return self.labels[label]
