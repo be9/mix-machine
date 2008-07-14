@@ -57,7 +57,7 @@ class SymbolTable:
         ca += 1
       elif line.operation == "EQU":
         try:
-          address = parse_argument(line, self)
+          address = parse_argument(line, self, ca)
           check_address(address)
           set_label(line, address)
         except AssemblySyntaxError, err:
@@ -68,7 +68,7 @@ class SymbolTable:
         check_address(ca)
         set_label(line, ca)
         try:
-          ca = parse_argument(line, self)
+          ca = parse_argument(line, self, ca)
         except AssemblySyntaxError, err:
           self.errors.append( (line.line_number, err) )
         check_address(ca)

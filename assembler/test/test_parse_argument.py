@@ -8,7 +8,7 @@ from parse_line import Line
 
 class ParseArgumentTestCase(unittest.TestCase):
   def check_split(self, line, tokens):
-    parser = ArgumentParser(line, None)
+    parser = ArgumentParser(line, None, 0)
     self.assertEqual(parser.tokens, tokens)
 
   def test_split(self):
@@ -29,7 +29,7 @@ class ParseArgumentTestCase(unittest.TestCase):
       []
     )
 
-  def test_parse_argument(self):
+  def test_basic(self):
     class MockSymbolTable:
       def find(self, arg, no):
         if arg == 'SYM':
@@ -41,17 +41,25 @@ class ParseArgumentTestCase(unittest.TestCase):
         else:
           return None
 
-    # test int
-    #for i in (0, 123456, -123456, 64**5-1, -(64**5-1)):
-      #self.assertEqual(parse_argument(Line(None, 'NOP', i), MockSymbolTable()), i)
-    
-    # test syms
-    self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM'), MockSymbolTable()), 123)
-    self.assertEqual(parse_argument(Line(None, 'NOP', '1F'), MockSymbolTable()), 456)
-    self.assertEqual(parse_argument(Line(None, 'NOP', '1B'), MockSymbolTable()), 789)
+    # test NUMBER
+    for i in (0, 123456, 64**5-1):
+      self.assertEqual(parse_argument(Line(None, 'NOP', str(i)), MockSymbolTable(), 0), i)
+      self.assertEqual(parse_argument(Line(None, 'ORIG', str(i)), MockSymbolTable(), 0), i)
+
+    # test SYMBOL
+    self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM'), MockSymbolTable(), 0), 123)
+    self.assertEqual(parse_argument(Line(None, 'NOP', '1F'), MockSymbolTable(), 0), 456)
+    self.assertEqual(parse_argument(Line(None, 'ORIG', '1F'), MockSymbolTable(), 0), 456)
+    self.assertEqual(parse_argument(Line(None, 'ORIG', '1B'), MockSymbolTable(), 0), 789)
+
+    # test CUR_ADDR
+    for i in (0, 3, 2000, 3999):
+      self.assertEqual(parse_argument(Line(None, 'NOP', "*"), MockSymbolTable(), i), i)
+      self.assertEqual(parse_argument(Line(None, 'ORIG', "*"), MockSymbolTable(), i), i)
+
 
     # test nonsense
-    #self.assertRaises(InvalidExpressionError, parse_argument, Line(None, 'NOP', 'QQQ'), MockSymbolTable())
+    #self.assertRaises(InvalidExpressionError, parse_argument, Line(None, 'NOP', 'QQQ'), MockSymbolTable(), 0)
 
 suite = unittest.makeSuite(ParseArgumentTestCase, 'test')
 

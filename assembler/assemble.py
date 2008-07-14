@@ -16,9 +16,9 @@ def assemble(lines, symbol_table):
     if is_instruction(line.operation):
       c_code, f_code_default = get_codes(line.operation)
 
-      # (in the future) a_code, i_code, f_code = parse_argument(line, symbol_table)
+      # (in the future) a_code, i_code, f_code = parse_argument(line, symbol_table, ca)
       try:
-        a_part = parse_argument(line, symbol_table)
+        a_part = parse_argument(line, symbol_table, ca)
       except AssemblySyntaxError, err:
         errors.append( (line.line_number, err) )
       else:
@@ -29,10 +29,10 @@ def assemble(lines, symbol_table):
     elif line.operation == "EQU":
       pass
     elif line.operation == "ORIG":
-      ca = parse_argument(line, symbol_table)
+      ca = parse_argument(line, symbol_table, ca)
     elif line.operation == "CON":
       try:
-        memory.set_word(ca, parse_argument(line, symbol_table))
+        memory.set_word(ca, parse_argument(line, symbol_table, ca))
       except AssemblySyntaxError, err:
         errors.append( (line.line_number, err) )
       else:
@@ -44,7 +44,7 @@ def assemble(lines, symbol_table):
     elif line.operation == "END":
       # FIX ME: here we put all CON's which comes from smth like "=3="
       try:
-        start_address = parse_argument(line, symbol_table)
+        start_address = parse_argument(line, symbol_table, ca)
       except AssemblySyntaxError, err:
         start_address = None
         errors.append( (line.line_number, err) )
