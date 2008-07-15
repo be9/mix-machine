@@ -13,15 +13,14 @@
 # + CUR_ADDR        ::==  "*"
 # + S_EXP           ::==  NUMBER | DEFINED_SYMBOL | CUR_ADDR
 # + EXP             ::==  [ "+" | "-" ] S_EXP [ ( "+" | "-" | "*" | "/" | "//" | ":" ) S_EXP]*
-# ~ IND_PART        ::==  NONE | ( "," EXP )
+# + IND_PART        ::==  NONE | ( "," EXP )
 # + F_PART          ::==  NONE | ( "(" EXP ")" )
 # + W_EXP           ::==  EXP F_PART [ "," EXP F_PART ]*
 #   LITERAL         ::==  "=" W_EXP "="
 # + ADDR_PART       ::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
-#
-#   ARGUMENT        ::== ( ADDR_PART IND_PART F_PART ) |    # if is_instruction(operation)
-#                        W_EXP |        # if operation in("EQU", "ORIG", "CON", "END")
-#                        ALF_WORD       # if operation == "ALF"
+# + ARGUMENT        ::== ( ADDR_PART IND_PART F_PART ) |    # if is_instruction(operation)
+# +                      W_EXP |        # if operation in("EQU", "ORIG", "CON", "END")
+# +                      ALF_WORD       # if operation == "ALF"
 
 from math import *
 from operations import *
@@ -103,9 +102,7 @@ class ArgumentParser:
 
   def parse(self):
     """Main parse function"""
-    return self.try_addr_part()
-    # return self.try_argument() # not done yet
-
+    return self.try_argument()
 
 # moving in tokens
   def get(self):
@@ -122,6 +119,12 @@ class ArgumentParser:
       return self.tokens[self.ct + 1]
     except:
       return None
+
+  def get_all_before(self):
+    return "".join(self.tokens[:self.ct])
+
+  def get_all_after(self):
+    return "".join(self.tokens[self.ct+1:])
 # moving in tokens
 
 
@@ -169,7 +172,7 @@ class ArgumentParser:
       else:
         s = self.get()
         if self.look() != '"':
-          raise "ERROR!"
+          raise UnquotedStringError(self.line.argument)
         self.next()
     else:
       # less than six mix-chars not in inverted
@@ -186,9 +189,10 @@ class ArgumentParser:
     try:
       for i in xrange(1,6):
         word[i] = self.charset[s[i-1]]
-    except KeyError:
-      raise "ERROR!"
+    except KeyError, ch:
+      raise InvalidCharError(ch)
     return Memory.mix2dec(word)
+
 
   def try_cur_addr(self):
     if self.get() == "*":
@@ -208,7 +212,8 @@ class ArgumentParser:
 
     has_unary = False
     if self.get() in self.unary_ops:
-      unary = self.unary_func[self.get()]
+      unary_str = self.get()
+      unary = self.unary_func[unary_str]
       has_unary = True
       self.next()
     else:
@@ -217,7 +222,7 @@ class ArgumentParser:
     s_exp = self.try_s_exp()
     if s_exp is None:
       if has_unary:
-        raise "ERROR!"
+        raise ExpectedSExpError(self.get_all_before())
       else:
         return None
     result = unary(s_exp)
@@ -230,21 +235,23 @@ class ArgumentParser:
       self.next()
       s_exp = self.try_s_exp()
       if s_exp is None:
-        raise "ERROR!"
+        raise ExpectedSExpError(self.get_all_before())
       result = binary(result, s_exp)
 
     return result
 
 
   def try_ind_part(self):
+    """This function DO SELF.NEXT()"""
     if self.get() != ",":
       return 0
     else:
       self.next()
       exp = self.try_exp()
       if exp is None:
-        raise "ERROR!"
+        raise ExpectedExpError(self.get_all_before())
       else:
+        self.next()
         return exp
 
 
@@ -255,11 +262,11 @@ class ArgumentParser:
       self.next()
       exp = self.try_exp()
       if exp is None:
-        raise "ERROR!"
+        raise ExpectedExpError(self.get_all_before())
       else:
         self.next()
         if self.get() != ")":
-          raise "ERROR!"
+          raise NoClosedBracketError(self.get_all_before())
         else:
           return exp
 
@@ -277,7 +284,7 @@ class ArgumentParser:
       field = get_codes(self.line.operation)[1]
 
     if Memory.apply_to_word(value, word, field) is None:
-      raise "ERROR!"
+      raise InvalidFieldSpecError( (field / 8, field % 8) )
 
     while True:
       if self.look() != ",":
@@ -288,7 +295,7 @@ class ArgumentParser:
 
       value = self.try_exp()
       if value is None:
-        raise "ERROR!"
+        raise ExpectedExpError(self.get_all_before())
 
       if self.look() == "(":
         self.next()
@@ -297,7 +304,7 @@ class ArgumentParser:
         field = get_codes(self.line.operation)[1]
 
       if Memory.apply_to_word(value, word, field) is None:
-        raise "ERROR!"
+        raise InvalidFieldSpecError( (field / 8, field % 8) )
 
     return Memory.mix2dec(word)
 
@@ -308,10 +315,34 @@ class ArgumentParser:
 
 
   def try_addr_part(self):
+    """This function DO SELF.NEXT()"""
     res = self.try_any(
       (self.try_exp, self.try_future_symbol, self.try_literal)
     )
-    if res is not None:
-      return res
-    else:
+    if res is None:
       return 0
+    else:
+      self.next()
+      return res
+
+#UnexpectedStrInTheEndError
+  def try_argument(self):
+    if is_instruction(self.line.operation):
+      addr_part = self.try_addr_part()
+      # no self.next() !!!
+      ind_part = self.try_ind_part()
+      # no self.next() !!!
+      f_part = self.try_f_part()
+      if self.look() is not None:
+        raise UnexpectedStrInTheEndError(self.get_all_after())
+      return Memory.sign(addr_part) * (abs(addr_part) * 64**3 + ind_part * 64**2 + f_part * 64)
+    elif self.line.operation in ("EQU", "ORIG", "CON", "END"):
+      res = self.try_w_exp()
+      if res is not None:
+        if self.look() is not None:
+          raise UnexpectedStrInTheEndError(self.get_all_after())
+        return res
+      else:
+        raise ExpectedWExpError(self.line.argument)
+    else: # self.line.instruction = "ALF"
+      return self.try_alf_word()

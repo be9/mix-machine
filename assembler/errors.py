@@ -36,7 +36,7 @@ class TooLongLabelError(AssemblySyntaxError):
   """Too long label name (%s)"""
 
 class UnknownOperationError(AssemblySyntaxError):
-  """Unknown operation: %s"""
+  """Unknown operation (%s)"""
 
 class RepeatedLabelError(AssemblySyntaxError):
   """This label name used twice (%s)"""
@@ -55,3 +55,27 @@ class InvalidLocalLabelError(AssemblySyntaxError):
 
 class ArgumentRequiredError(AssemblySyntaxError):
   """Argument required for this operation (%s)"""
+
+class UnquotedStringError(AssemblySyntaxError):
+  """Unqouted string (%s)"""
+
+class InvalidCharError(AssemblySyntaxError):
+  """This char is invalid in MIX computer (%s)"""
+
+class ExpectedSExpError(AssemblySyntaxError):
+  """Expected correct simple expression after '%s'"""
+
+class ExpectedExpError(AssemblySyntaxError):
+  """Expected correct expression after '%s'"""
+
+class NoClosedBracketError(AssemblySyntaxError):
+  """Expected closing bracket after '%s'"""
+
+class InvalidFieldSpecError(AssemblySyntaxError):
+  """Invalid field specification (left: %s, right: %s)"""
+
+class ExpectedWExpError(AssemblySyntaxError):
+  """Expected correct W-expression (%s)"""
+
+class UnexpectedStrInTheEndError(AssemblySyntaxError):
+  """Unexpected string in the end of argument (%s)"""

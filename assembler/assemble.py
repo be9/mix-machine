@@ -14,17 +14,14 @@ def assemble(lines, symbol_table):
   for line in lines:
     # all by 10th and 11th rules from Donald Knuth's book
     if is_instruction(line.operation):
-      c_code, f_code_default = get_codes(line.operation)
-
-      # (in the future) a_code, i_code, f_code = parse_argument(line, symbol_table, ca)
       try:
-        a_part = parse_argument(line, symbol_table, ca)
+        word_value = parse_argument(line, symbol_table, ca)
       except AssemblySyntaxError, err:
         errors.append( (line.line_number, err) )
       else:
-        i_code = 0
-        f_code = f_code_default
-        memory.set_instruction(ca, a_part, i_code, f_code, c_code)
+        c_code = get_codes(line.operation)[0]
+        word_value |= c_code
+        memory.set_word(ca, word_value)
         ca += 1
     elif line.operation == "EQU":
       pass
@@ -38,9 +35,12 @@ def assemble(lines, symbol_table):
       else:
         ca += 1
     elif line.operation == "ALF":
-      # FIX ME
-      memory.set_word(ca, 20210054) # 20210054 = "ALFFF" = (+1, 1, 13, 6, 6, 6,)
-      ca += 1
+      try:
+        memory.set_word(ca, parse_argument(line, symbol_table, ca))
+      except AssemblySyntaxError, err:
+        errors.append( (line.line_number, err) )
+      else:
+        ca += 1
     elif line.operation == "END":
       # FIX ME: here we put all CON's which comes from smth like "=3="
       try:
