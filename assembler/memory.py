@@ -1,11 +1,14 @@
 class Memory:
+  @staticmethod
+  def positive_zero():
+    return [+1] + [0] * 5
+
   def __init__(self):
-    positive_zero = [+1] + [0] * 5
-    self.memory = [ positive_zero[:] for _ in xrange(4000)]
+    self.memory = [ self.positive_zero()[:] for _ in xrange(4000)]
 
   def cmp_memory(self, memory_dict):
     """Need for testing"""
-    positive_zero = [+1] + [0] * 5
+    positive_zero = self.positive_zero()
     for i in xrange(4000):
       if (i in memory_dict and self.memory[i] != memory_dict[i]) or\
          (i not in memory_dict and self.memory[i] != positive_zero):

@@ -146,6 +146,9 @@ class MemoryTestCase(unittest.TestCase):
     self.assertFalse(memory.cmp_memory(memory_part_1))
     self.assertFalse(memory.cmp_memory(memory_part_2))
 
+  def test_positive_zero(self):
+    self.assertEqual(Memory.positive_zero(), [+1, 0, 0, 0, 0, 0])
+
 suite = unittest.makeSuite(MemoryTestCase, 'test')
 
 if __name__ == "__main__":
