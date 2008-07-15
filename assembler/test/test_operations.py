@@ -15,7 +15,7 @@ class OperationsTestCase(unittest.TestCase):
     self.assertEqual(get_codes('JNOV'), (39,3))
     self.assertEqual(get_codes('CMPX'), (63,5))
 
-    self.assertEqual(get_codes('BLAH'), (None,None))
+    self.assertEqual(get_codes('BLAH'), (None,5))
 
   def test_is_valid_operation(self):
     for op in "LDA CMPX JAN ent4 cmpA EQU ORIG END CON ALF".split():

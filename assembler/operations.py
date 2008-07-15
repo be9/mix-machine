@@ -165,4 +165,4 @@ def get_codes(instr):
   try:
     return _instructions[instr]
   except:
-    return (None, None)
+    return (None, 5)
