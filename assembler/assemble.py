@@ -20,7 +20,7 @@ def assemble(lines, symbol_table):
         errors.append( (line.line_number, err) )
       else:
         c_code = get_codes(line.operation)[0]
-        word_value |= c_code
+        word_value = (abs(word_value) | c_code) * Memory.sign(word_value)
         memory.set_word(ca, word_value)
         ca += 1
     elif line.operation == "EQU":

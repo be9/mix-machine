@@ -120,10 +120,13 @@ class ArgumentParser:
     except:
       return None
 
-  def get_all_before(self):
+  def get_all_before_this_this_this(self):
     return "".join(self.tokens[:self.ct])
 
-  def get_all_after(self):
+  def get_all_forward_from_this(self):
+    return "".join(self.tokens[self.ct:])
+    
+  def get_all_after_this(self):
     return "".join(self.tokens[self.ct+1:])
 # moving in tokens
 
@@ -222,7 +225,7 @@ class ArgumentParser:
     s_exp = self.try_s_exp()
     if s_exp is None:
       if has_unary:
-        raise ExpectedSExpError(self.get_all_before())
+        raise ExpectedSExpError(self.get_all_before_this())
       else:
         return None
     result = unary(s_exp)
@@ -235,7 +238,7 @@ class ArgumentParser:
       self.next()
       s_exp = self.try_s_exp()
       if s_exp is None:
-        raise ExpectedSExpError(self.get_all_before())
+        raise ExpectedSExpError(self.get_all_before_this())
       result = binary(result, s_exp)
 
     return result
@@ -249,7 +252,7 @@ class ArgumentParser:
       self.next()
       exp = self.try_exp()
       if exp is None:
-        raise ExpectedExpError(self.get_all_before())
+        raise ExpectedExpError(self.get_all_before_this())
       else:
         self.next()
         return exp
@@ -263,11 +266,11 @@ class ArgumentParser:
       self.next()
       exp = self.try_exp()
       if exp is None:
-        raise ExpectedExpError(self.get_all_before())
+        raise ExpectedExpError(self.get_all_before_this())
       else:
         self.next()
         if self.get() != ")":
-          raise NoClosedBracketError(self.get_all_before())
+          raise NoClosedBracketError(self.get_all_before_this())
         else:
           self.next()
           return exp
@@ -296,7 +299,7 @@ class ArgumentParser:
 
       value = self.try_exp()
       if value is None:
-        raise ExpectedExpError(self.get_all_before())
+        raise ExpectedExpError(self.get_all_before_this())
 
       if self.look() == "(":
         self.next()
@@ -326,22 +329,23 @@ class ArgumentParser:
       self.next()
       return res
 
-#UnexpectedStrInTheEndError
+
   def try_argument(self):
     if is_instruction(self.line.operation):
       addr_part = self.try_addr_part()
-      # no self.next() !!!
+      # done self.next() !!!
       ind_part = self.try_ind_part()
-      # no self.next() !!!
+      # done self.next() !!!
       f_part = self.try_f_part()
+      # done self.next() !!!
       if self.get() is not None:
-        raise UnexpectedStrInTheEndError(self.get_all_after())
+        raise UnexpectedStrInTheEndError(self.get_all_forward_from_this())
       return Memory.sign(addr_part) * (abs(addr_part) * 64**3 + ind_part * 64**2 + f_part * 64)
     elif self.line.operation in ("EQU", "ORIG", "CON", "END"):
       res = self.try_w_exp()
       if res is not None:
         if self.look() is not None:
-          raise UnexpectedStrInTheEndError(self.get_all_after())
+          raise UnexpectedStrInTheEndError(self.get_all_after_this())
         return res
       else:
         raise ExpectedWExpError(self.line.argument)

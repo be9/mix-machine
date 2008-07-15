@@ -35,9 +35,9 @@ class AssembleTestCase(unittest.TestCase):
       start_address = None,
       errors = [
         (1, InvalidLocalLabelError("8F")),
-        (2, InvalidExpressionError("LABEL")),
-        (3, InvalidExpressionError("LABEL%")),
-        (5, InvalidExpressionError("LABEL%")),
+        (2, UnexpectedStrInTheEndError("LABEL")),
+        (3, UnexpectedStrInTheEndError("LABEL%")),
+        (5, ExpectedWExpError("LABEL%")),
         (6, InvalidLocalLabelError("7B"))
       ]
     )
@@ -63,7 +63,7 @@ class AssembleTestCase(unittest.TestCase):
         30: [+1,  0, 15,  0,  2, 48],
         31: [-1,  0,  2,  0,  3, 50],
         32: [+1,  1,  0,  0,  2,  5],
-        33: [+1,  1,  2, 03,  4,  5]
+        33: [+1,  1,  2,  3,  4,  5]
       },
       start_address = 30,
       errors = []

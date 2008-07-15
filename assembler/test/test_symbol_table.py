@@ -151,8 +151,8 @@ class LabelsTestCase(unittest.TestCase):
       [
         (6, RepeatedLabelError("123456789L")),
         (8, InvalidLocalLabelError("3B")),
-        (9, InvalidExpressionError("UNKNWN")),
-        (10, InvalidExpressionError("18%"))
+        (9, ExpectedWExpError("UNKNWN")),
+        (10, ExpectedWExpError("18%"))
       ]
     )
 

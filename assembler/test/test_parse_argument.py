@@ -47,18 +47,14 @@ class ParseArgumentTestCase(unittest.TestCase):
         return None
 
   def test_instructions(self):
-    self.assertEqual(parse_argument(
-      Line(None, 'NOP', '-1*65,6(2:3)'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([-1, 1, 1, 6, 19, 0])
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'NOP', 'SYM,5(1:1)'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([-1, 1, 59, 5, 9, 0])
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'NOP', 'SYM,*/2(1:1)'), self.MockSymbolTable(), 10),
-      Memory.mix2dec([-1, 1, 59, 5, 9, 0])
-    )
+    self.assertEqual(parse_argument(Line(None, 'NOP', '-1*65,6(2:3)'), self.MockSymbolTable(), 0),
+      Memory.mix2dec([-1, 1, 1, 6, 19, 0]))
+    self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM,5(1:1)'), self.MockSymbolTable(), 0),
+      Memory.mix2dec([-1, 1, 59, 5, 9, 0]))
+    self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM,*/2(1:1)'), self.MockSymbolTable(), 10),
+      Memory.mix2dec([-1, 1, 59, 5, 9, 0]))
+
+    #self.assertRaises(
 
   def test_directives(self):
     # test directives except "ALF"
@@ -97,8 +93,6 @@ class ParseArgumentTestCase(unittest.TestCase):
       135582544
     )
 
-  def test_errors(self):
-    pass
 
 suite = unittest.makeSuite(ParseArgumentTestCase, 'test')
 
