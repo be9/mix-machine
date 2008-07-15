@@ -38,25 +38,37 @@ class ParseArgumentTestCase(unittest.TestCase):
           return 456
         elif arg == '1B':
           return 789
+        elif arg == '2B':
+          return 20
         else:
           return None
 
     # test NUMBER
     for i in (0, 123456, 64**5-1):
-      self.assertEqual(parse_argument(Line(None, 'NOP', str(i)), MockSymbolTable(), 0), i)
+      #self.assertEqual(parse_argument(Line(None, 'NOP', str(i)), MockSymbolTable(), 0), i)
       self.assertEqual(parse_argument(Line(None, 'ORIG', str(i)), MockSymbolTable(), 0), i)
 
     # test SYMBOL
-    self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM'), MockSymbolTable(), 0), 123)
-    self.assertEqual(parse_argument(Line(None, 'NOP', '1F'), MockSymbolTable(), 0), 456)
+    #self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM'), MockSymbolTable(), 0), 123)
+    #self.assertEqual(parse_argument(Line(None, 'NOP', '1F'), MockSymbolTable(), 0), 456)
     self.assertEqual(parse_argument(Line(None, 'ORIG', '1F'), MockSymbolTable(), 0), 456)
     self.assertEqual(parse_argument(Line(None, 'ORIG', '1B'), MockSymbolTable(), 0), 789)
 
     # test CUR_ADDR
     for i in (0, 3, 2000, 3999):
-      self.assertEqual(parse_argument(Line(None, 'NOP', "*"), MockSymbolTable(), i), i)
+      #self.assertEqual(parse_argument(Line(None, 'NOP', "*"), MockSymbolTable(), i), i)
       self.assertEqual(parse_argument(Line(None, 'ORIG', "*"), MockSymbolTable(), i), i)
 
+    # test EXP
+    #self.assertEqual(parse_argument(Line(None, 'NOP', "-1+5"), MockSymbolTable(), 0), 4)
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "-SYM+23*2/2B"), MockSymbolTable(), 0), -10)
+
+    # test W_EXP (and F_PART)
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "2(2:2),3(2:3),4(4:4),5(5:5),"),\
+        MockSymbolTable(), 0), Memory.mix2dec([+1,0,2,3,4,5]))
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "1(1:1),2(2:2),3(3:3),4(4:4),5(5:5),"),\
+        MockSymbolTable(), 0), Memory.mix2dec([+1,1,2,3,4,5]))
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "1,-1000(0:2)"), MockSymbolTable(), 0), -10)
 
     # test nonsense
     #self.assertRaises(InvalidExpressionError, parse_argument, Line(None, 'NOP', 'QQQ'), MockSymbolTable(), 0)

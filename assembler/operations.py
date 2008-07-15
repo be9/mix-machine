@@ -162,7 +162,7 @@ def is_arg_required(operation):
   return operation.upper() in _directives and operation.upper() != "ALF"
 
 def get_codes(instr):
-  try:  
+  try:
     return _instructions[instr]
   except:
     return (None, None)
