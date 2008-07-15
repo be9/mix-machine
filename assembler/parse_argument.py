@@ -12,26 +12,12 @@
 #                        less than six mix-chars not in inverted
 # + NONE            ::==  can be missed
 # + CUR_ADDR        ::==  "*"
-# + EQUAL           ::==  "="
-# + COMMA           ::==  ","
-# + L_BRACKET       ::==  "("
-# + R_BRACKET       ::==  ")"
-# + UPLUS           ::==  "+"
-# + UMINUS          ::==  "-"
-# + PLUS            ::==  "+"
-# + MINUS           ::==  "-"
-# + MULT            ::==  "*"
-# + DIV             ::==  "/"
-# + FDIV            ::==  "//"
-# + COLON           ::==  ":"
-# + UNARY_OP        ::==  UPLUS | UMINUS
-# + BINARY_OP       ::==  PLUS | MINUS | MULT | DIV | FDIV | COLON
 # + S_EXP           ::==  NUMBER | DEFINED_SYMBOL | CUR_ADDR
-# + EXP             ::==  [ UNARY_OP ] S_EXP [ BINARY_OP S_EXP]*
-# ~ IND_PART        ::==  NONE | ( COMMA EXP )
-# ~ F_PART          ::==  NONE | ( L_BRACKET EXP R_BRACKET )
-# ~ W_EXP           ::==  EXP F_PART [ COMMA EXP F_PART ]*
-#   LITERAL         ::==  EQUAL W_EXP EQUAL
+# + EXP             ::==  [ "+" | "-" ] S_EXP [ ( "+" | "-" | "*" | "/" | "//" | ":" ) S_EXP]*
+# ~ IND_PART        ::==  NONE | ( "," EXP )
+# ~ F_PART          ::==  NONE | ( "(" EXP ")" )
+# ~ W_EXP           ::==  EXP F_PART [ "," EXP F_PART ]*
+#   LITERAL         ::==  "=" W_EXP "="
 #   ADR_PART        ::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
 #
 #   ARGUMENT        ::== ( ADR_PART IND_PART F_PART ) | # if is_instruction(operation)
@@ -44,10 +30,26 @@ from errors import *
 from memory import Memory
 
 def parse_argument(line, symbol_table, cur_addr):
+# + EQUAL           ::==  "="
   arg_parser = ArgumentParser(line, symbol_table, cur_addr)
   return arg_parser.parse()
 
 class ArgumentParser:
+  unary_ops = "+ -".split(" ")
+  unary_func = {
+    "+":  lambda x : x,
+    "-":  lambda x : -x
+  }
+  binary_ops = "+ - * / // :".split(" ")
+  binary_func = {
+    "+":  lambda x,y : x + y,
+    "-":  lambda x,y : x - y,
+    "*":  lambda x,y : x * y,
+    "/":  lambda x,y : x / y,
+    "//": lambda x,y : (x * 64**5) / y,
+    ":":  lambda x,y : 8*x + y
+  }
+
   def __init__(self, line, symbol_table, cur_addr):
     self.line = line
     self.symbol_table = symbol_table
@@ -82,12 +84,11 @@ class ArgumentParser:
 
 
   def parse(self):
-    return self.try_w_exp()
+    return self.try_exp()
     # return self.try_argument() # not done yet
 
 
   def get(self):
-    # FIX ME: errors
     try:
       return self.tokens[self.ct]
     except:
@@ -99,7 +100,10 @@ class ArgumentParser:
 
 
   def look(self):
-    return self.tokens[self.ct + 1]
+    try:
+      return self.tokens[self.ct + 1]
+    except:
+      return None
 
   @staticmethod
   def try_any(seq):
@@ -134,107 +138,11 @@ class ArgumentParser:
     return self.try_symbol()      # which use any symbols with full symbol table.
 
 
-  def try_equal(self):
-    if self.get() == "=":
-      return True
-    else:
-      return None
-
-
-  def try_comma(self):
-    if self.get() == ",":
-      return True
-    else:
-      return None
-
-
-  def try_l_bracket(self):
-    if self.get() == "(":
-      return True
-    else:
-      return None
-
-
-  def try_r_bracket(self):
-    if self.get() == ")":
-      return True
-    else:
-      return None
-
-
   def try_cur_addr(self):
     if self.get() == "*":
       return self.cur_addr
     else:
       return None
-
-
-  def try_uplus(self):
-    if self.get() == "+":
-      return lambda x : x
-    else:
-      return None
-
-
-  def try_uminus(self):
-    if self.get() == "-":
-      return lambda x : -x
-    else:
-      return None
-
-
-  def try_plus(self):
-    if self.get() == "+":
-      return lambda x,y : x + y
-    else:
-      return None
-
-
-  def try_minus(self):
-    if self.get() == "-":
-      return lambda x,y : x - y
-    else:
-      return None
-
-
-  def try_mult(self):
-    if self.get() == "*":
-      return lambda x,y : x * y
-    else:
-      return None
-
-
-  def try_div(self):
-    if self.get() == "/":
-      return lambda x,y : x / y
-    else:
-      return None
-
-
-  def try_fdiv(self):
-    if self.get() == "//":
-      return lambda x,y : (x * 64**5) / y
-    else:
-      return None
-
-
-  def try_colon(self):
-    if self.get() == "-":
-      return lambda x,y : 8*x + y
-    else:
-      return None
-
-
-  def try_unary_op(self):
-    return self.try_any(
-      (self.try_uplus, self.try_uminus)
-    )
-
-
-  def try_binary_op(self):
-    return self.try_any(
-      (self.try_plus, self.try_minus, self.try_mult, self.try_div, self.try_fdiv, self.try_colon)
-    )
 
 
   def try_s_exp(self):
@@ -245,31 +153,33 @@ class ArgumentParser:
 
   def try_exp(self):
     result = 0
-    unary = self.try_unary_op()
-    if unary is not None:
+
+    has_unary = False
+    if self.get() in self.unary_ops:
+      unary = self.unary_func[self.get()]
+      has_unary = True
       self.next()
     else:
-      unary = lambda x : x
+      unary = lambda x : x # identical function
 
     s_exp = self.try_s_exp()
     if s_exp is None:
-      if unary is None:
-        return None
-      else:
+      if has_unary:
         raise "ERROR!"
+      else:
+        return None
     result = unary(s_exp)
 
     while True:
-      self.next()
-      binary = self.try_binary_op()
-      if binary is None:
+      if self.look() not in self.binary_ops:
         break
-      else:
-        self.next()
-        s_exp = self.try_s_exp()
-        if s_exp is None:
-          raise "ERROR!"
-        result = binary(result, s_exp)
+      self.next()
+      binary = self.binary_func[self.get()]
+      self.next()
+      s_exp = self.try_s_exp()
+      if s_exp is None:
+        raise "ERROR!"
+      result = binary(result, s_exp)
 
     return result
 
