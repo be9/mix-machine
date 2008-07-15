@@ -48,23 +48,23 @@ class ParseArgumentTestCase(unittest.TestCase):
           return None
 
     # test NUMBER
-    #for i in (0, 123456, 64**5-1):
-      #self.assertEqual(parse_argument(Line(None, 'NOP', str(i)), MockSymbolTable(), 0), i)
+    for i in (0, 123456, 64**5-1):
+      self.assertEqual(parse_argument(Line(None, 'NOP', str(i)), MockSymbolTable(), 0), i)
       #self.assertEqual(parse_argument(Line(None, 'ORIG', str(i)), MockSymbolTable(), 0), i)
 
     # test SYMBOL
-    #self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM'), MockSymbolTable(), 0), 123)
-    #self.assertEqual(parse_argument(Line(None, 'NOP', '1F'), MockSymbolTable(), 0), 456)
+    self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM'), MockSymbolTable(), 0), 123)
+    self.assertEqual(parse_argument(Line(None, 'NOP', '1F'), MockSymbolTable(), 0), 456)
     #self.assertEqual(parse_argument(Line(None, 'ORIG', '1F'), MockSymbolTable(), 0), 456)
     #self.assertEqual(parse_argument(Line(None, 'ORIG', '1B'), MockSymbolTable(), 0), 789)
 
     # test CUR_ADDR
-    #for i in (0, 3, 2000, 3999):
-      #self.assertEqual(parse_argument(Line(None, 'NOP', "*"), MockSymbolTable(), i), i)
+    for i in (0, 3, 2000, 3999):
+      self.assertEqual(parse_argument(Line(None, 'NOP', "*"), MockSymbolTable(), i), i)
       #self.assertEqual(parse_argument(Line(None, 'ORIG', "*"), MockSymbolTable(), i), i)
 
     # test EXP
-    #self.assertEqual(parse_argument(Line(None, 'NOP', "-1+5"), MockSymbolTable(), 0), 4)
+    self.assertEqual(parse_argument(Line(None, 'NOP', "-1+5"), MockSymbolTable(), 0), 4)
     #self.assertEqual(parse_argument(Line(None, 'ORIG', "-SYM+23*2/2B"), MockSymbolTable(), 0), -10)
 
     # test W_EXP (and F_PART)
@@ -80,14 +80,14 @@ class ParseArgumentTestCase(unittest.TestCase):
         #MockSymbolTable(), 0), Memory.mix2dec([+1,0,0,0,0,1]))
 
     # test ALF
-    self.assertEqual(parse_argument(Line(None, 'ALF', '"HEL"'), MockSymbolTable(), 0), 135581696)
-    self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLO"'), MockSymbolTable(), 0), 135582544)
-    self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLOWORLD"'), MockSymbolTable(), 0), 135582544)
-    self.assertEqual(parse_argument(Line(None, 'ALF', '""'), MockSymbolTable(), 0), 0)
-    self.assertEqual(parse_argument(Line(None, 'ALF', 'HEL'), MockSymbolTable(), 0), 135581696)
-    self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO'), MockSymbolTable(), 0), 135582544)
-    self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLOWORLD'), MockSymbolTable(), 0), 135582544)
-    self.assertEqual(parse_argument(Line(None, 'ALF', None), MockSymbolTable(), 0), 0)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', '"HEL"'), MockSymbolTable(), 0), 135581696)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLO"'), MockSymbolTable(), 0), 135582544)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLOWORLD"'), MockSymbolTable(), 0), 135582544)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', '""'), MockSymbolTable(), 0), 0)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', 'HEL'), MockSymbolTable(), 0), 135581696)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO'), MockSymbolTable(), 0), 135582544)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLOWORLD'), MockSymbolTable(), 0), 135582544)
+    #self.assertEqual(parse_argument(Line(None, 'ALF', None), MockSymbolTable(), 0), 0)
 
     #self.assertRaises("ERROR!", parse_argument, Line(None, 'ALF', '"HE&"'), MockSymbolTable(), 0)
 

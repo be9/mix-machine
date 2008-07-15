@@ -17,7 +17,7 @@
 # + F_PART          ::==  NONE | ( "(" EXP ")" )
 # + W_EXP           ::==  EXP F_PART [ "," EXP F_PART ]*
 #   LITERAL         ::==  "=" W_EXP "="
-#   ADDR_PART       ::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
+# + ADDR_PART       ::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
 #
 #   ARGUMENT        ::== ( ADDR_PART IND_PART F_PART ) |    # if is_instruction(operation)
 #                        W_EXP |        # if operation in("EQU", "ORIG", "CON", "END")
@@ -103,7 +103,7 @@ class ArgumentParser:
 
   def parse(self):
     """Main parse function"""
-    return self.try_alf_word()
+    return self.try_addr_part()
     # return self.try_argument() # not done yet
 
 
