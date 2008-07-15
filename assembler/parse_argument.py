@@ -256,6 +256,7 @@ class ArgumentParser:
 
 
   def try_f_part(self):
+    """This function DO SELF.NEXT()"""
     if self.get() != "(":
       return get_codes(self.line.operation)[1]
     else:
@@ -268,6 +269,7 @@ class ArgumentParser:
         if self.get() != ")":
           raise NoClosedBracketError(self.get_all_before())
         else:
+          self.next()
           return exp
 
 
@@ -287,10 +289,9 @@ class ArgumentParser:
       raise InvalidFieldSpecError( (field / 8, field % 8) )
 
     while True:
-      if self.look() != ",":
+      if self.get() != ",":
         break
 
-      self.next()
       self.next()
 
       value = self.try_exp()
@@ -333,7 +334,7 @@ class ArgumentParser:
       ind_part = self.try_ind_part()
       # no self.next() !!!
       f_part = self.try_f_part()
-      if self.look() is not None:
+      if self.get() is not None:
         raise UnexpectedStrInTheEndError(self.get_all_after())
       return Memory.sign(addr_part) * (abs(addr_part) * 64**3 + ind_part * 64**2 + f_part * 64)
     elif self.line.operation in ("EQU", "ORIG", "CON", "END"):

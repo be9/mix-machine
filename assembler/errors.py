@@ -47,9 +47,6 @@ class LineNumberError(AssemblySyntaxError):
 class NoEndError(AssemblySyntaxError):
   """Required operation (END) wasn't found"""
 
-class InvalidExpressionError(AssemblySyntaxError):
-  """Invalid expression (%s)"""
-
 class InvalidLocalLabelError(AssemblySyntaxError):
   """Invalid local label (%s) (no dH label found)"""
 
