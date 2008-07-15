@@ -84,7 +84,7 @@ class ArgumentParser:
 
 
   def parse(self):
-    return self.try_exp()
+    return self.try_w_exp()
     # return self.try_argument() # not done yet
 
 
@@ -185,7 +185,7 @@ class ArgumentParser:
 
 
   def try_ind_part(self):
-    if self.try_comma() is None:
+    if self.get() != ",":
       return 0
     else:
       self.next()
@@ -197,12 +197,8 @@ class ArgumentParser:
 
 
   def try_f_part(self):
-    if self.try_l_bracket() is None:
-      field = get_codes(self.line.operation)[1]
-      if field is not None:
-        return field
-      else:
-        return 5
+    if self.get() != "(":
+      return get_codes(self.line.operation)[1]
     else:
       self.next()
       exp = self.try_exp()
@@ -210,44 +206,45 @@ class ArgumentParser:
         raise "ERROR!"
       else:
         self.next()
-        if self.try_r_bracket() is None:
+        if self.get() != ")":
           raise "ERROR!"
         else:
           return exp
 
 
   def try_w_exp(self):
-    print "--------------------"
     word = [+1, 0, 0, 0, 0, 0]
-    print self.ct
     value = self.try_exp()
-    print self.ct
-    print "VALUE:", value
     if value is None:
       return None
-    self.next()
-    print self.tokens[self.ct-1:self.ct+2]
-    field = self.try_f_part()
-    print "FIELD:", field
-    self.next()
-    if Memory.apply_to_word(value, word, field) is None:
-      raise "ERROR!"
-    print "WORD:", word
-    while True:
-      if self.try_comma() is None:
-        break
-      self.next()
-      value = self.try_exp()
-      print "VALUE:", value
-      if value is None:
-        raise "ERROR!"
+
+    if self.look() == "(":
       self.next()
       field = self.try_f_part()
-      print "FIELD:", field
-      if field is None:
-        raise "ERROR!"
+    else:
+      field = get_codes(self.line.operation)[1]
+
+    if Memory.apply_to_word(value, word, field) is None:
+      raise "ERROR!"
+
+    while True:
+      if self.look() != ",":
+        break
+
       self.next()
+      self.next()
+
+      value = self.try_exp()
+      if value is None:
+        raise "ERROR!"
+
+      if self.look() == "(":
+        self.next()
+        field = self.try_f_part()
+      else:
+        field = get_codes(self.line.operation)[1]
+
       if Memory.apply_to_word(value, word, field) is None:
         raise "ERROR!"
-      print "WORD:", word
+
     return Memory.mix2dec(word)

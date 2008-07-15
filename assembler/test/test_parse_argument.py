@@ -64,11 +64,16 @@ class ParseArgumentTestCase(unittest.TestCase):
     self.assertEqual(parse_argument(Line(None, 'ORIG', "-SYM+23*2/2B"), MockSymbolTable(), 0), -10)
 
     # test W_EXP (and F_PART)
-    self.assertEqual(parse_argument(Line(None, 'ORIG', "2(2:2),3(2:3),4(4:4),5(5:5),"),\
-        MockSymbolTable(), 0), Memory.mix2dec([+1,0,2,3,4,5]))
-    self.assertEqual(parse_argument(Line(None, 'ORIG', "1(1:1),2(2:2),3(3:3),4(4:4),5(5:5),"),\
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "65"),\
+        MockSymbolTable(), 0), Memory.mix2dec([+1,0,0,0,1,1]))
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "65(1:2)"),\
+        MockSymbolTable(), 0), Memory.mix2dec([+1,1,1,0,0,0]))
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "1(1:1),2(2:2),3(3:3),4(4:4),5(5:5)"),\
         MockSymbolTable(), 0), Memory.mix2dec([+1,1,2,3,4,5]))
-    self.assertEqual(parse_argument(Line(None, 'ORIG', "1,-1000(0:2)"), MockSymbolTable(), 0), -10)
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "1,-1000(0:2)"),\
+        MockSymbolTable(), 0), Memory.mix2dec([-1,15,40,0,0,1]))
+    self.assertEqual(parse_argument(Line(None, 'ORIG', "-1000(0:2),1"),\
+        MockSymbolTable(), 0), Memory.mix2dec([+1,0,0,0,0,1]))
 
     # test nonsense
     #self.assertRaises(InvalidExpressionError, parse_argument, Line(None, 'NOP', 'QQQ'), MockSymbolTable(), 0)
