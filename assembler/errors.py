@@ -69,7 +69,7 @@ class NoClosedBracketError(AssemblySyntaxError):
   """Expected closing bracket after '%s'"""
 
 class InvalidFieldSpecError(AssemblySyntaxError):
-  """Invalid field specification (left: %s, right: %s)"""
+  """Invalid field specification (%s)"""
 
 class ExpectedWExpError(AssemblySyntaxError):
   """Expected correct W-expression (%s)"""

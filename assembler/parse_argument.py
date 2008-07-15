@@ -2,7 +2,7 @@
 
 # parses third part of line
 
-# Grammar of mix's arguments:
+# Grammar of mix's arguments (n - means that this function does self.next() in the end):
 # + SYMBOL          ::==  string with length from 1 to 10 of digits or alphas (one alpha required)
 # +                       also special symbols dH, dF, dB - where "d" is digit
 # + NUMBER          ::==  string with length from 1 to 10 of digits
@@ -13,11 +13,11 @@
 # + CUR_ADDR        ::==  "*"
 # + S_EXP           ::==  NUMBER | DEFINED_SYMBOL | CUR_ADDR
 # + EXP             ::==  [ "+" | "-" ] S_EXP [ ( "+" | "-" | "*" | "/" | "//" | ":" ) S_EXP]*
-# + IND_PART        ::==  NONE | ( "," EXP )
-# + F_PART          ::==  NONE | ( "(" EXP ")" )
-# + W_EXP           ::==  EXP F_PART [ "," EXP F_PART ]*
+# + IND_PART       n::==  NONE | ( "," EXP )
+# + F_PART         n::==  NONE | ( "(" EXP ")" )
+# + W_EXP          n::==  EXP F_PART [ "," EXP F_PART ]*
 #   LITERAL         ::==  "=" W_EXP "="
-# + ADDR_PART       ::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
+# + ADDR_PART      n::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
 # + ARGUMENT        ::== ( ADDR_PART IND_PART F_PART ) |    # if is_instruction(operation)
 # +                      W_EXP |        # if operation in("EQU", "ORIG", "CON", "END")
 # +                      ALF_WORD       # if operation == "ALF"
@@ -120,7 +120,7 @@ class ArgumentParser:
     except:
       return None
 
-  def get_all_before_this_this_this(self):
+  def get_all_before_this(self):
     return "".join(self.tokens[:self.ct])
 
   def get_all_forward_from_this(self):
@@ -273,10 +273,14 @@ class ArgumentParser:
           raise NoClosedBracketError(self.get_all_before_this())
         else:
           self.next()
-          return exp
+          if 0 <= exp <= 45 and (exp / 8) <= (exp % 8): # 45 = 8*5 + 5
+            return exp
+          else:
+            raise InvalidFieldSpecError(exp)
 
 
   def try_w_exp(self):
+    """This function DO SELF.NEXT()"""
     word = Memory.positive_zero()
     value = self.try_exp()
     if value is None:
@@ -287,9 +291,9 @@ class ArgumentParser:
       field = self.try_f_part()
     else:
       field = get_codes(self.line.operation)[1]
+      self.next()
 
-    if Memory.apply_to_word(value, word, field) is None:
-      raise InvalidFieldSpecError( (field / 8, field % 8) )
+    Memory.apply_to_word(value, word, field)
 
     while True:
       if self.get() != ",":
@@ -306,9 +310,9 @@ class ArgumentParser:
         field = self.try_f_part()
       else:
         field = get_codes(self.line.operation)[1]
+        self.next()
 
-      if Memory.apply_to_word(value, word, field) is None:
-        raise InvalidFieldSpecError( (field / 8, field % 8) )
+      Memory.apply_to_word(value, word, field)
 
     return Memory.mix2dec(word)
 
@@ -343,11 +347,15 @@ class ArgumentParser:
       return Memory.sign(addr_part) * (abs(addr_part) * 64**3 + ind_part * 64**2 + f_part * 64)
     elif self.line.operation in ("EQU", "ORIG", "CON", "END"):
       res = self.try_w_exp()
+      # done self.next() !!!
       if res is not None:
-        if self.look() is not None:
-          raise UnexpectedStrInTheEndError(self.get_all_after_this())
+        if self.get() is not None:
+          raise UnexpectedStrInTheEndError(self.get_all_forward_from_this())
         return res
       else:
         raise ExpectedWExpError(self.line.argument)
     else: # self.line.instruction = "ALF"
-      return self.try_alf_word()
+      res = self.try_alf_word()
+      if self.look() is not None:
+        raise UnexpectedStrInTheEndError(self.get_all_after_this())
+      return res

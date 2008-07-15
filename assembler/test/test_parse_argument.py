@@ -53,45 +53,67 @@ class ParseArgumentTestCase(unittest.TestCase):
       Memory.mix2dec([-1, 1, 59, 5, 9, 0]))
     self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM,*/2(1:1)'), self.MockSymbolTable(), 10),
       Memory.mix2dec([-1, 1, 59, 5, 9, 0]))
+    self.assertEqual(parse_argument(Line(None, 'STJ', 'SYM,*/2'), self.MockSymbolTable(), 10),
+      Memory.mix2dec([-1, 1, 59, 5, 2, 0]))
+    self.assertEqual(parse_argument(Line(None, 'STJ', None), self.MockSymbolTable(), 10),
+      Memory.mix2dec([+1, 0, 0, 0, 2, 0]))
+    self.assertEqual(parse_argument(Line(None, 'STJ', '(2:3)'), self.MockSymbolTable(), 10),
+      Memory.mix2dec([+1, 0, 0, 0, 19, 0]))
+    self.assertEqual(parse_argument(Line(None, 'STJ', ',*(2:3)'), self.MockSymbolTable(), 10),
+      Memory.mix2dec([+1, 0, 0, 10, 19, 0]))
 
-    #self.assertRaises(
+    self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'NOP', '+'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'NOP', '+*-,2(5)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'NOP', '+*-2,2(-1)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'NOP', '+*-2,2(3:2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'NOP', 'LABB'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'NOP', '2+3(9)LABB'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'NOP', '2+3()'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'NOP', '2+3,(2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(NoClosedBracketError, parse_argument, Line(None, 'NOP', '2+3(2'), self.MockSymbolTable(), 0)
+
 
   def test_directives(self):
     # test directives except "ALF"
-    self.assertEqual(parse_argument(
-      Line('LABEL', 'CON', '-**2+5/3(+2*8-1/5-1),64(4:5),2B(5:5)'), self.MockSymbolTable(), 1000),
-      Memory.mix2dec([-1, 10, 25, 0, 1, 20])
-    )
-    self.assertEqual(parse_argument(
-      Line('LABEL', 'CON', '0'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([+1, 0, 0, 0, 0, 0])
-    )
+    self.assertEqual(parse_argument(Line('LABEL', 'CON', '-**2+5/3(+2*8-1/5-1),64(4:5),2B(5:5)'), self.MockSymbolTable(), 1000),
+      Memory.mix2dec([-1, 10, 25, 0, 1, 20]))
+    self.assertEqual(parse_argument(Line('LABEL', 'CON', '1,-1000(0:2)'), self.MockSymbolTable(), 0),
+      Memory.mix2dec([-1, 15, 40, 0, 0, 1]))
+    self.assertEqual(parse_argument(Line('LABEL', 'CON', '***(***),-1000(0:2),1'), self.MockSymbolTable(), 0),
+      Memory.mix2dec([+1, 0, 0, 0, 0, 1]))
+    self.assertEqual(parse_argument(Line('LABEL', 'CON', '0'), self.MockSymbolTable(), 0),
+      Memory.mix2dec([+1, 0, 0, 0, 0, 0]))
+
+    self.assertRaises(ExpectedSExpError, parse_argument, Line('LABEL', 'CON', '+'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedSExpError, parse_argument, Line('LABEL', 'CON', '+SYM*'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line('LABEL', 'CON', '2+3(46)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line('LABEL', 'CON', '2+3(3:2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line('LABEL', 'CON', '2+3(-1:2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line('LABEL', 'CON', '2+3(45)666'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedWExpError, parse_argument, Line('LABEL', 'CON', '?WHAT?'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedExpError, parse_argument, Line('LABEL', 'CON', '2+3(?WHAT?)'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedExpError, parse_argument, Line('LABEL', 'CON', '2+3(5),'), self.MockSymbolTable(), 0)
+    self.assertRaises(NoClosedBracketError, parse_argument, Line('LABEL', 'CON', '2+3(5'), self.MockSymbolTable(), 0)
+
 
   def test_alf(self):
-    self.assertEqual(parse_argument(
-      Line(None, 'ALF', 'HELLO WORLD'), self.MockSymbolTable(), 1000),
-      135582544
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'ALF', '"HELLO WORLD"'), self.MockSymbolTable(), 1000),
-      135582544
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'ALF', '"HELL"'), self.MockSymbolTable(), 1000),
-      135582528
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'ALF', 'HELL'), self.MockSymbolTable(), 1000),
-      135582528
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'ALF', '"HELLO"'), self.MockSymbolTable(), 1000),
-      135582544
-    )
-    self.assertEqual(parse_argument(
-      Line(None, 'ALF', 'HELLO'), self.MockSymbolTable(), 1000),
-      135582544
-    )
+    self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO WORLD'), self.MockSymbolTable(), 0),
+      135582544)
+    self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLO WORLD"'), self.MockSymbolTable(), 0),
+      135582544)
+    self.assertEqual(parse_argument(Line(None, 'ALF', '"HELL"'), self.MockSymbolTable(), 0),
+      135582528)
+    self.assertEqual(parse_argument(Line(None, 'ALF', 'HELL'), self.MockSymbolTable(), 0),
+      135582528)
+    self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLO"'), self.MockSymbolTable(), 0),
+      135582544)
+    self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO%%%'), self.MockSymbolTable(), 0),
+      135582544)
+
+    self.assertRaises(UnquotedStringError, parse_argument, Line(None, 'ALF', '"HELLO'), self.MockSymbolTable(), 0)
+    for s in "^ rh%% hell!".split():
+      self.assertRaises(InvalidCharError, parse_argument, Line(None, 'ALF', s), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'ALF', '"TEST"SMTH'), self.MockSymbolTable(), 0)
 
 
 suite = unittest.makeSuite(ParseArgumentTestCase, 'test')
