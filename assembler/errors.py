@@ -68,6 +68,9 @@ class ExpectedExpError(AssemblySyntaxError):
 class NoClosedBracketError(AssemblySyntaxError):
   """Expected closing bracket after '%s'"""
 
+class NoEqualSignError(AssemblySyntaxError):
+  """Expected equal sign after '%s'"""
+
 class InvalidFieldSpecError(AssemblySyntaxError):
   """Invalid field specification (%s)"""
 
@@ -76,3 +79,9 @@ class ExpectedWExpError(AssemblySyntaxError):
 
 class UnexpectedStrInTheEndError(AssemblySyntaxError):
   """Unexpected string in the end of argument (%s)"""
+
+class TooLongLiteralError(AssemblySyntaxError):
+  """Too long literal expression, must be shorter than 10 digits (%s)"""
+
+class NoFreeSpaceForLiteralsError(AssemblySyntaxError):
+  """After END there are no memory to store all literals"""

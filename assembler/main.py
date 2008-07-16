@@ -25,7 +25,7 @@ DEFAULT_OUT_NAME = "out.ma"
 
 def print_syntax_errors(errors):
   for error in errors:
-    print "%i: %s" % (error[0], error[1])
+    print "%04i: %s" % (error[0], error[1])
 
 def main():
   arg_number = len(sys.argv) - 1

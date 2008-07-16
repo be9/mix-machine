@@ -33,11 +33,14 @@ class LabelsTestCase(unittest.TestCase):
       self.assertEqual(is_local_label_reference('%dH' % i), False)
       self.assertEqual(is_local_label_reference('%dh' % i), False)
   
-  def check(self, lines, labels, local_labels = {}, errors = []):
+  def check(self, lines, labels, local_labels = {}, literals = [], errors = [], end_address = None):
     symbol_table = SymbolTable(lines)
     self.assertEqual(symbol_table.labels, labels)
     self.assertEqual(symbol_table.local_labels, local_labels)
+    self.assertEqual(symbol_table.literals, literals)
     self.assertEqual(symbol_table.errors, errors)
+    if end_address is not None:
+      self.assertEqual(symbol_table.end_address, end_address)
 
   def testNoErrors(self):
     self.check(
@@ -77,7 +80,10 @@ class LabelsTestCase(unittest.TestCase):
       },
       {
         "9H" : [(547, 4), (745, 9)]
-      }
+      },
+      [],
+      [],
+      746
     )
 
     self.check(
@@ -86,9 +92,9 @@ class LabelsTestCase(unittest.TestCase):
         Line("0LABEL",      "CON",  "19",         2),
         Line("1LABEL",      "ALF",  "HELLO",      3),
         Line("9L",          "ORIG", "0LABEL",     4),
-        Line("9H",          "NOP",  None,         5),
+        Line("9H",          "LDA",  "=357=",      5),
         Line("123456789L",  "NOP",  None,         6),
-        Line("0H",          "ENTA", "9B",         7),
+        Line("0H",          "ENTA", "=357=",      7),
         Line(None,          "ORIG", "100",        8),
         Line("9H",          "HLT",  None,         9),
         Line(None,          "END",  "1000",       10),
@@ -103,7 +109,10 @@ class LabelsTestCase(unittest.TestCase):
       {
         "0H" : [(2, 7)],
         "9H" : [(0, 5), (100, 9)]
-      }
+      },
+      [ 357, 357 ],
+      [],
+      101
     )
 
   def testErrors(self):
@@ -117,6 +126,7 @@ class LabelsTestCase(unittest.TestCase):
       ],
       {"NULL" : 0, "START" : 3000},
       {},
+      [],
       [
         (3, RepeatedLabelError("START")),
         (4, LineNumberError(5000))
@@ -148,6 +158,7 @@ class LabelsTestCase(unittest.TestCase):
         "0H" : [(1002, 7)],
         "9H" : [(1000, 5), (1003, 11)]
       },
+      [],
       [
         (6, RepeatedLabelError("123456789L")),
         (8, InvalidLocalLabelError("3B")),
@@ -167,7 +178,7 @@ class LabelsTestCase(unittest.TestCase):
         Line("0H",          "ENTA", "PRINTER666", 7),
         Line(None,          "ORIG", "3998",       8),
         Line("9H",          "NOP",  None,         9),
-        Line(None,          "NOP",  None,         10),
+        Line(None,          "NOP",  "=2=",        10),
         Line(None,          "NOP",  None,         11),
         Line("4001LABEL",   "NOP",  None,         12),
         Line(None,          "END",  "1000",       13),
@@ -183,6 +194,7 @@ class LabelsTestCase(unittest.TestCase):
         "0H" : [(1002, 7)],
         "9H" : [(1000, 5), (3998, 9)]
       },
+      [ 2 ],
       [
         (6, RepeatedLabelError("123456789L")),
         (11, LineNumberError(4000)),

@@ -48,4 +48,13 @@ def assemble(lines, symbol_table):
       except AssemblySyntaxError, err:
         start_address = None
         errors.append( (line.line_number, err) )
+      else:
+        # now ca must be equal to symbol_table.end_address
+        assert(ca, symbol_table.end_address)
+        for value in symbol_table.literals:
+          if ca >= 4000:
+            errors.append( (line.line_number, NoFreeSpaceForLiteralsError()) )
+            break
+          memory.set_word(ca, value)
+          ca += 1
       return (memory, start_address, errors) # assemblying finished

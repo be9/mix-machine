@@ -10,8 +10,8 @@ from assemble import *
 from memory import *
 
 class AssembleTestCase(unittest.TestCase):
-  def check(self, lines, labels, local_labels, memory_part, start_address, errors):
-    symbol_table = SymbolTable(None, labels, local_labels)
+  def check(self, lines, labels, local_labels, memory_part, start_address, errors, literals = None, end_address = None):
+    symbol_table = SymbolTable(None, labels, local_labels, literals, end_address)
     result = assemble(lines, symbol_table)
     self.assertTrue(result[0].cmp_memory(memory_part))
     self.assertEqual(result[1], start_address)
@@ -45,13 +45,13 @@ class AssembleTestCase(unittest.TestCase):
   def testNoErrors(self):
     self.check(
       lines = [
-        Line(None,          "ORIG", "30",       1),
-        Line("7H",          "ENTA", "15",       2),
-        Line(None,          "ENN2", "TEMP",     3),
-        Line("TEMP",        "EQU",  "-2",       4),
-        Line(None,          "HLT",  "64",       5),
-        Line(None,          "CON",  "17314053", 7),
-        Line(None,          "END",  "7B",       8)
+        Line(None,          "ORIG", "30",                 1),
+        Line("7H",          "ENTA", "15",                 2),
+        Line(None,          "LD2", "=357=",               3),
+        Line("TEMP",        "EQU",  "-2",                 4),
+        Line(None,          "HLT",  "=1(2:2)=",    5),
+        Line(None,          "CON",  "17314053",           7),
+        Line(None,          "END",  "7B",                 8)
       ],
       labels = {
         "TEMP": -2
@@ -61,12 +61,16 @@ class AssembleTestCase(unittest.TestCase):
       },
       memory_part = {
         30: [+1,  0, 15,  0,  2, 48],
-        31: [-1,  0,  2,  0,  3, 50],
-        32: [+1,  1,  0,  0,  2,  5],
-        33: [+1,  1,  2,  3,  4,  5]
+        31: [+1,  0, 34,  0,  5, 10],
+        32: [+1,  0, 35,  0,  2,  5],
+        33: [+1,  1,  2,  3,  4,  5],
+        34: [+1,  0,  0,  0,  5, 37],
+        35: [+1,  0,  1,  0,  0,  0]
       },
       start_address = 30,
-      errors = []
+      errors = [],
+      literals = [ 357, 262144 ],
+      end_address = 34
     )
 
   def testSmthSly(self):

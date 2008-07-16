@@ -32,6 +32,12 @@ def parse_argument(line, symbol_table, cur_addr):
   arg_parser = ArgumentParser(line, symbol_table, cur_addr)
   return arg_parser.parse()
 
+
+class HaveLiteralException(Exception):
+  def __init__(self, value):
+    self.value = value
+
+
 class ArgumentParser:
   unary_ops = "+ -".split(" ")
   unary_func = {
@@ -71,6 +77,7 @@ class ArgumentParser:
     self.symbol_table = symbol_table
     self.cur_addr = cur_addr
     self.split() # create self.tokens and ct=0 (current token)
+    self.literal_number = 0 # current literal number for return from symbol_table.literals
 
 
   def split(self):
@@ -290,7 +297,7 @@ class ArgumentParser:
       self.next()
       field = self.try_f_part()
     else:
-      field = get_codes(self.line.operation)[1]
+      field = 5 # it's property of w-exp that empty f-part means not default value but 0:5
       self.next()
 
     Memory.apply_to_word(value, word, field)
@@ -318,8 +325,36 @@ class ArgumentParser:
 
 
   def try_literal(self):
-    # FIX ME
-    return None
+    if self.get() != "=":
+      return None
+    else:
+      self.next()
+      res = self.try_w_exp()
+      if res is None:
+        raise ExpectedWExpError(self.line.argument)
+      else:
+        if self.get() != "=":
+          raise NoEqualSignError(self.get_all_before_this())
+        else:
+
+          # line of expression must be less than 10 digits
+          length = self.line.argument.find("=", 1) - 1
+          if length >= 10:
+            raise TooLongLiteralError(self.line.argument[1 : length + 1])
+
+          self.next()
+
+          if self.symbol_table.end_address is None:
+            # we raise exception for symbol_table.__init__
+            raise HaveLiteralException(res)
+          else:
+            # we return value for assemble()
+            # res must be equal to symbol_table.literals[literal_number]
+            assert(res, self.symbol_table.literals[self.symbol_table.literal_number])
+
+            res = self.symbol_table.end_address + self.symbol_table.literal_number
+            self.symbol_table.literal_number += 1
+            return res
 
 
   def try_addr_part(self):

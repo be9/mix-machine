@@ -2,7 +2,7 @@
 
 # module for find labels and creating table of them
 
-from parse_argument import parse_argument
+from parse_argument import *
 from operations import *
 from errors import *
 
@@ -17,7 +17,7 @@ def is_label(s):
     not is_local_label_reference(s)
   
 class SymbolTable:
-  def __init__(self, lines, labels = None, local_labels = None):
+  def __init__(self, lines, labels = None, local_labels = None, literals = None, end_address = None):
     if labels is not None:
       self.labels = labels # {"LABEL" : address, ...}
     else:
@@ -26,8 +26,14 @@ class SymbolTable:
       self.local_labels = local_labels
     else:
       self.local_labels = {} # {"dH" : [(address1, line1), (address2, line2), ...], ...}
+    if literals is not None:
+      self.literals = literals
+    else:
+      self.literals = [] # [value1, value2, ...]
     self.errors = []
-
+    self.end_address = end_address # None means that it is not set yet
+    self.literal_number = 0 # None means that it is not set yet
+    
     if lines is None: # need for testing
       return
 
@@ -45,20 +51,29 @@ class SymbolTable:
           self.labels[line.label] = address
 
     def check_address(address):
-      if not (-4000 < address < 4000):
+      if not (0 <= address < 4000):
         self.errors.append( (line.line_number, LineNumberError(address)) )
 
-    ca = 0 # current address (*)
+    def set_literal(value):
+      self.literals.append(value) # it's queue. first added values would be first popped
+                                  # in assembler to put them in the end or program
+
+    ca = 0 # current address (*) 
     for line in lines:
       # all by 10th and 11th rules from Donald Knuth's book
       if is_instruction(line.operation):
         check_address(ca)
         set_label(line, ca)
+        try:
+          res = parse_argument(line, self, ca)
+        except AssemblySyntaxError:
+          pass # it will be excepted in assembler :)
+        except HaveLiteralException, e:
+          set_literal(e.value)
         ca += 1
       elif line.operation == "EQU":
         try:
           address = parse_argument(line, self, ca)
-          check_address(address)
           set_label(line, address)
         except AssemblySyntaxError, err:
           self.errors.append( (line.line_number, err) )
@@ -77,7 +92,7 @@ class SymbolTable:
         set_label(line, ca)
         ca += 1
       elif line.operation == "END":
-        # FIX ME: here we put all CON's which comes from smth like "=3="
+        self.end_address = ca
         set_label(line, ca)
         break # assemblying finished
 

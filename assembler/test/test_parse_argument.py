@@ -62,15 +62,18 @@ class ParseArgumentTestCase(unittest.TestCase):
     self.assertEqual(parse_argument(Line(None, 'STJ', ',*(2:3)'), self.MockSymbolTable(), 10),
       Memory.mix2dec([+1, 0, 0, 10, 19, 0]))
 
-    self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'NOP', '+'), self.MockSymbolTable(), 0)
-    self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'NOP', '+*-,2(5)'), self.MockSymbolTable(), 0)
-    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'NOP', '+*-2,2(-1)'), self.MockSymbolTable(), 0)
-    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'NOP', '+*-2,2(3:2)'), self.MockSymbolTable(), 0)
-    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'NOP', 'LABB'), self.MockSymbolTable(), 0)
-    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'NOP', '2+3(9)LABB'), self.MockSymbolTable(), 0)
-    self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'NOP', '2+3()'), self.MockSymbolTable(), 0)
-    self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'NOP', '2+3,(2)'), self.MockSymbolTable(), 0)
-    self.assertRaises(NoClosedBracketError, parse_argument, Line(None, 'NOP', '2+3(2'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'LDA', '+'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'LDA', '+*-,2(5)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'LDA', '+*-2,2(-1)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'LDA', '+*-2,2(3:2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', 'LABB'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', '2+3(9)LABB'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3()'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3,(2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(ExpectedWExpError, parse_argument, Line(None, 'LDA', '='), self.MockSymbolTable(), 0)
+    self.assertRaises(NoClosedBracketError, parse_argument, Line(None, 'LDA', '2+3(2'), self.MockSymbolTable(), 0)
+    self.assertRaises(NoEqualSignError, parse_argument, Line(None, 'LDA', '=SYM*2+5'), self.MockSymbolTable(), 0)
+    self.assertRaises(TooLongLiteralError, parse_argument, Line(None, 'LDA', '=1000000000='), self.MockSymbolTable(), 0)
 
 
   def test_directives(self):
