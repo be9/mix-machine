@@ -53,28 +53,6 @@ class MemoryTestCase(unittest.TestCase):
     self.assertTrue(Memory.apply_to_word(0, word, colon(0, -1)) is None)
     self.assertTrue(Memory.apply_to_word(0, word, colon(3, 2)) is None)
 
-  def testMemory_set_byte(self):
-    memory = Memory()
-    byte_tests = [ # (word_index, byte_index, value, word)
-      (113, 3, 45, [+1, 0, 0, 45, 0, 0]),
-      (0, 0, -1, [-1, 0, 0, 0, 0, 0]),
-      (3999, 5, 63, [+1, 0, 0, 0, 0, 63])
-    ]
-    for word_index, byte_index, value, word in byte_tests:
-      memory.set_byte(word_index, byte_index, value)
-      self.assertEqual(memory.memory[word_index], word)
-
-  def testMemory_set_instruction(self):
-    memory = Memory()
-    instruction_tests = [ # (word_index, a_code, i_code, f_code, c_code, word)
-      (0, -0, 0, 0, 0, [+1, 0, 0, 0, 0, 0]),
-      (3999, -113, 43, 22, 62, [-1, 1, 49, 43, 22, 62]),
-      (3999, +113, 62, 22, 43, [+1, 1, 49, 62, 22, 43]),
-    ]
-    for word_index, a_code, i_code, f_code, c_code, word in instruction_tests:
-      memory.set_instruction(word_index, a_code, i_code, f_code, c_code)
-      self.assertEqual(memory.memory[word_index], word)
-
   def testMemory_set_word(self):
     memory = Memory()
     value_tests = [ # (word_index, value, word)
@@ -83,7 +61,7 @@ class MemoryTestCase(unittest.TestCase):
       (3999, +113, [+1, 0, 0, 0, 1, 49]),
     ]
     for word_index, value, word in value_tests:
-      memory.set_word(word_index, value)
+      memory[word_index] = value
       self.assertEqual(memory.memory[word_index], word)
 
   def testMemory_cmp_memory(self):
@@ -108,9 +86,9 @@ class MemoryTestCase(unittest.TestCase):
       3999: [+1,  0,  0,  0,  1,  0]
     }
     for value, addr in test:
-      memory.set_word(addr, value)
-    self.assertTrue(memory.cmp_memory(memory_part))
+      memory[addr] = value
 
+    self.assertEqual(memory, memory_part)
 
     memory = Memory()
     test = ( # pairs (value, addr)
@@ -141,10 +119,10 @@ class MemoryTestCase(unittest.TestCase):
       3999: [+1,  0,  0,  0,  1,  0]
     }
     for value, addr in test:
-      memory.set_word(addr, value)
+      memory[addr] = value
 
-    self.assertFalse(memory.cmp_memory(memory_part_1))
-    self.assertFalse(memory.cmp_memory(memory_part_2))
+    self.assertNotEqual(memory, memory_part_1)
+    self.assertNotEqual(memory, memory_part_2)
 
   def test_positive_zero(self):
     self.assertEqual(Memory.positive_zero(), [+1, 0, 0, 0, 0, 0])

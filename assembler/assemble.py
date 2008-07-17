@@ -21,7 +21,7 @@ def assemble(lines, symbol_table):
       else:
         c_code = get_codes(line.operation)[0]
         word_value = (abs(word_value) | c_code) * Memory.sign(word_value)
-        memory.set_word(ca, word_value)
+        memory[ca] = word_value
         ca += 1
     elif line.operation == "EQU":
       pass
@@ -29,14 +29,14 @@ def assemble(lines, symbol_table):
       ca = parse_argument(line, symbol_table, ca)
     elif line.operation == "CON":
       try:
-        memory.set_word(ca, parse_argument(line, symbol_table, ca))
+        memory[ca] = parse_argument(line, symbol_table, ca)
       except AssemblySyntaxError, err:
         errors.append( (line.line_number, err) )
       else:
         ca += 1
     elif line.operation == "ALF":
       try:
-        memory.set_word(ca, parse_argument(line, symbol_table, ca))
+        memory[ca] = parse_argument(line, symbol_table, ca)
       except AssemblySyntaxError, err:
         errors.append( (line.line_number, err) )
       else:
@@ -55,6 +55,6 @@ def assemble(lines, symbol_table):
           if ca >= 4000:
             errors.append( (line.line_number, NoFreeSpaceForLiteralsError()) )
             break
-          memory.set_word(ca, value)
+          memory[ca] = value
           ca += 1
       return (memory, start_address, errors) # assemblying finished

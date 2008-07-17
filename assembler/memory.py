@@ -6,33 +6,27 @@ class Memory:
   def __init__(self):
     self.memory = [ self.positive_zero()[:] for _ in xrange(4000)]
 
-  def cmp_memory(self, memory_dict):
-    """Need for testing"""
-    positive_zero = self.positive_zero()
-    for i in xrange(4000):
-      if (i in memory_dict and self.memory[i] != memory_dict[i]) or\
-         (i not in memory_dict and self.memory[i] != positive_zero):
-        return False
+  def __getitem__(self, index):
+    return self.memory[index]
 
-    return True
-
-  def set_byte(self, word_index, byte_index, value):
-    """Get valid indexes!"""
-    self.memory[word_index][byte_index] = value
-
-  def set_instruction(self, word_index, a_code, i_code, f_code, c_code):
-    self.set_byte(word_index, 0, self.sign(a_code))
-    self.set_byte(word_index, 1, (self.sign(a_code) * a_code) / 64)
-    self.set_byte(word_index, 2, (self.sign(a_code) * a_code) % 64)
-    self.set_byte(word_index, 3, i_code)
-    self.set_byte(word_index, 4, f_code)
-    self.set_byte(word_index, 5, c_code)
-
-  def set_word(self, word_index, value):
+  def __setitem__(self, index, value):
     word = self.dec2mix(value)
-    for i in xrange(6):
-      self.set_byte(word_index, i, word[i])
 
+    self.memory[index][:] = word[:]
+
+  def __cmp__(self, memory_dict):
+    """Need for testing"""
+    
+    positive_zero = self.positive_zero()
+    
+    if not isinstance(memory_dict, dict) or \
+       any( (i     in memory_dict and self[i] != memory_dict[i]) or
+            (i not in memory_dict and self[i] != positive_zero)
+            for i in xrange(4000)):
+      return 1
+    else:
+      return 0
+    
   @staticmethod
   def mix2dec(word):
     return word[0] * reduce(lambda x,y: (x << 6) | y, word[1:], 0)
