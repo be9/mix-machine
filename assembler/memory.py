@@ -1,10 +1,14 @@
+__all__ = [ 'Memory' ]
+
+MEMORY_SIZE = 4000
+
 class Memory:
   @staticmethod
   def positive_zero():
     return [+1] + [0] * 5
 
   def __init__(self):
-    self.memory = [ self.positive_zero()[:] for _ in xrange(4000)]
+    self.memory = [ self.positive_zero()[:] for _ in xrange(MEMORY_SIZE)]
 
   def __getitem__(self, index):
     return self.memory[index]
@@ -12,7 +16,8 @@ class Memory:
   def __setitem__(self, index, value):
     word = self.dec2mix(value)
 
-    self.memory[index][:] = word[:]
+    if self.is_valid_address(index):
+      self.memory[index][:] = word[:]
 
   def __cmp__(self, memory_dict):
     """Need for testing"""
@@ -22,10 +27,13 @@ class Memory:
     if not isinstance(memory_dict, dict) or \
        any( (i     in memory_dict and self[i] != memory_dict[i]) or
             (i not in memory_dict and self[i] != positive_zero)
-            for i in xrange(4000)):
+            for i in xrange(MEMORY_SIZE)):
       return 1
     else:
       return 0
+  
+  def is_valid_address(self, adr):
+    return 0 <= adr < len(self.memory)
     
   @staticmethod
   def mix2dec(word):

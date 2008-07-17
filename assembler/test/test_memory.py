@@ -127,6 +127,13 @@ class MemoryTestCase(unittest.TestCase):
   def test_positive_zero(self):
     self.assertEqual(Memory.positive_zero(), [+1, 0, 0, 0, 0, 0])
 
+  def test_validness(self):
+    for adr in (0,1,333,3999):
+      self.assertTrue(Memory().is_valid_address(adr))
+    
+    for adr in (-1,4000,4001):
+      self.assertFalse(Memory().is_valid_address(adr))
+
 suite = unittest.makeSuite(MemoryTestCase, 'test')
 
 if __name__ == "__main__":

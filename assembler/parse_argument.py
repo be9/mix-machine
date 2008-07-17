@@ -27,16 +27,9 @@ from operations import *
 from errors import *
 from memory import Memory
 
-def parse_argument(line, symbol_table, cur_addr):
+def parse_argument(line, symbol_table, cur_addr, npass = 1):
 # + EQUAL           ::==  "="
-  arg_parser = ArgumentParser(line, symbol_table, cur_addr)
-  return arg_parser.parse()
-
-
-class HaveLiteralException(Exception):
-  def __init__(self, value):
-    self.value = value
-
+  return ArgumentParser(line, symbol_table, cur_addr, npass).parse()
 
 class ArgumentParser:
   unary_ops = "+ -".split(" ")
@@ -72,13 +65,13 @@ class ArgumentParser:
     "@":  52,     ";":  53,     ":":  54,     "'":  55
   }
 
-  def __init__(self, line, symbol_table, cur_addr):
+  def __init__(self, line, symbol_table, cur_addr, npass = 1):
     self.line = line
     self.symbol_table = symbol_table
     self.cur_addr = cur_addr
+    self.npass = npass
+    
     self.split() # create self.tokens and ct=0 (current token)
-    self.literal_number = 0 # current literal number for return from symbol_table.literals
-
 
   def split(self):
     """Create tokens"""
@@ -327,35 +320,26 @@ class ArgumentParser:
   def try_literal(self):
     if self.get() != "=":
       return None
+    
+    self.next()
+    res = self.try_w_exp()
+    if res is None:
+      raise ExpectedWExpError(self.line.argument)
     else:
-      self.next()
-      res = self.try_w_exp()
-      if res is None:
-        raise ExpectedWExpError(self.line.argument)
+      if self.get() != "=":
+        raise NoEqualSignError(self.get_all_before_this())
       else:
-        if self.get() != "=":
-          raise NoEqualSignError(self.get_all_before_this())
-        else:
+        # line of expression must be less than 10 digits
+        length = self.line.argument.find("=", 1) - 1
+        if length >= 10:
+          raise TooLongLiteralError(self.line.argument[1 : length + 1])
 
-          # line of expression must be less than 10 digits
-          length = self.line.argument.find("=", 1) - 1
-          if length >= 10:
-            raise TooLongLiteralError(self.line.argument[1 : length + 1])
+        self.next()
 
-          self.next()
+        if self.npass == 1:
+          return 0
 
-          if self.symbol_table.end_address is None:
-            # we raise exception for symbol_table.__init__
-            raise HaveLiteralException(res)
-          else:
-            # we return value for assemble()
-            # res must be equal to symbol_table.literals[literal_number]
-            assert(res, self.symbol_table.literals[self.symbol_table.literal_number])
-
-            res = self.symbol_table.end_address + self.symbol_table.literal_number
-            self.symbol_table.literal_number += 1
-            return res
-
+        return self.symbol_table.add_literal(res)
 
   def try_addr_part(self):
     """This function DO SELF.NEXT()"""
