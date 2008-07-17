@@ -61,26 +61,23 @@ def main():
     file_out.close()
     return ERR_SYNTAX[0]
 
+  asm = Assembler()
+  asm.run(lines)
   
-  # first we need to create table of labels
-  symbol_table = SymbolTable(lines)
+  memory_table = asm.memory
+  start_address = asm.start_address
+  errors = asm.errors
 
-  if len(symbol_table.errors) > 0:
-    print_syntax_errors(symbol_table.errors)
-  else:
-    # now we have list of lines with correct labels and operations
-    memory_table, start_address, errors = assemble(lines, symbol_table)
-
-    print "Errors:"
-    print_syntax_errors(errors)
-    if start_address is not None:
-      print "Start address:", start_address
-    if memory_table is not None:
-      print "Memory:"
-      for i in xrange(len(memory_table.memory)):
-        word = memory_table.memory[i]
-        # print "%04i: %s %02i %02i %02i %02i %02i (%010i)" % tuple([i, sign] + word[1:] + [abs(mix2dec(word))])
-        print "%+2i %02i %02i %02i %02i %02i" % tuple(word)
+  print "Errors:"
+  print_syntax_errors(errors)
+  if start_address is not None:
+    print "Start address:", start_address
+  if memory_table is not None:
+    print "Memory:"
+    for i in xrange(len(memory_table.memory)):
+      word = memory_table.memory[i]
+      # print "%04i: %s %02i %02i %02i %02i %02i (%010i)" % tuple([i, sign] + word[1:] + [abs(mix2dec(word))])
+      print "%+2i %02i %02i %02i %02i %02i" % tuple(word)
   #write_ma(file_out, [23,453,124])
   file_out.close()
 	
