@@ -64,6 +64,7 @@ class ParserTestCase(unittest.TestCase):
     self.checkLine(parse_line("label\tmove\t123\t* comment"), 'LABEL', 'MOVE', '123')
     self.checkLine(parse_line(" equ arg"),                    None, 'EQU', 'ARG')
     self.checkLine(parse_line(" equ arg comment"),            None, 'EQU', 'ARG')
+    self.checkLine(parse_line('msg alf "ABC  "'),            'MSG', 'ALF', '"ABC  "')
 
     self.assertRaises(MissingOperationError, parse_line, "labelonly")
     self.assertRaises(UnknownOperationError, parse_line, "label $^%$")
