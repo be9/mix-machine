@@ -17,26 +17,50 @@ class Line:
     """ Mostly needed for tests """
     return cmp(self.__str__(), another.__str__())
 
+def split_line(line):
+  sep = (' ', '\t', '\n')
+  words = []
+  word = ''
+  i = 0
+  while i < len(line):
+    if line[i] in sep:
+      if word != '':
+        words.append(word)
+        word = ''
+    else:
+      if line[i] == '"':
+        inverted_end = line.find('"', i + 1)
+        if inverted_end == -1:
+          inverted_end = len(line) - 1
+        word += line[i:inverted_end + 1]
+        i = inverted_end
+      else:
+        word += line[i]
+    i += 1
+  if word != '':
+    words.append(word)
+  return words
+
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):
-  split_line = text_line.upper().split()
+  words = split_line(text_line.upper())
 
   # empty line or comment line
-  if len(split_line) == 0 or text_line[0] == '*':
+  if len(words) == 0 or text_line[0] == '*':
     return None
 
   # line without a label
   if text_line[0].isspace():
-    split_line.insert(0, None)
+    words.insert(0, None)
 
-  if len(split_line) < 2:
+  if len(words) < 2:
     raise MissingOperationError
 
   # line without an operand
-  if len(split_line) < 3:
-    split_line.append(None)
+  if len(words) < 3:
+    words.append(None)
 
-  label, operation, argument = split_line[0:3]
+  label, operation, argument = words[0:3]
 
   # check label
   if label is not None:
