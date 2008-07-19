@@ -28,7 +28,6 @@ from errors import *
 from memory import Memory
 
 def parse_argument(line, symbol_table, cur_addr, npass = 1):
-# + EQUAL           ::==  "="
   return ArgumentParser(line, symbol_table, cur_addr, npass).parse()
 
 class ArgumentParser:
@@ -75,44 +74,57 @@ class ArgumentParser:
 
   def split(self):
     """Create tokens"""
+    # init
     self.tokens = []
     self.ct = 0 # current token
+
     s = self.line.argument
     if s is None:
       return
-    splitters = ", + - * / : ( ) \" = \n \r".split(" ")
+
+    splitters = ", + - * / : ( ) = \" \n \r".split(" ")
+
     cur_token = ""
     i = 0
     while i < len(s):
-      if s[i] not in splitters:
-        cur_token += s[i]
-      else:
+      if s[i] in splitters:
+
+        # append cur_token
+        self.tokens.append(cur_token)
+        cur_token = ''
+
+        # some variants
         if s[i] == '"':
-          inverted_end = s.find('"', i + 1)
-          if inverted_end == -1:
-            no_end = True
-            inverted_end = len(s) - 1
+          # inverted string
+          end = s.find('"', i + 1)
+          if end == -1:
+            self.tokens += ['"', s[i+1:]]
+            i = len(s) - 1
           else:
-            no_end = False
-          for word in (cur_token, '"', s[i + 1:inverted_end]):
-            if word != '':
-              self.tokens.append(word)
-          if not no_end:
-              self.tokens.append('"')
-          i = inverted_end
-        else:
-          if cur_token != "": 
-            self.tokens.append(cur_token)
-          cur_token = ""
-          if s[i] == "/" and i + 1 < len(s) and s[i+1] == "/":
-            self.tokens.append("//")
-            i += 1
-          else:
-            if s[i] not in ('\n', '\r'):
-              self.tokens.append(s[i])
+            self.tokens += ['"', s[i+1:end], '"']
+            i = end
+
+        elif s[i] == '/' and (i + 1 < len(s) and s[i + 1] == '/'): # <=> s[i:i+2] == '//'
+          # special division
+          self.tokens.append('//')
+          i += 1
+
+        elif s[i] not in ('\n', '\r'):
+          # basic sign ( , + - * / : ( ) = )
+          self.tokens.append(s[i])
+
+      else:
+        cur_token += s[i]
       i += 1
-    if cur_token != "":
-      self.tokens += [cur_token]
+
+    # add accumulated cur_token
+    self.tokens.append(cur_token)
+    # remove all ''
+    try:
+      while True:
+        self.tokens.remove('')
+    except ValueError:
+      pass
 
 
   def parse(self):
