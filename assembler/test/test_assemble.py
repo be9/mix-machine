@@ -646,6 +646,7 @@ class AssembleTestCase(unittest.TestCase):
         (6, RepeatedLabelError("123456789L")),
         (11, LineNumberError(4000)),
         (12, LineNumberError(4001)),
+        (10, InvalidAddrError(4002)),
         (13, NoFreeSpaceForLiteralsError())
       ]
     )

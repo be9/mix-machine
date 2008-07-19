@@ -80,7 +80,7 @@ class ArgumentParser:
     s = self.line.argument
     if s is None:
       return
-    splitters = ", + - * / : ( ) \" =".split(" ")
+    splitters = ", + - * / : ( ) \" = \n \r".split(" ")
     cur_token = ""
     i = 0
     while i < len(s):
@@ -90,10 +90,15 @@ class ArgumentParser:
         if s[i] == '"':
           inverted_end = s.find('"', i + 1)
           if inverted_end == -1:
+            no_end = True
             inverted_end = len(s) - 1
-          for word in (cur_token, '"', s[i + 1:inverted_end], '"'):
+          else:
+            no_end = False
+          for word in (cur_token, '"', s[i + 1:inverted_end]):
             if word != '':
               self.tokens.append(word)
+          if not no_end:
+              self.tokens.append('"')
           i = inverted_end
         else:
           if cur_token != "": 
@@ -103,7 +108,8 @@ class ArgumentParser:
             self.tokens.append("//")
             i += 1
           else:
-            self.tokens.append(s[i])
+            if s[i] not in ('\n', '\r'):
+              self.tokens.append(s[i])
       i += 1
     if cur_token != "":
       self.tokens += [cur_token]
@@ -282,12 +288,9 @@ class ArgumentParser:
           raise NoClosedBracketError(self.get_all_before_this())
         else:
           self.next()
-          if 0 <= exp <= 45 and (exp / 8) <= (exp % 8): # 45 = 8*5 + 5
-            return exp
-          else:
-            raise InvalidFieldSpecError(exp)
+          return exp
 
-
+ 
   def try_w_exp(self):
     """This function DO SELF.NEXT()"""
     word = Memory.positive_zero()
@@ -302,7 +305,8 @@ class ArgumentParser:
       field = 5 # it's property of w-exp that empty f-part means not default value but 0:5
       self.next()
 
-    Memory.apply_to_word(value, word, field)
+    if Memory.apply_to_word(value, word, field) is None:
+      raise InvalidFieldSpecError(field)
 
     while True:
       if self.get() != ",":
@@ -321,8 +325,8 @@ class ArgumentParser:
         field = get_codes(self.line.operation)[1]
         self.next()
 
-      Memory.apply_to_word(value, word, field)
-
+      if Memory.apply_to_word(value, word, field) is None:
+        raise InvalidFieldSpecError(field)
     return Memory.mix2dec(word)
 
 
@@ -372,6 +376,12 @@ class ArgumentParser:
       # done self.next() !!!
       if self.get() is not None:
         raise UnexpectedStrInTheEndError(self.get_all_forward_from_this())
+      if not (abs(addr_part < 4000)):
+        raise InvalidAddrError(addr_part)
+      if not (0 <= f_part <= 63):
+        raise InvalidFieldSpecError(f_part)
+      if not (0 <= ind_part <= 6):
+        raise InvalidIndError(ind_part)
       return Memory.sign(addr_part) * (abs(addr_part) * 64**3 + ind_part * 64**2 + f_part * 64)
     elif self.line.operation in ("EQU", "ORIG", "CON", "END"):
       res = self.try_w_exp()

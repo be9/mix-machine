@@ -74,6 +74,12 @@ class NoEqualSignError(AssemblySyntaxError):
 class InvalidFieldSpecError(AssemblySyntaxError):
   """Invalid field specification (%s)"""
 
+class InvalidIndError(AssemblySyntaxError):
+  """Invalid index (%s)"""
+
+class InvalidAddrError(AssemblySyntaxError):
+  """Invalid address (%s)"""
+
 class ExpectedWExpError(AssemblySyntaxError):
   """Expected correct W-expression (%s)"""
 

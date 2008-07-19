@@ -18,7 +18,8 @@ class Line:
     return cmp(self.__str__(), another.__str__())
 
 def split_line(line):
-  sep = (' ', '\t', '\n')
+  has_label = len(line) > 0 and not line[0].isspace()
+  sep = (' ', '\t', '\n', '\r')
   words = []
   word = ''
   i = 0
@@ -27,6 +28,9 @@ def split_line(line):
       if word != '':
         words.append(word)
         word = ''
+        if len(words) == (2 if has_label else 1) and words[-1] == 'ALF':
+          words.append(line[i+1:])
+          return words
     else:
       if line[i] == '"':
         inverted_end = line.find('"', i + 1)

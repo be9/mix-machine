@@ -63,13 +63,14 @@ class ParseArgumentTestCase(unittest.TestCase):
       Memory.mix2dec([+1, 0, 0, 0, 2, 0]))
     self.assertEqual(parse_argument(Line(None, 'STJ', '(2:3)'), self.MockSymbolTable(), 10),
       Memory.mix2dec([+1, 0, 0, 0, 19, 0]))
-    self.assertEqual(parse_argument(Line(None, 'STJ', ',*(2:3)'), self.MockSymbolTable(), 10),
-      Memory.mix2dec([+1, 0, 0, 10, 19, 0]))
+    self.assertEqual(parse_argument(Line(None, 'STJ', ',*(2:3)'), self.MockSymbolTable(), 5),
+      Memory.mix2dec([+1, 0, 0, 5, 19, 0]))
 
     self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'LDA', '+'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'LDA', '+*-,2(5)'), self.MockSymbolTable(), 0)
     self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'LDA', '+*-2,2(-1)'), self.MockSymbolTable(), 0)
-    self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'LDA', '+*-2,2(3:2)'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidAddrError, parse_argument, Line(None, 'LDA', '5000,2'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidIndError, parse_argument, Line(None, 'LDA', '2000,-1'), self.MockSymbolTable(), 0)
     self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', 'LABB'), self.MockSymbolTable(), 0)
     self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', '2+3(9)LABB'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3()'), self.MockSymbolTable(), 0)
@@ -117,7 +118,7 @@ class ParseArgumentTestCase(unittest.TestCase):
     self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO%%%'), self.MockSymbolTable(), 0),
       135582544)
 
-    self.assertRaises(UnquotedStringError, parse_argument, Line(None, 'ALF', '"HELLO'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnquotedStringError, parse_argument, Line(None, 'ALF', '"FAIL'), self.MockSymbolTable(), 0)
     for s in "^ rh%% hell!".split():
       self.assertRaises(InvalidCharError, parse_argument, Line(None, 'ALF', s), self.MockSymbolTable(), 0)
     self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'ALF', '"TEST"SMTH'), self.MockSymbolTable(), 0)
