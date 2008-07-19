@@ -16,7 +16,7 @@
 # + IND_PART       n::==  NONE | ( "," EXP )
 # + F_PART         n::==  NONE | ( "(" EXP ")" )
 # + W_EXP          n::==  EXP F_PART [ "," EXP F_PART ]*
-#   LITERAL         ::==  "=" W_EXP "="
+# + LITERAL         ::==  "=" W_EXP "="
 # + ADDR_PART      n::==  NONE | EXP | FUTURE_SYMBOL | LITERAL
 # + ARGUMENT        ::== ( ADDR_PART IND_PART F_PART ) |    # if is_instruction(operation)
 # +                      W_EXP |        # if operation in("EQU", "ORIG", "CON", "END")
@@ -87,14 +87,23 @@ class ArgumentParser:
       if s[i] not in splitters:
         cur_token += s[i]
       else:
-        if cur_token != "": 
-          self.tokens.append(cur_token)
-        cur_token = ""
-        if s[i] == "/" and i + 1 < len(s) and s[i+1] == "/":
-          self.tokens.append("//")
-          i += 1
+        if s[i] == '"':
+          inverted_end = s.find('"', i + 1)
+          if inverted_end == -1:
+            inverted_end = len(s) - 1
+          for word in (cur_token, '"', s[i + 1:inverted_end], '"'):
+            if word != '':
+              self.tokens.append(word)
+          i = inverted_end
         else:
-          self.tokens.append(s[i])
+          if cur_token != "": 
+            self.tokens.append(cur_token)
+          cur_token = ""
+          if s[i] == "/" and i + 1 < len(s) and s[i+1] == "/":
+            self.tokens.append("//")
+            i += 1
+          else:
+            self.tokens.append(s[i])
       i += 1
     if cur_token != "":
       self.tokens += [cur_token]

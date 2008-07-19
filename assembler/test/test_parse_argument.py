@@ -29,8 +29,12 @@ class ParseArgumentTestCase(unittest.TestCase):
       []
     )
     self.check_split(
-      Line(None, "ALF", '"HELLO"'),
-      ['"', 'HELLO', '"']
+      Line(None, "ALF", '"HEL 0"'),
+      ['"', 'HEL 0', '"']
+    )
+    self.check_split(
+      Line(None, "ALF", '"A B C D E F"'),
+      ['"', 'A B C D E F', '"']
     )
 
   class MockSymbolTable:
