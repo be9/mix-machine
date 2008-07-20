@@ -64,10 +64,10 @@ class ParserTestCase(unittest.TestCase):
     self.checkLine(parse_line("label\tmove\t123\t* comment"), 'LABEL', 'MOVE', '123')
     self.checkLine(parse_line(" equ arg"),                    None, 'EQU', 'ARG')
     self.checkLine(parse_line(" equ arg comment"),            None, 'EQU', 'ARG')
-    self.checkLine(parse_line('msg alf "ABC  "'),             'MSG', 'ALF', '"ABC  "')
-    self.checkLine(parse_line('msg alf "ABC  "aa'),           'MSG', 'ALF', '"ABC  "AA')
+    self.checkLine(parse_line('msg alf   "ABC  "'),             'MSG', 'ALF', '"ABC  "')
+    self.checkLine(parse_line('msg alf   "ABC  " aa'),           'MSG', 'ALF', '"ABC  " AA')
     self.checkLine(parse_line('msg alf aa"ABC  "'),           'MSG', 'ALF', 'AA"ABC  "')
-    self.checkLine(parse_line('msg alf "ABC  '),              'MSG', 'ALF', '"ABC  ')
+    self.checkLine(parse_line('msg alf    "ABC  '),              'MSG', 'ALF', '"ABC  ')
     self.checkLine(parse_line('msg alf A B C comment'),       'MSG', 'ALF', 'A B C COMMENT')
 
     self.assertRaises(MissingOperationError, parse_line, "labelonly")

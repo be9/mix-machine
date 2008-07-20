@@ -17,6 +17,12 @@ class Line:
     """ Mostly needed for tests """
     return cmp(self.__str__(), another.__str__())
 
+def find_first_not_space(line, index):
+  for char in line[index:]:
+    if not char.isspace():
+      return char
+  return None
+
 def split_line(line):
   has_label = len(line) > 0 and not line[0].isspace()
   sep = (' ', '\t', '\n', '\r')
@@ -28,8 +34,12 @@ def split_line(line):
       if word != '':
         words.append(word)
         word = ''
+        # check if operation is ALF
         if len(words) == (2 if has_label else 1) and words[-1] == 'ALF':
-          words.append(line[i+1:])
+          if find_first_not_space(line, i + 1) == '"':
+            words.append(line[ line.find('"', i + 1) :])
+          else:
+            words.append(line[ i + 1 :])
           return words
     else:
       if line[i] == '"':
