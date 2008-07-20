@@ -32,7 +32,7 @@ class ParserTestCase(unittest.TestCase):
   * * bad comment""".split("\n")
 
     for line in bad_empties:
-      self.assertRaises(AssemblySyntaxError, parse_line, line)
+      self.assertRaises(AssemblyError, parse_line, line)
 
   def testLabels(self):
 

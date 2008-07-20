@@ -8,7 +8,7 @@ from errors import *
 from assemble import Assembler
 
 
-def print_syntax_errors(errors):
+def print_errors(errors):
   for error in errors:
     print "%04i: %s" % (error[0], error[1])
 
@@ -33,7 +33,7 @@ class CompleteProgramsTestCase(unittest.TestCase):
       lines, errors = parse_lines(f.readlines())
       if errors != []:
         print "------------------------------\n",fname, '\nParse_line errors:'
-        print_syntax_errors(errors)
+        print_errors(errors)
       self.assertEqual(errors, [])
 
       asm = Assembler()
@@ -41,7 +41,7 @@ class CompleteProgramsTestCase(unittest.TestCase):
 
       if asm.errors != []:
         print "------------------------------\n",fname, '\nAssemble errors:'
-        print_syntax_errors(asm.errors)
+        print_errors(asm.errors)
       self.assertEqual(asm.errors, [])
 
   def __str__(self):

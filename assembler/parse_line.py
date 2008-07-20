@@ -92,7 +92,7 @@ def parse_lines(lines):
   for i in xrange(len(lines)):
     try:
       line = parse_line(lines[i])
-    except AssemblySyntaxError, error:
+    except AssemblyError, error:
       errors.append( (i + 1, error) )
     else:
       if line is not None:
