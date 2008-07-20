@@ -304,7 +304,13 @@ class AssembleTestCase(unittest.TestCase):
         Line(None,  "FDIV",   "0",  148  ),
         Line(None,  "FLOT",   "0",  149  ),
         Line(None,  "FIX",    "0",  150  ),
-        Line(None,  "END",    "0",  151  )
+        Line(None,  "SLB",    "0",  151  ),
+        Line(None,  "SRB",    "0",  152  ),
+        Line(None,  "JAE",    "0",  153  ),
+        Line(None,  "JAO",    "0",  154  ),
+        Line(None,  "JXE",    "0",  155  ),
+        Line(None,  "JXO",    "0",  156  ),
+        Line(None,  "END",    "0",  157  )
       ],
       labels = {},
       local_labels = {},
@@ -459,6 +465,12 @@ class AssembleTestCase(unittest.TestCase):
         147 : [+1, 0, 0, 0, 6,  4 ],
         148 : [+1, 0, 0, 0, 6,  5 ],
         149 : [+1, 0, 0, 0, 7,  5 ],
+        150 : [+1, 0, 0, 0, 6,  6 ],
+        151 : [+1, 0, 0, 0, 7,  6 ],
+        152 : [+1, 0, 0, 0, 6, 40 ],
+        153 : [+1, 0, 0, 0, 7, 40 ],
+        154 : [+1, 0, 0, 0, 6, 47 ],
+        155 : [+1, 0, 0, 0, 7, 47 ],
       },
       start_address = 0,
       errors = []
