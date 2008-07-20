@@ -91,6 +91,8 @@ class ParseArgumentTestCase(unittest.TestCase):
       Memory.mix2dec([+1, 0, 0, 0, 0, 1]))
     self.assertEqual(parse_argument(Line('LABEL', 'CON', '0'), self.MockSymbolTable(), 0),
       Memory.mix2dec([+1, 0, 0, 0, 0, 0]))
+    self.assertEqual(parse_argument(Line('LABEL', 'CON', '2//3'), self.MockSymbolTable(), 0),
+      Memory.mix2dec([+1, 42, 42, 42, 42, 42]))
 
     self.assertRaises(ExpectedSExpError, parse_argument, Line('LABEL', 'CON', '+'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedSExpError, parse_argument, Line('LABEL', 'CON', '+SYM*'), self.MockSymbolTable(), 0)
