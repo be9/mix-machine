@@ -298,8 +298,13 @@ class AssembleTestCase(unittest.TestCase):
         Line(None,  "CMP5",   "0",  142  ),
         Line(None,  "CMP6",   "0",  143  ),
         Line(None,  "CMPX",   "0",  144  ),
-        Line(None,  "HLT",    "0",  145  ),
-        Line(None,  "END",    "0",  146  )
+        Line(None,  "FADD",   "0",  145  ),
+        Line(None,  "FSUB",   "0",  146  ),
+        Line(None,  "FMUL",   "0",  147  ),
+        Line(None,  "FDIV",   "0",  148  ),
+        Line(None,  "FLOT",   "0",  149  ),
+        Line(None,  "FIX",    "0",  150  ),
+        Line(None,  "END",    "0",  151  )
       ],
       labels = {},
       local_labels = {},
@@ -448,7 +453,12 @@ class AssembleTestCase(unittest.TestCase):
         141 : [+1, 0, 0, 0, 5, 61 ],
         142 : [+1, 0, 0, 0, 5, 62 ],
         143 : [+1, 0, 0, 0, 5, 63 ],
-        144 : [+1, 0, 0, 0, 2, 5 ]
+        144 : [+1, 0, 0, 0, 6,  1 ],
+        145 : [+1, 0, 0, 0, 6,  2 ],
+        146 : [+1, 0, 0, 0, 6,  3 ],
+        147 : [+1, 0, 0, 0, 6,  4 ],
+        148 : [+1, 0, 0, 0, 6,  5 ],
+        149 : [+1, 0, 0, 0, 7,  5 ],
       },
       start_address = 0,
       errors = []

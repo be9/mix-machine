@@ -15,11 +15,9 @@ def print_errors(errors):
 class CompleteProgramsTestCase(unittest.TestCase):
   def test(self):
     dir = os.path.join(os.path.dirname(__file__), 'mix_programs')
- 
+
     #IGNORED = 'isains.mix Test.mix FloatOverflow.mix 1_3_2_Ex14.mix primes.mix 1_3_2_ProgM_ex3.mix'.split()
     IGNORED = []
-    IGNORED.append('FloatOverflow.mix') # floating point math
-    IGNORED.append('Test.mix') # floating point math
     IGNORED.append('permutations.mix') # bad labels SIZE and START
     IGNORED.append('1_3_2_Ex14.mix') # bad label Y
 

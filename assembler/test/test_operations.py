@@ -18,14 +18,14 @@ class OperationsTestCase(unittest.TestCase):
     self.assertEqual(get_codes('BLAH'), (None,5))
 
   def test_is_valid_operation(self):
-    for op in "LDA CMPX JAN ent4 cmpA EQU ORIG END CON ALF".split():
+    for op in "LDA CMPX JAN ent4 cmpA EQU ORIG END CON ALF fmul".split():
       self.assertTrue(is_valid_operation(op))
     
     for op in "BLAH QQQ".split():
       self.assertFalse(is_valid_operation(op))
 
   def test_is_instruction(self):
-    for op in "LDA CMPX JAN ent4 cmpA".split():
+    for op in "LDA CMPX JAN ent4 cmpA FaDd FcMp".split():
       self.assertTrue(is_instruction(op))
     
     for op in " EQU ORIG END CON ALF BLAH QQQ".split():
@@ -39,7 +39,7 @@ class OperationsTestCase(unittest.TestCase):
       self.assertFalse(is_arg_required(op))
 
   def test_fixed_field(self):
-    for op in "num HLT SLA src jmp enn1 ennx".split():
+    for op in "num HLT SLA src jmp enn1 ennx fdiv flot fix fadd fsub fmul fcmp".split():
       self.assertTrue(is_field_fixed(op))
     
     for op in "BLAH QQQ con orig cmpx cmp1 jred move div nop".split():
