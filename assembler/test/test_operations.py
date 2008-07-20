@@ -38,6 +38,13 @@ class OperationsTestCase(unittest.TestCase):
     for op in " STA NOP ALF BLAH QQQ".split():
       self.assertFalse(is_arg_required(op))
 
+  def test_fixed_field(self):
+    for op in "num HLT SLA src jmp enn1 ennx".split():
+      self.assertTrue(is_field_fixed(op))
+    
+    for op in "BLAH QQQ con orig cmpx cmp1 jred move div nop".split():
+      self.assertFalse(is_field_fixed(op))
+
 suite = unittest.makeSuite(OperationsTestCase, 'test')
 
 if __name__ == "__main__":

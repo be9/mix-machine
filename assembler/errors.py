@@ -92,3 +92,6 @@ class TooLongLiteralError(AssemblyError):
 
 class NoFreeSpaceForLiteralsError(AssemblyError):
   """After END there are no memory to store all literals"""
+
+class FieldFixedError(AssemblyError):
+  """Field part for this instruction is fixed (%s), can't be changed"""

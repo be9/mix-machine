@@ -388,12 +388,19 @@ class ArgumentParser:
       # done self.next() !!!
       if self.get() is not None:
         raise UnexpectedStrInTheEndError(self.get_all_forward_from_this())
+
       if not (abs(addr_part < 4000)):
         raise InvalidAddrError(addr_part)
+
       if not (0 <= f_part <= 63):
         raise InvalidFieldSpecError(f_part)
+      # check if field fixed for this instruction and f_part is different from default
+      if is_field_fixed(self.line.operation) and f_part != get_codes(self.line.operation)[1]:
+        raise FieldFixedError(self.line.operation)
+
       if not (0 <= ind_part <= 6):
         raise InvalidIndError(ind_part)
+
       return Memory.sign(addr_part) * (abs(addr_part) * 64**3 + ind_part * 64**2 + f_part * 64)
     elif self.line.operation in ("EQU", "ORIG", "CON", "END"):
       res = self.try_w_exp()

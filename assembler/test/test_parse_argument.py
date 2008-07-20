@@ -79,6 +79,7 @@ class ParseArgumentTestCase(unittest.TestCase):
     self.assertRaises(NoClosedBracketError, parse_argument, Line(None, 'LDA', '2+3(2'), self.MockSymbolTable(), 0)
     self.assertRaises(NoEqualSignError, parse_argument, Line(None, 'LDA', '=SYM*2+5'), self.MockSymbolTable(), 0)
     self.assertRaises(TooLongLiteralError, parse_argument, Line(None, 'LDA', '=1000000000='), self.MockSymbolTable(), 0)
+    self.assertRaises(FieldFixedError, parse_argument, Line(None, 'HLT', '(5)'), self.MockSymbolTable(), 0)
 
 
   def test_directives(self):
