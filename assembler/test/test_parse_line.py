@@ -32,7 +32,7 @@ class ParserTestCase(unittest.TestCase):
   * * bad comment""".split("\n")
 
     for line in bad_empties:
-      self.assertRaises(AssemblySyntaxError, parse_line, line)
+      self.assertRaises(AssemblyError, parse_line, line)
 
   def testLabels(self):
 
@@ -56,12 +56,19 @@ class ParserTestCase(unittest.TestCase):
   def testFullLines(self):
     self.checkLine(parse_line('label nop'),                   'LABEL', 'NOP', None)
     self.checkLine(parse_line('9H nop'),                      '9H', 'NOP', None)
-    self.checkLine(parse_line(' nop'),                        None, 'NOP', None)
+    self.checkLine(parse_line(' nop\n'),                        None, 'NOP', None)
     self.checkLine(parse_line("\tnop"),                       None, 'NOP', None)
     self.checkLine(parse_line("\tnop arg"),                   None, 'NOP', 'ARG')
     self.checkLine(parse_line("\tnop arg comment"),           None, 'NOP', 'ARG')
     self.checkLine(parse_line("label nop arg comment"),       'LABEL', 'NOP', 'ARG')
     self.checkLine(parse_line("label\tmove\t123\t* comment"), 'LABEL', 'MOVE', '123')
+    self.checkLine(parse_line(" equ arg"),                    None, 'EQU', 'ARG')
+    self.checkLine(parse_line(" equ arg comment"),            None, 'EQU', 'ARG')
+    self.checkLine(parse_line('msg alf   "ABC  "'),             'MSG', 'ALF', '"ABC  "')
+    self.checkLine(parse_line('msg alf   "ABC  " aa'),           'MSG', 'ALF', '"ABC  " AA')
+    self.checkLine(parse_line('msg alf aa"ABC  "'),           'MSG', 'ALF', 'AA"ABC  "')
+    self.checkLine(parse_line('msg alf    "ABC  '),              'MSG', 'ALF', '"ABC  ')
+    self.checkLine(parse_line('msg alf A B C comment'),       'MSG', 'ALF', 'A B C COMMENT')
 
     self.assertRaises(MissingOperationError, parse_line, "labelonly")
     self.assertRaises(UnknownOperationError, parse_line, "label $^%$")
@@ -70,6 +77,9 @@ class ParserTestCase(unittest.TestCase):
     self.assertRaises(UnknownOperationError, parse_line, "\tqq* arg")
     self.assertRaises(UnknownOperationError, parse_line, "\tqqq arg")
     self.assertRaises(UnknownOperationError, parse_line, " mov arg comment")
+    self.assertRaises(ArgumentRequiredError, parse_line, " equ")
+    self.assertRaises(ArgumentRequiredError, parse_line, " orig")
+
 
   def checkLine(self, line, label, operation, argument):
     self.assertEqual( (line.label, line.operation, line.argument), (label, operation, argument) )

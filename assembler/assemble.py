@@ -2,50 +2,118 @@
 
 # assemble parsed lines to memory
 
-from symbol_table import *
-from operations import *
+import operations
+from errors import *
+from parse_argument import parse_argument
 from memory import Memory
+from symbol_table import SymbolTable
 
-def assemble(lines, symbol_table):
-  """Now we need to assemble program"""
-  errors = []
-  memory = Memory()
-  ca = 0 # current address (*)
-  for line in lines:
-    # all by 10th and 11th rules from Donald Knuth's book
-    if is_instruction(line.operation):
-      c_code, f_code_default = get_codes(line.operation)
+class Assembler:
+  def __init__(self, symtable = None):
+    self.memory = Memory()
+    self.symtable = SymbolTable() if symtable is None else symtable
+    self.end_address = None
 
-      # (in the future) a_code, i_code, f_code = parse_argument(line, symbol_table)
+  def run(self, lines, only = None):
+    self.start_address = None
+    self.errors = []
+    self.error_set = set()
+
+    if only != 2:
+      self.ca, self.npass = 0, 1
+      self._do_pass(lines)
+
+    if only != 1:
+      self.ca, self.npass = 0, 2
+      self.symtable.literal_address = self.end_address
+      self._do_pass(lines)
+
+  def _do_pass(self, lines):
+    for line in lines:
       try:
-        a_part = parse_argument(line, symbol_table)
-      except AssemblySyntaxError, err:
-        errors.append( (line.line_number, err) )
-      else:
-        i_code = 0
-        f_code = f_code_default
-        memory.set_instruction(ca, a_part, i_code, f_code, c_code)
-        ca += 1
-    elif line.operation == "EQU":
-      pass
-    elif line.operation == "ORIG":
-      ca = parse_argument(line, symbol_table)
-    elif line.operation == "CON":
+        if self.npass == 1 and line.operation != "EQU": 
+          self._add_label(line)
+
+        if operations.is_instruction(line.operation):
+          self._do_instruction(line)
+        else:
+          Assembler.__dict__["_do_" + line.operation.lower()](self, line)
+
+      except AssemblyError, err:
+        self._add_error(line, err)
+
+  def _do_instruction(self, line):
+    self._check_address(line)
+        
+    if self.npass == 1:
+      # first pass
       try:
-        memory.set_word(ca, parse_argument(line, symbol_table))
-      except AssemblySyntaxError, err:
-        errors.append( (line.line_number, err) )
-      else:
-        ca += 1
-    elif line.operation == "ALF":
-      # FIX ME
-      memory.set_word(ca, 20210054) # 20210054 = "ALFFF" = (+1, 1, 13, 6, 6, 6,)
-      ca += 1
-    elif line.operation == "END":
-      # FIX ME: here we put all CON's which comes from smth like "=3="
+        self._parse_arg(line)
+      except AssemblyError:
+        # errors in parsing argument are checked on the 2nd pass
+        pass
+      
+      self.ca += 1
+    else:
+      # second pass
+      word_value = self._parse_arg(line)
+      
+      c_code = operations.get_codes(line.operation)[0]
+      self._write_word((abs(word_value) | c_code) * Memory.sign(word_value))
+
+  def _do_equ(self, line):
+    if self.npass == 1:
+      self.symtable.set_label(line.label, self._parse_arg(line), line.line_number)
+
+  def _do_orig(self, line):
+    self.ca = self._parse_arg(line)
+    self._check_address(line)
+    
+  def _do_con(self, line):
+    self._check_address(line)
+    
+    if self.npass == 2:
+      self._write_word(self._parse_arg(line))
+    else:
+      self.ca += 1
+
+  _do_alf = _do_con
+
+  def _do_end(self, line):
+    if self.npass == 1:
+      self.end_address = self.ca
+
+    if self.npass == 2:
+      self.start_address = self._parse_arg(line)
+
+      for value in self.symtable.literals:
+        if not self.memory.is_valid_address(self.ca):
+          raise NoFreeSpaceForLiteralsError
+
+        self._write_word(value)
+
+  def _parse_arg(self, line):
+    return parse_argument(line, self.symtable, self.ca, self.npass)
+
+  def _write_word(self, word):
+    self.memory[self.ca] = word
+    self.ca += 1
+
+  def _add_error(self, line, error):
+    # do not allow two errors of the same type in one line
+    error_tuple = (line.line_number, error.__class__)
+
+    if error_tuple not in self.error_set:
+      self.errors.append( (line.line_number, error) )
+      self.error_set.add(error_tuple)
+
+  def _add_label(self, line):
+    if line.label is not None:
       try:
-        start_address = parse_argument(line, symbol_table)
-      except AssemblySyntaxError, err:
-        start_address = None
-        errors.append( (line.line_number, err) )
-      return (memory, start_address, errors) # assemblying finished
+          self.symtable.set_label(line.label, self.ca, line.line_number)
+      except AssemblyError, err:
+        self._add_error(line, err)
+
+  def _check_address(self, line):
+    if self.npass == 1 and not self.memory.is_valid_address(self.ca):
+      self._add_error(line, LineNumberError(self.ca))

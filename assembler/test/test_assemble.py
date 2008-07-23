@@ -9,13 +9,27 @@ from parse_line import *
 from assemble import *
 from memory import *
 
+def print_memory(mem):
+  for idx in range(len(mem)):
+    if mem[idx] != Memory.positive_zero():
+      print idx, ":", mem[idx]
+
 class AssembleTestCase(unittest.TestCase):
-  def check(self, lines, labels, local_labels, memory_part, start_address, errors):
-    symbol_table = SymbolTable(None, labels, local_labels)
-    result = assemble(lines, symbol_table)
-    self.assertTrue(result[0].cmp_memory(memory_part))
-    self.assertEqual(result[1], start_address)
-    self.assertEqual(result[2], errors)
+  def check(self, lines, labels, local_labels, memory_part, start_address, errors,
+            literals = None, end_address = None):
+    symtable = SymbolTable(labels, local_labels)
+    asm = Assembler(symtable)
+    asm.end_address = end_address
+    asm.run(lines, 2)
+
+    #print_memory(asm.memory.memory)
+
+    self.assertEqual(asm.memory, memory_part)
+    self.assertEqual(asm.start_address, start_address)
+    self.assertEqual(asm.errors, errors)
+
+    literals = [] if literals is None else literals
+    self.assertEqual(symtable.literals, literals)
 
   def testErrors(self):
     self.check(
@@ -35,9 +49,9 @@ class AssembleTestCase(unittest.TestCase):
       start_address = None,
       errors = [
         (1, InvalidLocalLabelError("8F")),
-        (2, InvalidExpressionError("LABEL")),
-        (3, InvalidExpressionError("LABEL%")),
-        (5, InvalidExpressionError("LABEL%")),
+        (2, UnexpectedStrInTheEndError("LABEL")),
+        (3, UnexpectedStrInTheEndError("LABEL%")),
+        (5, ExpectedWExpError("LABEL%")),
         (6, InvalidLocalLabelError("7B"))
       ]
     )
@@ -45,13 +59,13 @@ class AssembleTestCase(unittest.TestCase):
   def testNoErrors(self):
     self.check(
       lines = [
-        Line(None,          "ORIG", "30",       1),
-        Line("7H",          "ENTA", "15",       2),
-        Line(None,          "ENN2", "TEMP",     3),
-        Line("TEMP",        "EQU",  "-2",       4),
-        Line(None,          "HLT",  "64",       5),
-        Line(None,          "CON",  "17314053", 7),
-        Line(None,          "END",  "7B",       8)
+        Line(None,          "ORIG", "30",                 1),
+        Line("7H",          "ENTA", "15",                 2),
+        Line(None,          "LD2", "=357=",               3),
+        Line("TEMP",        "EQU",  "-2",                 4),
+        Line(None,          "HLT",  "=1(2:2)=",    5),
+        Line(None,          "CON",  "17314053",           7),
+        Line(None,          "END",  "7B",                 8)
       ],
       labels = {
         "TEMP": -2
@@ -61,12 +75,16 @@ class AssembleTestCase(unittest.TestCase):
       },
       memory_part = {
         30: [+1,  0, 15,  0,  2, 48],
-        31: [-1,  0,  2,  0,  3, 50],
-        32: [+1,  1,  0,  0,  2,  5],
-        33: [+1,  1,  2, 03,  4,  5]
+        31: [+1,  0, 34,  0,  5, 10],
+        32: [+1,  0, 35,  0,  2,  5],
+        33: [+1,  1,  2,  3,  4,  5],
+        34: [+1,  0,  0,  0,  5, 37],
+        35: [+1,  0,  1,  0,  0,  0]
       },
       start_address = 30,
-      errors = []
+      errors = [],
+      literals = [ 357, 262144 ],
+      end_address = 34
     )
 
   def testSmthSly(self):
@@ -280,8 +298,19 @@ class AssembleTestCase(unittest.TestCase):
         Line(None,  "CMP5",   "0",  142  ),
         Line(None,  "CMP6",   "0",  143  ),
         Line(None,  "CMPX",   "0",  144  ),
-        Line(None,  "HLT",    "0",  145  ),
-        Line(None,  "END",    "0",  146  )
+        Line(None,  "FADD",   "0",  145  ),
+        Line(None,  "FSUB",   "0",  146  ),
+        Line(None,  "FMUL",   "0",  147  ),
+        Line(None,  "FDIV",   "0",  148  ),
+        Line(None,  "FLOT",   "0",  149  ),
+        Line(None,  "FIX",    "0",  150  ),
+        Line(None,  "SLB",    "0",  151  ),
+        Line(None,  "SRB",    "0",  152  ),
+        Line(None,  "JAE",    "0",  153  ),
+        Line(None,  "JAO",    "0",  154  ),
+        Line(None,  "JXE",    "0",  155  ),
+        Line(None,  "JXO",    "0",  156  ),
+        Line(None,  "END",    "0",  157  )
       ],
       labels = {},
       local_labels = {},
@@ -430,10 +459,218 @@ class AssembleTestCase(unittest.TestCase):
         141 : [+1, 0, 0, 0, 5, 61 ],
         142 : [+1, 0, 0, 0, 5, 62 ],
         143 : [+1, 0, 0, 0, 5, 63 ],
-        144 : [+1, 0, 0, 0, 2, 5 ]
+        144 : [+1, 0, 0, 0, 6,  1 ],
+        145 : [+1, 0, 0, 0, 6,  2 ],
+        146 : [+1, 0, 0, 0, 6,  3 ],
+        147 : [+1, 0, 0, 0, 6,  4 ],
+        148 : [+1, 0, 0, 0, 6,  5 ],
+        149 : [+1, 0, 0, 0, 7,  5 ],
+        150 : [+1, 0, 0, 0, 6,  6 ],
+        151 : [+1, 0, 0, 0, 7,  6 ],
+        152 : [+1, 0, 0, 0, 6, 40 ],
+        153 : [+1, 0, 0, 0, 7, 40 ],
+        154 : [+1, 0, 0, 0, 6, 47 ],
+        155 : [+1, 0, 0, 0, 7, 47 ],
       },
       start_address = 0,
       errors = []
+    )
+  
+  def checkLabels(self, lines, labels, local_labels = {}, literals = [], errors = [], end_address = None):
+    symtable = SymbolTable()
+    asm = Assembler(symtable)
+    asm.run(lines)
+
+    self.assertEqual(symtable.labels, labels)
+    self.assertEqual(symtable.local_labels, local_labels)
+    self.assertEqual(symtable.literals, literals)
+    self.assertEqual(asm.errors, errors)
+
+    if end_address is not None:
+      self.assertEqual(asm.end_address, end_address)
+
+  def testGoodLabels(self):
+    self.checkLabels(
+      lines = [
+        Line("PRINTER","EQU","18",1),
+        Line("NULL","ORIG","PRINTER",2),
+        Line("START","ENTA","4",3),
+        Line(None,"NOP",None,4),
+        Line(None,"END","START",5)
+      ],
+
+      labels = {"NULL" : 0, "START" : 18, "PRINTER" : 18}
+    )
+
+    # test locals
+    self.checkLabels(
+      lines = [
+        Line("PRINTER","EQU","18",1),
+        Line("NULL","ORIG","PRINTER",2),
+        Line("START","ENTA","4",3),
+        Line("9H","EQU","547",4),
+        Line(None,"ORIG","9B",5),
+        Line("TESTLABEL","NOP",None,6),
+        Line(None,"ORIG","TESTLABEL",7),
+        Line("TESTLABEL3","NOP",None,8),
+        Line("9H","EQU","745",9),
+        Line(None,"ORIG","9B",10),
+        Line("TESTLABEL2","NOP",None,11),
+        Line(None,"END","START",12)
+      ],
+
+      labels = {
+        "NULL" : 0,
+        "START" : 18,
+        "PRINTER" : 18,
+        "TESTLABEL" : 547,
+        "TESTLABEL2" : 745,
+        "TESTLABEL3" : 547
+      },
+
+      local_labels = {
+        "9H" : [(547, 4), (745, 9)]
+      },
+      
+      literals = [],
+      errors = [],
+      
+      end_address = 746
+    )
+
+    self.checkLabels(
+      lines = [
+        Line("PRINTER666",  "EQU",  "18",         1),
+        Line("0LABEL",      "CON",  "19",         2),
+        Line("1LABEL",      "ALF",  "HELLO",      3),
+        Line("9L",          "ORIG", "0LABEL",     4),
+        Line("9H",          "LDA",  "=357=",      5),
+        Line("123456789L",  "NOP",  None,         6),
+        Line("0H",          "ENTA", "=357=",      7),
+        Line(None,          "ORIG", "100",        8),
+        Line("9H",          "HLT",  None,         9),
+        Line(None,          "END",  "1000",       10),
+      ],
+      
+      labels = {
+        "PRINTER666" : 18,
+        "0LABEL" : 0,
+        "1LABEL" : 1,
+        "9L" : 2,
+        "123456789L" : 1
+      },
+      
+      local_labels = {
+        "0H" : [(2, 7)],
+        "9H" : [(0, 5), (100, 9)]
+      },
+
+      literals = [ 357, 357 ],
+      
+      errors = [],
+
+      end_address = 101
+    )
+
+  def testBadLabels(self):
+    self.checkLabels(
+      lines = [
+        Line("NULL","ORIG","3000",1),
+        Line("START","ENTA","4",2),
+        Line("START","NOP",None,3),
+        Line(None, "ORIG", "5000", 4),
+        Line(None,"END","START",5)
+      ],
+
+      labels = {"NULL" : 0, "START" : 3000},
+      
+      local_labels = {},
+      
+      literals = [],
+
+      errors = [
+        (3, RepeatedLabelError("START")),
+        (4, LineNumberError(5000))
+      ]
+    )
+
+    self.checkLabels(
+      lines = [
+        Line("PRINTER666",  "EQU",  "18",         1),
+        Line("OLABEL",      "CON",  "19",         2),
+        Line("123456789L",  "ALF",  "HELLO",      3),
+        Line("9L",          "ORIG", "1000",       4),
+        Line("9H",          "NOP",  None,         5),
+        Line("123456789L",  "NOP",  None,         6),
+        Line("0H",          "ENTA", "PRINTER666", 7),
+        Line(None,          "ORIG", "3B",         8),
+        Line(None,          "ORIG", "UNKNWN",     9),
+        Line(None,          "ORIG", "18%",        10),
+        Line("9H",          "HLT",  None,         11),
+        Line(None,          "END",  "1000",       12),
+      ],
+
+      labels = {
+        "PRINTER666" : 18,
+        "OLABEL" : 0,
+        "9L" : 2,
+        "123456789L" : 1
+      },
+      
+      local_labels = {
+        "0H" : [(1002, 7)],
+        "9H" : [(1000, 5), (1003, 11)]
+      },
+      
+      literals = [],
+
+      errors = [
+        (6, RepeatedLabelError("123456789L")),
+        (8, InvalidLocalLabelError("3B")),
+        (9, ExpectedWExpError("UNKNWN")),
+        (10, ExpectedWExpError("18%"))
+      ]
+    )
+
+    self.checkLabels(
+      lines = [
+        Line("PRINTER666",  "EQU",  "18",         1),
+        Line("OLABEL",      "CON",  "19",         2),
+        Line("123456789L",  "ALF",  "HELLO",      3),
+        Line("9L",          "ORIG", "1000",       4),
+        Line("9H",          "NOP",  None,         5),
+        Line("123456789L",  "NOP",  None,         6),
+        Line("0H",          "ENTA", "PRINTER666", 7),
+        Line(None,          "ORIG", "3998",       8),
+        Line("9H",          "NOP",  None,         9),
+        Line(None,          "NOP",  "=2=",        10),
+        Line(None,          "NOP",  None,         11),
+        Line("4001LABEL",   "NOP",  None,         12),
+        Line(None,          "END",  "1000",       13),
+      ],
+      
+      labels = {
+        "PRINTER666" : 18,
+        "OLABEL" : 0,
+        "9L" : 2,
+        "123456789L" : 1,
+        "4001LABEL" : 4001
+      },
+      
+      local_labels = {
+        "0H" : [(1002, 7)],
+        "9H" : [(1000, 5), (3998, 9)]
+      },
+      
+      literals = [ 2 ],
+      
+      errors = [
+        (6, RepeatedLabelError("123456789L")),
+        (11, LineNumberError(4000)),
+        (12, LineNumberError(4001)),
+        (10, InvalidAddrError(4002)),
+        (13, NoFreeSpaceForLiteralsError())
+      ]
     )
 
 suite = unittest.makeSuite(AssembleTestCase, 'test')
