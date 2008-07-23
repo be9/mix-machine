@@ -1,9 +1,16 @@
 from vm_word import *
 from vm_memory import *
 from vm_command import cmdList
-import vm_command_other
-#import vm_command_jump
 from vm_events import *
+
+#import vm_command_addr
+#import vm_command_cmp
+#import vm_command_io
+import vm_command_jump
+#import vm_command_load
+#import vm_command_math
+#import vm_command_mem
+import vm_command_other
 
 class VMContext:
 	def __init__(self):
@@ -98,13 +105,11 @@ class VM:
 	
 vm = VM()
 
-vm.context.mem.set(Word([1,0,0,0,2,5]), 4)
+vm.context.mem.set(Word([1,0,0,0,2,5]), 5)
+vm.context.mem.set(Word([1,0,4,0,0,39]), 3)
 for i in vm.context.mem.get_range(0, 10):
 	print str(i)
 
-vm.trace()
-vm.trace()
-vm.trace()
-vm.trace()
-vm.trace()
-#vm.trace()
+while not vm.context.is_halted:
+	vm.trace()
+	raw_input()

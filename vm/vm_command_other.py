@@ -2,19 +2,6 @@ from vm_word import Word
 from vm_command import cmdList
 from vm_events import *
 
-#class CommandOther:
-#	def __init__(self):
-#		# something like
-		# command_list.add_command(0, 1, nop)
-		# command_list.add_command(5, 0, hlt)
-#		pass
-	
-	# here go static functions
-#	def nop(context):
-#		pass 
-#	def hlt(context):
-#		pass 
-
 def nop(command, context):
 	return context.regs["L"].addr() + 1
 
@@ -26,7 +13,7 @@ def spec(command, context):
 	elif command.fmt() == 2:
 		return spec_hlt(command, context)
 	else:
-		return Word(-1)		# error: invalid fmt
+		return -1		# error: invalid fmt
 		
 def spec_num(command, context):
 	return context.regs["L"].addr() + 1
