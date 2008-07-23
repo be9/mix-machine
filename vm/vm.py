@@ -73,7 +73,7 @@ class VM:
 			self.context.regs["L"] = Word(command.func(command, self.context))
 		except VMHalt:
 			self.context.is_halted = True
-		self.context.instructions += 1
+		self.context.instructions += command.time
 		
 		print str(self.context)
 		print str(self.context.mem.get(int(self.context.regs["L"]))) + " : " + str(cmdList.get_command(self.context.mem.get(int(self.context.regs["L"])).code()))
@@ -95,6 +95,11 @@ class VM:
 		pass
 	
 vm = VM()
+
+vm.context.mem.set(Word([1,0,0,0,2,5]), 4)
+for i in vm.context.mem.get_range(0, 10):
+	print str(i)
+
 vm.trace()
 vm.trace()
 vm.trace()

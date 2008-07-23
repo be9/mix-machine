@@ -1,4 +1,4 @@
-
+from copy import copy
 from vm_errors import VMError
 
 BYTE_SIZE = 6			# byte size in bits
@@ -149,10 +149,23 @@ class Word:
 	
 	def addr(self):
 		return self.int((0,3))
+	
 	def code(self):
 		return self.int((5,5))
+	
 	def fmt(self):
 		return self.int((4,4))
+	
+	def set_addr(self, addr):
+		self.set_bytes(Word(addr).get_bytes((4,5)), (1,2))
+		self.set_bytes(Word(addr).get_bytes((0,0)), (0,0))
+		return self
+	
+	def set_code(self, code):
+		return self.set_bytes(code, (5,5))
+	
+	def set_fmt(self, fmt):
+		return self.set_bytes(fmt, (4,4))
 	
 	#def __neg__(self):
 	#	return Word( [self.get_bytes((0,0))*-1, self.get_bytes((1,5))] )
