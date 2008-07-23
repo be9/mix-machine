@@ -147,14 +147,25 @@ class Word:
 		self.shift_r(num, self.get_bytes((1,5))[5-num:])
 		return self
 	
-	def addr(self):
+	def addr(self, addr = None):
+		if addr:
+			self.set_addr(addr)
 		return self.int((0,2))
 	
-	def code(self):
+	def code(self, code = None):
+		if code:
+			self.set_code(code)
 		return self.int((5,5))
 	
-	def fmt(self):
+	def fmt(self, fmt = None):
+		if fmt:
+			self.set_fmt(fmt)
 		return self.int((4,4))
+		
+	def index(self, index = None):
+		if index:
+			self.set_index(index)
+		return self.int((3,3))
 	
 	def set_addr(self, addr):
 		val = self._int2val(addr)
@@ -167,6 +178,9 @@ class Word:
 	
 	def set_fmt(self, fmt):
 		return self.set_bytes(fmt, (4,4))
+	
+	def set_index(self, index):
+		return self.set_bytes(index, (3,3))
 	
 	#def __neg__(self):
 	#	return Word( [self.get_bytes((0,0))*-1, self.get_bytes((1,5))] )
