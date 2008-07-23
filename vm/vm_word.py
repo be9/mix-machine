@@ -157,8 +157,9 @@ class Word:
 		return self.int((4,4))
 	
 	def set_addr(self, addr):
-		self.set_bytes(Word(addr).get_bytes((4,5)), (1,2))
-		self.set_bytes(Word(addr).get_bytes((0,0)), (0,0))
+		val = self._int2val(addr)
+		self.set_bytes(val[4:6], (1,2))
+		self.set_bytes(val[0], (0,0))
 		return self
 	
 	def set_code(self, code):
