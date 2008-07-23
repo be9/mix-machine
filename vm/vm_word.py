@@ -147,6 +147,13 @@ class Word:
 		self.shift_r(num, self.get_bytes((1,5))[5-num:])
 		return self
 	
+	def addr(self):
+		return self.int((0,3))
+	def code(self):
+		return self.int((5,5))
+	def fmt(self):
+		return self.int((4,4))
+	
 	#def __neg__(self):
 	#	return Word( [self.get_bytes((0,0))*-1, self.get_bytes((1,5))] )
 	#def __pos__(self):

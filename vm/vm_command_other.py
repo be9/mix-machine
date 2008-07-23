@@ -1,5 +1,5 @@
-from vm import VMContext
-from vm_command import CommandList, cmdList
+from vm_word import Word
+from vm_command import cmdList
 
 #class CommandOther:
 #	def __init__(self):
@@ -14,10 +14,11 @@ from vm_command import CommandList, cmdList
 #	def hlt(context):
 #		pass 
 
-def nop(context):
-	pass
-def spec(context):
+def nop(command, context):
+	print "NOP: ", command
+	return context.regs["L"].addr() + 1
+def spec(command, context):
 	pass
 	
 cmdList.add_command(0, nop, 1, "NOP")
-cmdList.add_command(0, spec, 1, "NUM, CHAR, HLT")
+cmdList.add_command(112, spec, 1, "NUM, CHAR, HLT")

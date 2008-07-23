@@ -1,6 +1,9 @@
 from vm_word import *
 from vm_memory import *
-from vm_command import CommandList, cmdList
+from vm_command import cmdList
+import vm_command_other
+#import vm_command_jump
+from vm_events import *
 
 class VMContext:
 	def __init__(self):
@@ -21,7 +24,9 @@ class VMContext:
 		self.mem = Memory()
 		self.mem.fill(0)
 		
-		self.instructions = 0	# how to name instruction counter?
+		self.instructions = 0
+		
+		self.is_halted = False
 		
 	def reset(self):
 		for i in self.regs:
@@ -33,17 +38,18 @@ class VMContext:
 		self.mem.fill(0)
 		
 		self.instructions = 0
+		self.is_halted = False
 		
 	# debug
 	def __str__(self):
 		regs = ""
 		for i in self.regs:
 			regs += "\t" + str(i) + ":\t" + str(self.regs[i]) + "\n"
-		return "registers: \n" + str(regs) + "flags: \n\t" + str(self.flags) + "\ninstructions: \n\t" + str(self.instructions) + "\n"
+		return "registers: \n" + str(regs) + "\nflags: \t\t" + str(self.flags) + "\ninstructions: \t" + str(self.instructions) + "\nhalted: \t" + str(self.is_halted) + "\n"
 
 class VM:
 	def __init__(self):
-		self.context = WMContext()
+		self.context = VMContext()
 		
 	# debug
 	def __str__(self):
@@ -57,7 +63,21 @@ class VM:
 		
 	
 	def trace(self):
-		pass
+		print "--[trace]-----------------------------------------------"
+		
+		word = self.context.mem.get(int(self.context.regs["L"]))
+		code = word.code()
+		command = cmdList.get_command(code)
+		
+		try:		
+			self.context.regs["L"] = Word(command.func(command, self.context))
+		except VMHalt:
+			self.context.is_halted = True
+		self.context.instructions += 1
+		
+		print str(self.context)
+		print str(self.context.mem.get(int(self.context.regs["L"]))) + " : " + str(cmdList.get_command(self.context.mem.get(int(self.context.regs["L"])).code()))
+		print "--------------------------------------------------------"
 	
 	def run(self):
 		pass
@@ -73,3 +93,14 @@ class VM:
 		pass
 	def get_all_breakpoints(self):
 		pass
+	
+vm = VM()
+vm.trace()
+vm.trace()
+vm.trace()
+vm.trace()
+vm.trace()
+vm.trace()
+vm.trace()
+vm.trace()
+vm.trace()
