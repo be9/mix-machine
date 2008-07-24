@@ -10,22 +10,22 @@ class WordError(VMError):
 
 class Word:
 	def __init__(self, obj):
-		self.__val = [];
+		self.val = [];
 		
 		if isinstance(obj, int):
-			self.__val = self._int2val(obj)
+			self.val = self._int2val(obj)
 			
 		elif isinstance(obj, list) or isinstance(obj, tuple):
-			self.__val = self._bytes2val(obj)
+			self.val = self._bytes2val(obj)
 			
 		elif isinstance(obj, float):
-			self.__val = self._float2val(obj)
+			self.val = self._float2val(obj)
 			
 		elif isinstance(obj, str):
-			self.__val = self.str2str(obj)
+			self.val = self.str2str(obj)
 			
 		elif isinstance(obj, Word):
-			self.__val = copy(obj.__val)
+			self.val = copy(obj.val)
 			
 		else:
 			raise WordError("Incompartible type for 'Word' constructor")
@@ -64,21 +64,21 @@ class Word:
 			raise WordError("Wrong format")
 		if not isinstance(bytes, list) and not isinstance(bytes, tuple) or len(bytes) != fmt[1] - fmt[0] + 1:
 			raise WordError("Bytes do not match to format")
-		#self.__val[fmt[0]: fmt[1]+1] = bytes[0: fmt[1]-fmt[0]+1]
-		self.__val = self._bytes2val(list(self.__val[0:fmt[0]] + bytes + self.__val[fmt[1] + 1: 6]))
+		#self.val[fmt[0]: fmt[1]+1] = bytes[0: fmt[1]-fmt[0]+1]
+		self.val = self._bytes2val(list(self.val[0:fmt[0]] + bytes + self.val[fmt[1] + 1: 6]))
 		return self
 	
 	def get_bytes(self, fmt=(0,5)):
 		if not isinstance(fmt, list) and not isinstance(fmt, tuple) or (fmt[0] < 0 or fmt[1] < fmt[0] or fmt[1] > 5):
 			raise WordError("Wrong format")
-		return self.__val[fmt[0]: fmt[1]+1]
+		return self.val[fmt[0]: fmt[1]+1]
 	
 	def int(self, fmt=(0,5)):
 		res = 0;
 		for i in xrange(max(fmt[0], 1), fmt[1]+1, 1):
-			res = res*(MAX_BYTE+1) + self.__val[i]
+			res = res*(MAX_BYTE+1) + self.val[i]
 		if fmt[0] == 0:
-			res *= self.__val[0]
+			res *= self.val[0]
 		return res
 	
 	def float(self):
@@ -95,7 +95,7 @@ class Word:
 	# debug
 	def __str__(self):
 		#return self.str()
-		return str(self.__val)
+		return str(self.val)
 	
 	def shift_l(self, num=1, bytes=None):
 		if num < 0:
@@ -182,18 +182,41 @@ class Word:
 	def set_index(self, index):
 		return self.set_bytes(index, (3,3))
 	
-	#def __neg__(self):
-	#	return Word( [self.get_bytes((0,0))*-1, self.get_bytes((1,5))] )
-	#def __pos__(self):
-	#	return self
-	#def __abs__(self):
-	#	return Word( self.get_bytes((1,5)) )
+class CmdWord(Word):
+	#def __init__(self, obj):
 		
-	#def __add__(self, other):
-	#	return Word(int(self) + int(other))
-	#def __sub__(self, other):
-	#def __mul__(self, other):
-	#def __mod__(self, other):
-	#def __divmod__(self, other):
-	#def __lshift__(self, other):
-	#def __rshift__(self, other):
+		
+	def addr(self, addr = None):
+		if addr:
+			self.set_addr(addr)
+		return self.int((0,2))
+	
+	def code(self, code = None):
+		if code:
+			self.set_code(code)
+		return self.int((5,5))
+	
+	def fmt(self, fmt = None):
+		if fmt:
+			self.set_fmt(fmt)
+		return self.int((4,4))
+		
+	def index(self, index = None):
+		if index:
+			self.set_index(index)
+		return self.int((3,3))
+	
+	def set_addr(self, addr):
+		val = self._int2val(addr)
+		self.set_bytes(val[4:6], (1,2))
+		self.set_bytes(val[0:1], (0,0))
+		return self
+	
+	def set_code(self, code):
+		return self.set_bytes(code, (5,5))
+	
+	def set_fmt(self, fmt):
+		return self.set_bytes(fmt, (4,4))
+	
+	def set_index(self, index):
+		return self.set_bytes(index, (3,3))

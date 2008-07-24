@@ -14,13 +14,9 @@ def ldx(command, context):
 	return context.get_reg_l().int() + 1
 
 def ldi(command, context):
-	print "--[ldi]--"
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	print M
 	F = divmod(command.fmt(), 8)
-	print F
-	print context.set_reg_index(command.code() - 8, Word(M.int(F)).set_bytes([0,0,0], (1,3)))
-	print "---------"
+	context.set_reg_index(command.code() - 8, Word(M.int(F)).set_bytes([0,0,0], (1,3)))
 	return context.get_reg_l().int() + 1
 
 def ldan(command, context):

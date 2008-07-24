@@ -70,6 +70,9 @@ class VMContext:
 		
 	def get_reg_l(self):
 		return self.regs["L"]
+	
+	def set_reg_l(self, value):
+		self.regs["L"] = value
 		
 	# debug
 	def __str__(self):
@@ -96,7 +99,7 @@ class VM:
 	def trace(self):
 		print "--[trace]-----------------------------------------------"
 		
-		word = self.context.mem.get(self.context.regs["L"].int())
+		word = CmdWord(self.context.mem.get(self.context.regs["L"].int()))
 		code = word.code()
 		fmt = word.fmt()
 		command = cmdList.get_command(code, fmt)
