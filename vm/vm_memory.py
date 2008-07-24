@@ -1,5 +1,6 @@
 from vm_word import Word
 from vm_errors import VMError
+from copy import copy
 
 MEM_SIZE = 4000	# memory size in words
 

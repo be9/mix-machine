@@ -1,15 +1,22 @@
-from vm import VMContext
-from vm_command import CommandList
+from vm_word import Word
+from vm_command import cmdList
+from vm_events import *
 
-class CommandOther:
-	def __init__(self):
-		# something like
-		# command_list.add_command(0, 1, nop)
-		# command_list.add_command(5, 0, hlt)
-		pass
+def nop(command, context):
+	return context.regs["L"].int() + 1
+
+def num(command, context):
+	return context.regs["L"].int() + 1
+
+def char(command, context):
+	return context.regs["L"].int() + 1
+
+def hlt(command, context):
+	raise VMHalt()
+	return context.regs["L"].int() + 1
+
 	
-	# here go static functions
-	def nop(context):
-		pass 
-	def hlt(context):
-		pass 
+cmdList.add_command(0,	-1, nop, 1,	"NOP")
+cmdList.add_command(5,	 0, num, 10,	"NUM")
+cmdList.add_command(5,	 1, char, 10,	"CHAR")
+cmdList.add_command(5,	 2, hlt, 10,	"HLT")
