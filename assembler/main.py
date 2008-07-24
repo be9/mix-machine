@@ -40,7 +40,7 @@ def main():
     file_in = open(sys.argv[1], "r")
   except IOError, (errno, strerror):
     file_out.close()
-    print "%s (%s): %s" % (ERR_FILE[1], sys.argv[1], strerror)
+    print "%s (%s): %s" % (ERR_INVALID_INPUT_FILE[1], sys.argv[1], strerror)
     return ERR_INVALID_INPUT_FILE[0]
 
   try:
