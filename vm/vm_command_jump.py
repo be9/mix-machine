@@ -4,10 +4,10 @@ from vm_command import cmdList
 #	Common jumps
 def jmp(command, context):
 	context.regs["J"].addr(context.get_reg_l().addr() + 1)
-	return command.addr() + context.get_reg_index(command.index()).addr()
+	return command.addr() + context.get_reg_index(command.index()).int()
 
 def jsj(command, context):
-	return command.addr() + context.get_reg_index(command.index()).addr()
+	return command.addr() + context.get_reg_index(command.index()).int()
 
 #	OF jumps
 def jov(command, context):
