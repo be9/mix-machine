@@ -96,20 +96,20 @@ class VM:
 	def trace(self):
 		print "--[trace]-----------------------------------------------"
 		
-		word = self.context.mem.get(self.context.regs["L"].addr())
+		word = self.context.mem.get(self.context.regs["L"].int())
 		code = word.code()
 		fmt = word.fmt()
 		command = cmdList.get_command(code, fmt)
 		
 		try:
 			jmp = int(command.func(word, self.context))
-			self.context.regs["L"].set_addr(jmp)
+			self.context.regs["L"] = Word(jmp)
 			self.context.instructions += command.time
 		except VMHalt:
 			self.context.is_halted = True
 		
 		print str(self.context)
-		word = self.context.mem.get(self.context.regs["L"].addr())
+		word = self.context.mem.get(self.context.regs["L"].int())
 		print str(word) + ":\t" + str(cmdList.get_command(word.code(), word.fmt()))
 		print "--------------------------------------------------------"
 	

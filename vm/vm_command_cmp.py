@@ -5,20 +5,20 @@ def cmpa(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.flags["CF"] = cmp(context.regs["A"].int(F), M.int(F))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def cmpx(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.flags["CF"] = cmp(context.regs["X"].int(F), M.int(F))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def cmpi(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	I = context.get_reg_index(command.code() - 56)
 	context.flags["CF"] = cmp(Word(I.addr()).int(F), M.int(F))	# rI: [*,*,*,0,0,0] -> [*,0,0,0,*,*]
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 cmdList.add_command(56,	-1, cmpa, 1,	"CMPA")
 cmdList.add_command(63,	-1, cmpx, 1,	"CMPX")

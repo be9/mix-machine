@@ -5,13 +5,13 @@ def lda(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.regs["A"] = Word(M.int(F))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def ldx(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.regs["X"] = Word(M.int(F))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def ldi(command, context):
 	print "--[ldi]--"
@@ -21,25 +21,25 @@ def ldi(command, context):
 	print F
 	print context.set_reg_index(command.code() - 8, Word(M.int(F)).set_bytes([0,0,0], (1,3)))
 	print "---------"
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def ldan(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.regs["A"] = Word(-M.int(F))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def ldxn(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.regs["X"] = Word(-M.int(F))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 def ldin(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	context.set_reg_index(command.code() - 16, Word(-M.int(F)).set_bytes([0,0,0], (1,3)))
-	return context.get_reg_l().addr() + 1
+	return context.get_reg_l().int() + 1
 
 cmdList.add_command(8,	-1, lda, 1,	"LDA")
 cmdList.add_command(15,	-1, ldx, 1,	"LDX")

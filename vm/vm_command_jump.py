@@ -3,7 +3,7 @@ from vm_command import cmdList
 
 #	Common jumps
 def jmp(command, context):
-	context.regs["J"].addr(context.get_reg_l().addr() + 1)
+	context.regs["J"] = Word(context.get_reg_l().int() + 1)
 	return command.addr() + context.get_reg_index(command.index()).int()
 
 def jsj(command, context):
@@ -15,161 +15,161 @@ def jov(command, context):
 		context.flags["OF"] = 0
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jnov(command, context):
 	if not context.flags["OF"]:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 #	CF jumps
 def jl(command, context):
 	if context.flags["CF"] < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def je(command, context):
 	if context.flags["CF"] == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jg(command, context):
 	if context.flags["CF"] > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jge(command, context):
 	if context.flags["CF"] >= 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jne(command, context):
 	if context.flags["CF"] != 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jle(command, context):
 	if context.flags["CF"] <= 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 #	rA jumps
 def jan(command, context):
 	if context.regs["A"] < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jaz(command, context):
 	if context.regs["A"] == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jap(command, context):
 	if context.regs["A"] > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jann(command, context):
 	if not context.regs["A"] < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def janz(command, context):
 	if not context.regs["A"] == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def janp(command, context):
 	if not context.regs["A"] > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 #	rX jumps
 def jxn(command, context):
 	if context.regs["X"] < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jxz(command, context):
 	if context.regs["X"] == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jxp(command, context):
 	if context.regs["X"] > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jxnn(command, context):
 	if not context.regs["X"] < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jxnz(command, context):
 	if not context.regs["X"] == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jxnp(command, context):
 	if not context.regs["X"] > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 #	rI jumps
 def jin(command, context):
 	if context.get_reg_index(command.code() - 40) < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jiz(command, context):
 	if context.get_reg_index(command.code() - 40) == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jip(command, context):
 	if context.get_reg_index(command.code() - 40) > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jinn(command, context):
 	if not context.get_reg_index(command.code() - 40) < 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 def jinz(command, context):
 	if not context.get_reg_index(command.code() - 40) == 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 	
 def jinp(command, context):
 	if not context.get_reg_index(command.code() - 40) > 0:
 		return jmp(command, context)
 	else:
-		return context.get_reg_l().addr() + 1
+		return context.get_reg_l().int() + 1
 
 cmdList.add_command(39, 0, jmp,		1, "JMP")
 cmdList.add_command(39, 1, jsj,		1, "JSJ")

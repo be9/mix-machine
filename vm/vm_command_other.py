@@ -3,17 +3,17 @@ from vm_command import cmdList
 from vm_events import *
 
 def nop(command, context):
-	return context.regs["L"].addr() + 1
+	return context.regs["L"].int() + 1
 
 def num(command, context):
-	return context.regs["L"].addr() + 1
+	return context.regs["L"].int() + 1
 
 def char(command, context):
-	return context.regs["L"].addr() + 1
+	return context.regs["L"].int() + 1
 
 def hlt(command, context):
 	raise VMHalt()
-	return context.regs["L"].addr() + 1
+	return context.regs["L"].int() + 1
 
 	
 cmdList.add_command(0,	-1, nop, 1,	"NOP")
