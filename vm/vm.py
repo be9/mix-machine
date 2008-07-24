@@ -5,7 +5,7 @@ from vm_events import *
 from vm_errors import VMError
 
 #import vm_command_addr
-#import vm_command_cmp
+import vm_command_cmp
 #import vm_command_io
 import vm_command_jump
 #import vm_command_load

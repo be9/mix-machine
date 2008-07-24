@@ -35,7 +35,7 @@ class CommandList:
 			key = (code, -1)
 			try:
 				ret = self.commands[key]
-			except:
+			except KeyError:
 				raise CommandListBadKeyError(key)
 		
 		return ret
