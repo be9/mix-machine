@@ -10,7 +10,7 @@ import vm_command_cmp
 import vm_command_jump
 import vm_command_load
 #import vm_command_math
-#import vm_command_mem
+import vm_command_store
 import vm_command_other
 
 class VMContextInvalidIndexError(VMError):
@@ -57,14 +57,14 @@ class VMContext:
 		if index == 0:
 			return Word(0)
 		elif index > 0 and index < 7:
-			return self.regs["I" + str(index)]
+			return Word(self.regs["I" + str(index)])
 		else:
 			raise VMContextInvalidIndexError(index)
 		
 	def set_reg_index(self, index, value):
 		if index > 0 and index < 7:
 			self.regs["I" + str(index)] = Word(value)
-			return self.regs["I" + str(index)]
+			return Word(self.regs["I" + str(index)])
 		else:
 			raise VMContextInvalidIndexError(index)
 		
@@ -134,11 +134,11 @@ class VM:
 vm = VM()
 
 #		Addr	Index	Fmt	Code	# Offset	Asm
-mem = [	Word([	1,0,18,	0,	10,	9]),	# 0		LDA 18,0(0:0)
-	Word([	1,0,18,	0,	5,	9]),	# 1		LDA 18,0(1:5)
-	Word([	1,0,18,	0,	5,	8]),	# 2		LDA 18,0(0:5)
-	Word([	1,0,18,	0,	19,	8]),	# 3		LDA 18,0(2:3)
-	Word([	1,0,0,	0,	0,	0]),	# 4		NOP 
+mem = [	Word([	1,0,18,	0,	2,	9]),	# 0		
+	Word([	1,0,17,	0,	2,	25]),	# 1		
+	Word([	1,0,18,	0,	5,	8]),	# 2		
+	Word([	1,0,18,	0,	19,	8]),	# 3		
+	Word([	1,0,0,	0,	0,	0]),	# 4		
 	
 	Word([	1,0,0,	0,	0,	0]),	# 5		NOP 
 	Word([	1,0,0,	0,	0,	0]),	# 6		NOP 
@@ -154,7 +154,7 @@ mem = [	Word([	1,0,18,	0,	10,	9]),	# 0		LDA 18,0(0:0)
 	
 	Word([	1,0,19,	0,	0,	39]),	# 15		JMP 19
 	Word([	1,0,0,	0,	0,	0]),	# 16		NOP 
-	Word([	1,0,0,	0,	0,	0]),	# 17		NOP 
+	Word([	1,10,20,30,	40,	50]),	# 17		NOP 
 	Word([	-1,1,2,	3,	4,	5]),	# 18		NOP 
 	Word([	1,0,0,	0,	2,	5]),	# 19		HLT
 	]
@@ -166,3 +166,4 @@ for i in vm.context.mem.get_range(0, 20):
 while not vm.context.is_halted:
 	raw_input()
 	vm.trace()
+	print vm.context.mem.get(17)
