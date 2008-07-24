@@ -2,6 +2,7 @@ from vm_word import *
 from vm_memory import *
 from vm_command import cmdList
 from vm_events import *
+from vm_errors import VMError
 
 #import vm_command_addr
 #import vm_command_cmp
@@ -11,6 +12,11 @@ import vm_command_jump
 #import vm_command_math
 #import vm_command_mem
 import vm_command_other
+
+class VMContextInvalidIndexError(VMError):
+	def __init__(self, index):
+		self = VMError("Invalid number of index register")
+		self.index = index
 
 class VMContext:
 	def __init__(self):
@@ -46,6 +52,17 @@ class VMContext:
 		
 		self.instructions = 0
 		self.is_halted = False
+		
+	def get_reg_index(self, index):
+		if index == 0:
+			return Word(0)
+		elif index > 0 and index < 7:
+			return self.regs["I" + str(index)]
+		else:
+			raise VMContextInvalidIndexError(index)
+		
+	def get_reg_l(self):
+		return self.regs["L"]
 		
 	# debug
 	def __str__(self):
@@ -106,11 +123,36 @@ class VM:
 	
 vm = VM()
 
-vm.context.mem.set(Word([1,0,0,0,2,5]), 5)
-#vm.context.mem.set(Word([1,0,0,0,0,39]), 3)
-for i in vm.context.mem.get_range(0, 10):
+vm.context.get_reg_index(1).set_addr(-10)
+
+mem = [	Word([1,0,0,0,0,0]),
+	Word([1,0,10,0,0,39]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,0,0]),
+	Word([1,0,0,0,2,5])	]
+
+vm.context.mem.set_range(mem, 0)
+for i in vm.context.mem.get_range(0, 20):
 	print str(i)
 
 while not vm.context.is_halted:
-	vm.trace()
 	raw_input()
+	vm.trace()
