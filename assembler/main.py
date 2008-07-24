@@ -39,13 +39,13 @@ def main():
   try:
     file_in = open(sys.argv[1], "r")
   except IOError, (errno, strerror):
-    file_out.close()
     print "%s (%s): %s" % (ERR_INVALID_INPUT_FILE[1], sys.argv[1], strerror)
     return ERR_INVALID_INPUT_FILE[0]
 
   try:
     file_out = open(sys.argv[2] if arg_number == 2 else DEFAULT_OUT_NAME, 'w')
   except IOError, (errno, strerror):
+    file_in.close()
     print "%s (%s): %s" % (ERR_INVALID_OUTPUT_FILE[1],
                            sys.argv[2] if arg_number == 2 else DEFAULT_OUT_NAME,
                            strerror)
