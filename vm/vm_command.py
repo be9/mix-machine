@@ -1,34 +1,42 @@
 from vm_errors import VMError
 
 class Command:
-	def __init__(self, code, func, time, label):
+	def __init__(self, code, fmt, func, time, label):
 		self.code = int(code)
+		self.fmt = int(fmt)
 		self.time = int(time)
 		self.func = func
 		self.label = str(label)
 		
 	def __str__(self):
-		return str(self.code) + ": " + str(self.label)
+		return str(self.code) + ":" + str(self.fmt) + " : " + str(self.label)
 
-class CommandListBadCodeError(VMError):
-	def __init__(self, code):
-		self = VMError("Invalid command code")
-		self.code = code
+class CommandListBadKeyError(VMError):
+	def __init__(self, key):
+		self = VMError("Invalid command key: (code, fmt)")
+		self.key = key
 
 class CommandList:
 	def __init__(self):
 		self.commands = {}
 	
-	def add_command(self, code, func, time, label):
-		if self.commands.has_key(code):
-			raise CommandListBadCodeError(code)
-		self.commands[code] = Command(code, func, time, label)
+	def add_command(self, code, fmt, func, time, label):
+		key = (code, fmt)
+		if self.commands.has_key(key):
+			raise CommandListBadKeyError(key)
+		
+		self.commands[key] = Command(code, fmt, func, time, label)
 	
-	def get_command(self, code):
+	def get_command(self, code, fmt = -1):
+		key = (code, fmt)
 		try:
-			ret = self.commands[code]
+			ret = self.commands[key]
 		except KeyError:
-			raise CommandListBadCodeError(code)
+			key = (code, -1)
+			try:
+				ret = self.commands[key]
+			except:
+				raise CommandListBadKeyError(key)
 		
 		return ret
 

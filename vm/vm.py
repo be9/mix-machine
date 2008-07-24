@@ -74,9 +74,10 @@ class VM:
 		
 		word = self.context.mem.get(self.context.regs["L"].addr())
 		code = word.code()
-		command = cmdList.get_command(code)
+		fmt = word.fmt()
+		command = cmdList.get_command(code, fmt)
 		
-		try:		
+		try:
 			jmp = int(command.func(word, self.context))
 			self.context.regs["L"].set_addr(jmp)
 			self.context.instructions += command.time
@@ -85,7 +86,7 @@ class VM:
 		
 		print str(self.context)
 		word = self.context.mem.get(self.context.regs["L"].addr())
-		print str(word) + ":\t" + str(cmdList.get_command(word.code()))
+		print str(word) + ":\t" + str(cmdList.get_command(word.code(), word.fmt()))
 		print "--------------------------------------------------------"
 	
 	def run(self):
@@ -106,7 +107,7 @@ class VM:
 vm = VM()
 
 vm.context.mem.set(Word([1,0,0,0,2,5]), 5)
-vm.context.mem.set(Word([1,0,4,0,0,39]), 3)
+#vm.context.mem.set(Word([1,0,0,0,0,39]), 3)
 for i in vm.context.mem.get_range(0, 10):
 	print str(i)
 
