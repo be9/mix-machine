@@ -17,7 +17,7 @@ def cmpi(command, context):
 	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
 	F = divmod(command.fmt(), 8)
 	I = context.get_reg_index(command.code() - 56)
-	context.flags["CF"] = cmp(Word(I.addr()).int(F), M.int(F))	# rI: [*,*,*,0,0,0] -> [*,0,0,0,*,*]
+	context.flags["CF"] = cmp(I.int(F), M.int(F))
 	return context.get_reg_l().int() + 1
 
 cmdList.add_command(56,	-1, cmpa, 1,	"CMPA")
