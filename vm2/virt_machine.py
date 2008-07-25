@@ -52,6 +52,9 @@ class VMachine:
     else:
       return True
 
+  def get_cur_word(self):
+    return self[self.cur_addr]
+
   def sort_errors(self):
     self.errors.sort(key = lambda x: x[0]) # sort by line_numbers
 
