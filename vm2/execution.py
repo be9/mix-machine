@@ -19,7 +19,7 @@ codes = {
 def find_nearest_down(array, value):
   # returns (result, Bool), where Bool - if result is exact (codes has value in keys)
   result = array[0]
-  for x in array[1:]:
+  for x in array:
     if x < value:
       result = x
     elif x == value:
