@@ -2,7 +2,7 @@ from vm_word import *
 from vm_memory import *
 from vm_command import cmdList
 from vm_events import *
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 from vm_context import VMContext
 
 #import vm_command_addr
@@ -15,6 +15,7 @@ import vm_command_store
 import vm_command_other
 
 class VM:
+	"""The main interface for MIX machine"""
 	def __init__(self):
 		self.context = VMContext()
 		
@@ -39,6 +40,11 @@ class VM:
 			jmp = int(command.func(word, self.context))
 			self.context.regs["L"] = Word(jmp)
 			self.context.instructions += command.time
+			
+		except VMRuntimeError, err:
+			print "runtime error occured"
+			print err
+			
 		except VMHalt:
 			self.context.is_halted = True
 	
@@ -48,6 +54,7 @@ class VM:
 	def reset(self):
 		pass
 	
+	# breakpoints
 	def set_brakepoint(self):
 		pass
 	def remove_brakepoint(self):
