@@ -24,7 +24,7 @@ def print_errors(errors):
 def write_memory(file, memory):
   for i in xrange(len(memory)):
     if memory[i] != Memory.positive_zero():
-      file.write("%04i: %+2i %02i %02i %02i %02i %02i\n" % tuple([i] + memory[i]))
+      file.write("%04i %+2i %02i %02i %02i %02i %02i\n" % tuple([i] + memory[i]))
 
 def write_asm_file(file, start_address, memory):
   file.write("%i\n" % start_address)
