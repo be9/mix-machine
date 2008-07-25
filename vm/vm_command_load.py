@@ -2,40 +2,30 @@ from vm_word import Word
 from vm_command import cmdList
 
 def lda(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.regs["A"] = Word(M.int(F))
-	return context.get_reg_l().int() + 1
+	data = context.mem.get(command["M"])
+	context.regs["A"] = Word(data.int(command["F"]))
 
 def ldx(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.regs["X"] = Word(M.int(F))
-	return context.get_reg_l().int() + 1
+	data = context.mem.get(command["M"])
+	context.regs["X"] = Word(data.int(command["F"]))
 
 def ldi(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.set_reg_index(command.code() - 8, Word(M.int(F)).set_bytes([0,0,0], (1,3)))
-	return context.get_reg_l().int() + 1
+	index = command["w_code"] - 8
+	data = context.mem.get(command["M"])
+	context.set_reg_index(index, Word(data.int(command["F"])).set_bytes([0,0,0], (1,3)))
 
 def ldan(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.regs["A"] = Word(-M.int(F))
-	return context.get_reg_l().int() + 1
+	data = context.mem.get(command["M"])
+	context.regs["A"] = Word(- data.int(command["F"]))
 
 def ldxn(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.regs["X"] = Word(-M.int(F))
-	return context.get_reg_l().int() + 1
+	data = context.mem.get(command["M"])
+	context.regs["X"] = Word(- data.int(command["F"]))
 
 def ldin(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.set_reg_index(command.code() - 16, Word(-M.int(F)).set_bytes([0,0,0], (1,3)))
-	return context.get_reg_l().int() + 1
+	index = command["w_code"] - 16
+	data = context.mem.get(command["M"])
+	context.set_reg_index(index, Word(- data.int(command["F"])).set_bytes([0,0,0], (1,3)))
 
 cmdList.add_command(8,	-1, lda, 1,	"LDA")
 cmdList.add_command(15,	-1, ldx, 1,	"LDX")

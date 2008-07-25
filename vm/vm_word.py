@@ -145,45 +145,11 @@ class Word:
 	def shift_cr(self, num=1):
 		num %= 5
 		self.shift_r(num, self.get_bytes((1,5))[5-num:])
-		return self
-	
-	def addr(self, addr = None):
-		if addr:
-			self.set_addr(addr)
-		return self.int((0,2))
-	
-	def code(self, code = None):
-		if code:
-			self.set_code(code)
-		return self.int((5,5))
-	
-	def fmt(self, fmt = None):
-		if fmt:
-			self.set_fmt(fmt)
-		return self.int((4,4))
-		
-	def index(self, index = None):
-		if index:
-			self.set_index(index)
-		return self.int((3,3))
-	
-	def set_addr(self, addr):
-		val = self._int2val(addr)
-		self.set_bytes(val[4:6], (1,2))
-		self.set_bytes(val[0:1], (0,0))
-		return self
-	
-	def set_code(self, code):
-		return self.set_bytes(code, (5,5))
-	
-	def set_fmt(self, fmt):
-		return self.set_bytes(fmt, (4,4))
-	
-	def set_index(self, index):
-		return self.set_bytes(index, (3,3))
+		return self	
 	
 class CmdWord(Word):
-	#def __init__(self, obj):
+	def __init__(self, obj):
+		Word.__init__(self, obj)
 		
 		
 	def addr(self, addr = None):
