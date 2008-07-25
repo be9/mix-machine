@@ -4,6 +4,7 @@ class Command:
 	def __init__(self, code, fmt, func, time, label):
 		self.code = int(code)
 		self.fmt = int(fmt)
+		
 		self.time = int(time)
 		self.func = func
 		self.label = str(label)

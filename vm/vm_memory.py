@@ -4,11 +4,6 @@ from copy import copy
 
 MEM_SIZE = 4000	# memory size in words
 
-class AddressOutOfRangeError(VMError):
-	def __init__(self, addr):
-		self = VMError("Adress out of range")
-		self.addr = addr
-		
 class BadRangeError(VMError):
 	def __init__(self, addr_b, addr_e):
 		self = VMError("Bad addresses in range")
@@ -20,6 +15,12 @@ class BadRangeSizeError(VMError):
 		self = VMError("Size of given values do not match to range")
 		self.size_need = size_need
 		self.size_real = size_real
+		
+# runtime errors
+class AddressOutOfRangeError(VMError):
+	def __init__(self, addr):
+		self = VMError("Adress out of range")
+		self.addr = addr
 
 class ReadLockedAddresError(VMError):
 	def __init__(self, addr):
