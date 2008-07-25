@@ -3,7 +3,7 @@ from read_memory import *
 
 def print_errors(errors):
   for error in errors:
-    print "%04i: %s" % (error[0], error[1])
+    print "%i: %s" % (error[0], error[1])
 
 def main():
   if len(sys.argv) != 2: # 1st - program name, 2nd - input filename
@@ -17,8 +17,11 @@ def main():
     return ERR_INVALID_INPUT_FILE[0]
 
   memory, start_address, errors = read_memory(file_in.readlines())
-  print start_address
-  print_errors(errors)
+  if len(errors) > 0:
+    print ERR_SYNTAX[1]
+    print_errors(errors)
+    return ERR_SYNTAX[0]
+
 
 # if we executing module
 if __name__ == '__main__':

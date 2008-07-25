@@ -1,6 +1,7 @@
 # error codes of interface:
 ERR_INVALID_ARGS = (1, "Invalid command line arguments, required one real filename")
 ERR_INVALID_INPUT_FILE = (2, "Can't open input file")
+ERR_SYNTAX = (3, "Syntax errors in input file")
 
 class VMError(Exception):
   def __init__(self, info = None):
@@ -20,3 +21,10 @@ class VMError(Exception):
 
 class InvalidStartAddressError(VMError):
   """Invalid start address in input file (%s)"""
+
+class InvalidIntError(VMError):
+  """Invalid integer in input file (%s)"""
+
+class TooShortInputLineError(VMError):
+  """Too short line in input, expected 7 integers (%s)"""
+  
