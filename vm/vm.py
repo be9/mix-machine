@@ -4,24 +4,23 @@ from vm_command import cmdList
 from vm_events import *
 from vm_errors import VMError, VMRuntimeError
 from vm_context import VMContext
+from vm_command_parser import CommandParser
 
 #import vm_command_addr
-import vm_command_cmp
+#import vm_command_cmp
 #import vm_command_io
 import vm_command_jump
-import vm_command_load
+#import vm_command_load
 #import vm_command_math
-import vm_command_store
+#import vm_command_store
 import vm_command_other
 
 class VM:
 	"""The main interface for MIX machine"""
 	def __init__(self):
 		self.context = VMContext()
-		
-	# debug
-	def __str__(self):
-		return str(context)
+		self.cmd_list = cmdList
+		self.parser = CommandParser()
 		
 	def fill_memory(self, mem):
 		pass
@@ -31,14 +30,21 @@ class VM:
 		
 	
 	def trace(self):
-		word = CmdWord(self.context.mem.get(self.context.regs["L"].int()))
-		code = word.code()
-		fmt = word.fmt()
+		word = self.context.mem.get(self.context.regs["L"].int())
+		word = CmdWord(word)
+		
+		parsed_cmd = self.parser.parse_word(word, self.context)
+		
+		code = parsed_cmd["w_code"]	
+		fmt = parsed_cmd["w_fmt"]	
+		
 		command = cmdList.get_command(code, fmt)
 		
 		try:
-			jmp = int(command.func(word, self.context))
-			self.context.regs["L"] = Word(jmp)
+			command.func(parsed_cmd, self.context)
+			
+			if not command.is_jump:
+				self.context.regs["L"] = Word(self.context.regs["L"].int() + 1)
 			self.context.instructions += command.time
 			
 		except VMRuntimeError, err:
