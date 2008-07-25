@@ -5,7 +5,7 @@ MEMORY_SIZE = 4000
 class Memory:
   @staticmethod
   def positive_zero():
-    return [+1] + [0] * 5
+    return [1, 0 ,0 ,0 ,0 ,0]
 
   def __init__(self):
     self.memory = [ self.positive_zero()[:] for _ in xrange(MEMORY_SIZE)]
