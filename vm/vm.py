@@ -10,7 +10,7 @@ from vm_command_parser import CommandParser
 #import vm_command_cmp
 #import vm_command_io
 import vm_command_jump
-#import vm_command_load
+import vm_command_load
 #import vm_command_math
 #import vm_command_store
 import vm_command_other

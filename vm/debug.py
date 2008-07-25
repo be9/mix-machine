@@ -6,7 +6,7 @@ from vm_command import cmdList
 vm = VM()
 
 #		Addr	Index	Fmt	Code	# Offset	Asm
-mem = [	Word([	1,0,18,	0,	2,	0]),	# 0		
+mem = [	Word([	1,0,18,	0,	19,	8]),	# 0		
 	Word([	1,0,17,	0,	2,	0]),	# 1		
 	Word([	1,0,18,	0,	5,	0]),	# 2		
 	Word([	1,0,18,	0,	19,	0]),	# 3		
