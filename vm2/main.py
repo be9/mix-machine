@@ -17,11 +17,13 @@ def main():
     print "%s (%s): %s" % (ERR_INVALID_INPUT_FILE[1], sys.argv[1], strerror)
     return ERR_INVALID_INPUT_FILE[0]
 
+
   memory, start_address, errors = read_memory(file_in.readlines())
   if len(errors) > 0:
     print ERR_SYNTAX[1]
     print_errors(errors)
     return ERR_SYNTAX[0]
+
 
   vmachine = VMachine(memory, start_address)
   if len(vmachine.errors) > 0:
@@ -29,10 +31,16 @@ def main():
     print_errors(vmachine.errors)
     return ERR_VM_INIT[0]
 
+
   vmachine.print_state(sys.stdout)
-  while not vmachine.halted:
+  while not vmachine.halted and len(vmachine.errors) == 0:
     vmachine.step()
   vmachine.print_state(sys.stdout)
+
+  if len(vmachine.errors) > 0:
+    print ERR_VM_RUN[1]
+    print_errors(vmachine.errors)
+    return ERR_VM_RUN[0]
 
 # if we executing module
 if __name__ == '__main__':

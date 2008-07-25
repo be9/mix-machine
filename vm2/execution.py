@@ -12,6 +12,7 @@ codes = {
   (0, 0) : (nop, False),
   (5, 2) : (hlt, True),
   (48, 2) : (enta, True),
+  (49, 0) : (inc1, True),
   (55, 2) : (entx, True),
   (63, 63) : (_debug_fail, False)
 }

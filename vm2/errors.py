@@ -2,7 +2,8 @@
 ERR_INVALID_ARGS = (1, "Invalid command line arguments, required one real filename")
 ERR_INVALID_INPUT_FILE = (2, "Can't open input file")
 ERR_SYNTAX = (3, "Syntax errors in input file")
-ERR_VM_INIT = (3, "Errors in input file, can't initialize virtual machine")
+ERR_VM_INIT = (4, "Errors in input file, can't initialize virtual machine")
+ERR_VM_RUN = (5, "Runtime errors occured")
 
 class VMError(Exception):
   def __init__(self, info = None):
@@ -39,7 +40,7 @@ class InvalidMixWordError(VMError):
   """Invalid mix-word (%s  %s %s %s %s %s)"""
 
 class UnknownInstructionError(VMError):
-  """Invalid mix-instruction at this word (%s  %s %s %s %s %s)"""
+  """Invalid mix-instruction at this word (%+2i %02i %02i %02i %02i %02i)"""
 
 class InvalidIndError(VMError):
   """Invalid index part (%s)"""

@@ -56,6 +56,16 @@ class VMachine:
   def get_cur_word(self):
     return self[self.cur_addr]
 
+  def clear_rI(self, reg):
+    if reg in "123456":
+      self.__dict__["r" + reg][1:4] = [0, 0, 0]
+
+  def sum_words(self, word1, word2):
+    res = self.mix2dec(word1) + self.mix2dec(word2)
+    if abs(res) >= self.MAX_BYTE**5:
+      self.of = True
+    return self.dec2mix(res)
+
   def sort_errors(self):
     self.errors.sort(key = lambda x: x[0]) # sort by line_numbers
 
@@ -76,7 +86,13 @@ class VMachine:
   def init_stuff(self):
     self.rA = self.POSITIVE_ZERO
     self.rX = self.POSITIVE_ZERO
-    self.rI = [self.POSITIVE_ZERO for _ in xrange(7)] # one not used rI[0] :)
+    self.r0 = self.POSITIVE_ZERO
+    self.r1 = self.POSITIVE_ZERO
+    self.r2 = self.POSITIVE_ZERO
+    self.r3 = self.POSITIVE_ZERO
+    self.r4 = self.POSITIVE_ZERO
+    self.r5 = self.POSITIVE_ZERO
+    self.r6 = self.POSITIVE_ZERO
 
     self.cf = 0
     self.of = False
@@ -100,18 +116,20 @@ class VMachine:
     file.write("rA:  %s\n" % word2str(self.rA))
     file.write("rX:  %s\n" % word2str(self.rX))
     for i in xrange(1, 7):
-      file.write("rI%i: %s\n" % (i, word2str(self.rI[i])))
+      file.write("rI%i: %s\n" % (i, word2str(self.__dict__["r"+str(i)])))
     file.write("CF:  ")
+    assert(self.cf in (-1, 0, 1))
     if self.cf == -1:
       file.write("LESS")
     elif self.cf == 0:
       file.write("EQUAL")
     elif self.cf == 1:
       file.write("GREATER")
-    else:
-      file.write("##ERROR##")
     file.write("\n")
     file.write("OF:  %s\n" % self.of)
 
   def step(self):
-    execute(self)
+    try:
+      execute(self)
+    except VMError, e:
+      self.errors.append( (self.cur_addr, e) )

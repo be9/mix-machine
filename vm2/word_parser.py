@@ -10,6 +10,6 @@ class WordParser:
     ind = word[3]
     if ind > 6:
       raise InvalidIndError(ind)
-    addr += self.vmachine.mix2dec(self.vmachine.rI[ind])
+    addr += self.vmachine.mix2dec(self.vmachine.__dict__["r"+str(ind)])
     addr = self.vmachine.sign(addr) * ( abs(addr) % self.vmachine.MAX_BYTE**2 )
     return addr
