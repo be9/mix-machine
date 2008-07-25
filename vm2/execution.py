@@ -9,11 +9,11 @@ def _debug_fail():
 
 # boolean - is field-part fixed
 codes = {
-  0 : (nop, False),
-  322 : (hlt, True),
-  3074 : (enta, True),
-  3522 : (entx, True),
-  4000 : (_debug_fail, False)
+  (0, 0) : (nop, False),
+  (5, 2) : (hlt, True),
+  (48, 2) : (enta, True),
+  (55, 2) : (entx, True),
+  (63, 63) : (_debug_fail, False)
 }
 
 def find_nearest_down(array, value):
@@ -39,9 +39,8 @@ def execute(vmachine):
   # list of sorted keys for search
   codes_sorted = codes.keys()
   codes_sorted.sort()
-
   # find instruction whith this codes
-  nearest, exact = find_nearest_down(codes_sorted, c * vmachine.MAX_BYTE + f)
+  nearest, exact = find_nearest_down(codes_sorted, (c, f))
   if codes[nearest][1] and not exact:
     raise UnknownInstructionError(tuple(word))
   codes[nearest][0](vmachine, addr, ind, f, c)
