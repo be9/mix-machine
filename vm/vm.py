@@ -4,13 +4,13 @@ from vm_command import cmdList
 from vm_events import *
 from vm_errors import VMError, VMRuntimeError
 from vm_context import VMContext
-from vm_command_parser import CommandParser
+from vm_command_parser import ParsedCommand
 
 #import vm_command_addr
 #import vm_command_cmp
 #import vm_command_io
 import vm_command_jump
-import vm_command_load
+#import vm_command_load
 #import vm_command_math
 #import vm_command_store
 import vm_command_other
@@ -20,7 +20,6 @@ class VM:
 	def __init__(self):
 		self.context = VMContext()
 		self.cmd_list = cmdList
-		self.parser = CommandParser()
 		
 	def fill_memory(self, mem):
 		pass
@@ -31,12 +30,11 @@ class VM:
 	
 	def trace(self):
 		word = self.context.mem.get(self.context.regs["L"].int())
-		word = CmdWord(word)
+				
+		parsed_cmd = ParsedCommand(word, self.context)
 		
-		parsed_cmd = self.parser.parse_word(word, self.context)
-		
-		code = parsed_cmd["w_code"]	
-		fmt = parsed_cmd["w_fmt"]	
+		code = parsed_cmd.w_code()
+		fmt = parsed_cmd.w_fmt()
 		
 		command = cmdList.get_command(code, fmt)
 		

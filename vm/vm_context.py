@@ -1,4 +1,4 @@
-from vm_word import *
+from vm_word import Word
 from vm_memory import *
 from vm_errors import VMError
 

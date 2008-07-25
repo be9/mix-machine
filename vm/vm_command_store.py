@@ -2,27 +2,32 @@ from vm_word import Word
 from vm_command import cmdList
 
 def sta(command, context):
-	addr = command.addr() + context.get_reg_index(command.index()).int()
-	word = context.mem.get(addr)
-	F = divmod(command.fmt(), 8)
-	
-	bytes = context.regs["A"].get_bytes((5-F[1]+F[0],5))
-	word.set_bytes(bytes, F)
-	
-	context.mem.set(word, addr)
-	return context.get_reg_l().int() + 1
+#	print "--[store]--"
+#	data = context.mem.get(command["M"])
+#	num = command["F"][1] - command["F"][0] + 1
+#	
+#	if command["F"][0] == 0:
+#		bytes = Word(context.regs["A"]).shift_r(num-1)
+#		data.set_bytes(bytes, (1, command["F"][1]))
+#	else:
+#		bytes = Word(context.regs["A"]).shift_r(num)
+#	print bytes
+#	
+#	data.set_bytes(bytes, command["F"])
+#	
+#	print data
+#	
+#	context.mem.set(data, command["M"])
+#	print "-----------"
 
 def stx(command, context):
-	addr = command.addr() + context.get_reg_index(command.index()).int()
-	word = context.mem.get(addr)
-	F = divmod(command.fmt(), 8)
+	data = context.mem.get(command["M"])
 	
 	bytes = context.regs["X"].get_bytes((5-F[1]+F[0],5))
-	word.set_bytes(bytes, F)
+	data.set_bytes(bytes, command["F"])
 	
-	context.mem.set(word, addr)
-	return context.get_reg_l().int() + 1
-
+	context.mem.set(data, command["M"])
+	
 def sti(command, context):
 	addr = command.addr() + context.get_reg_index(command.index()).int()
 	word = context.mem.get(addr)

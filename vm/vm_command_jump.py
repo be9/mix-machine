@@ -2,12 +2,12 @@ from vm_word import Word
 from vm_command import cmdList
 
 #	Common jumps
-def jmp(command, context):
+def jmp(cmd, context):
 	context.regs["J"] = Word(context.get_reg_l().int() + 1)
-	context.regs["L"] = Word(command["M"])
+	context.regs["L"] = Word(cmd.M())
 
 def jsj(command, context):
-	context.regs["L"] = Word(command["M"])
+	context.regs["L"] = Word(cmd.M())
 
 #	OF jumps
 def jov(command, context):
