@@ -42,6 +42,9 @@ def read_memory(lines):
       if res is None:
         continue
       else:
-        memory[res[0]] = res[1]
+        if res[0] in memory:
+          errors.append( (i + 1, RepeatedAddressError(res[0])) )
+        else:
+          memory[res[0]] = (res[1], i + 1)
 
   return (memory, start_address, errors)

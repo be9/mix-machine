@@ -27,4 +27,6 @@ class InvalidIntError(VMError):
 
 class TooShortInputLineError(VMError):
   """Too short line in input, expected 7 integers (%s)"""
-  
+
+class RepeatedAddressError(VMError):
+  """This address repeated in input file (%s)"""
