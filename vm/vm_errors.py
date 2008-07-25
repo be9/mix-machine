@@ -7,3 +7,6 @@ class VMError(Exception):
 		return str(self.err)
 	def __cmp__(self, other):
 		return cmp(self.err, other.err)
+	
+class VMRuntimeError(VMError):
+	pass
