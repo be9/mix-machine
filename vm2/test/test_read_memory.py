@@ -47,9 +47,9 @@ class ReadMemoryTestCase(unittest.TestCase):
         ],
         (
           {
-            120: [1, 1, 2, 3, 4, 5],
-            123: [1, 0, 0, 0, 5, 2],
-            3999: [-1, 63, 63, 63, 63, 63],
+            120: ([1, 1, 2, 3, 4, 5], 4),
+            123: ([1, 0, 0, 0, 5, 2], 3),
+            3999: ([-1, 63, 63, 63, 63, 63], 6),
           },
           123,
           []
@@ -71,17 +71,19 @@ class ReadMemoryTestCase(unittest.TestCase):
           "123 1\t\t0 0 0 5 \n my comment",
           "120 1 1 2 3\t \t4 5 long comment\n",
           "   ",
-          "3999 -1    63\t\t\t63 63\t63 63"
+          "3999 -1    63\t\t\t63 63\t63 63",
+          "3999 1    0\t\t0 0\t0 0"
         ],
         (
           {
-            120: [1, 1, 2, 3, 4, 5],
-            3999: [-1, 63, 63, 63, 63, 63],
+            120: ([1, 1, 2, 3, 4, 5], 4),
+            3999: ([-1, 63, 63, 63, 63, 63], 6),
           },
           None,
           [
             (1, InvalidStartAddressError("123WORD")),
-            (3, InvalidIntError("my"))
+            (3, InvalidIntError("my")),
+            (7, RepeatedAddressError(3999))
           ]
         )
       )

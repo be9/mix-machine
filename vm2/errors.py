@@ -2,6 +2,7 @@
 ERR_INVALID_ARGS = (1, "Invalid command line arguments, required one real filename")
 ERR_INVALID_INPUT_FILE = (2, "Can't open input file")
 ERR_SYNTAX = (3, "Syntax errors in input file")
+ERR_VM_INIT = (3, "Errors in input file, can't initialize virtual machine")
 
 class VMError(Exception):
   def __init__(self, info = None):
@@ -27,4 +28,15 @@ class InvalidIntError(VMError):
 
 class TooShortInputLineError(VMError):
   """Too short line in input, expected 7 integers (%s)"""
-  
+
+class RepeatedAddressError(VMError):
+  """This address repeated in input file (%s)"""
+
+class InvalidMemAddrError(VMError):
+  """Invalid memory address (%s)"""
+
+class InvalidMixWordError(VMError):
+  """Invalid mix-word (%s  %s %s %s %s %s)"""
+
+class UnknownInstructionError(VMError):
+  """Invalid mix-instruction at this word (%s  %s %s %s %s %s)"""
