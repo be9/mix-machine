@@ -1,5 +1,6 @@
 from errors import *
 from execution import *
+from word_parser import *
 
 class VMachine:
   MEMORY_SIZE = 4000
@@ -87,6 +88,7 @@ class VMachine:
     self.init_memory(memory)
     self.sort_errors()
     self.init_stuff()
+    self.word_parser = WordParser(self)
     self.cur_addr = start_address
     self.halted = False
 

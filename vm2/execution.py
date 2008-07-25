@@ -31,11 +31,6 @@ def find_nearest_down(array, value):
 def execute(vmachine):
   # some common stuff
   word = vmachine.get_cur_word()
-  addr = word[0] * (word[1] * vmachine.MAX_BYTE + word[2])
-  ind = word[3]
-  full_addr = addr + vmachine.mix2dec(vmachine.rI[ind])
-  full_addr = vmachine.sign(full_addr) * (abs(full_addr) % vmachine.MAX_BYTE**2 )
-
   f = word[4]
   c = word[5]
 
@@ -46,4 +41,4 @@ def execute(vmachine):
   nearest, exact = find_nearest_down(codes_sorted, (c, f))
   if codes[nearest][1] and not exact:
     raise UnknownInstructionError(tuple(word))
-  codes[nearest][0](vmachine, full_addr)
+  codes[nearest][0](vmachine)

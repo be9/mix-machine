@@ -40,3 +40,7 @@ class InvalidMixWordError(VMError):
 
 class UnknownInstructionError(VMError):
   """Invalid mix-instruction at this word (%s  %s %s %s %s %s)"""
+
+class InvalidIndError(VMError):
+  """Invalid index part (%s)"""
+  
