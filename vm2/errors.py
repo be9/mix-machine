@@ -37,3 +37,6 @@ class InvalidMemAddrError(VMError):
 
 class InvalidMixWordError(VMError):
   """Invalid mix-word (%s  %s %s %s %s %s)"""
+
+class UnknownInstructionError(VMError):
+  """Invalid mix-instruction at this word (%s  %s %s %s %s %s)"""

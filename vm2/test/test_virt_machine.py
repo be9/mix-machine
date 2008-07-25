@@ -6,7 +6,7 @@ from errors import *
 
 class VMachineTestCase(unittest.TestCase):
   def testPositiveZero(self):
-    self.assertEqual(VMachine.positive_zero(), [1, 0, 0, 0, 0, 0])
+    self.assertEqual(VMachine.POSITIVE_ZERO, [1, 0, 0, 0, 0, 0])
 
 
 
@@ -14,11 +14,11 @@ class VMachineTestCase(unittest.TestCase):
     tests = [
       (0, True),
       (10, True),
-      (MEMORY_SIZE - 1, True),
+      (VMachine.MEMORY_SIZE - 1, True),
       (-1, False),
       (-10, False),
-      (MEMORY_SIZE, False),
-      (MEMORY_SIZE + 2, False),
+      (VMachine.MEMORY_SIZE, False),
+      (VMachine.MEMORY_SIZE + 2, False),
     ]
     for addr, res in tests:
       self.assertEqual(VMachine.check_mem_addr(addr), res)
@@ -26,16 +26,16 @@ class VMachineTestCase(unittest.TestCase):
   def testCheckWord(self):
     tests = [
       ([+1,  0,  0,  0,  0,  0], True),
-      ([-1, MAX_BYTE-1,  MAX_BYTE-1,  MAX_BYTE-1,  MAX_BYTE-1,  MAX_BYTE-1], True),
-      ([+1, MAX_BYTE-1,  MAX_BYTE-1,  MAX_BYTE-1,  MAX_BYTE-1,  MAX_BYTE-1], True),
-      ([-1, MAX_BYTE/2,  MAX_BYTE/2,  MAX_BYTE/2,  MAX_BYTE/2,  MAX_BYTE/2], True),
-      ([+1, 0,  MAX_BYTE/2,  0,  MAX_BYTE/2,  0], True),
+      ([-1, VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1], True),
+      ([+1, VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1,  VMachine.MAX_BYTE-1], True),
+      ([-1, VMachine.MAX_BYTE/2,  VMachine.MAX_BYTE/2,  VMachine.MAX_BYTE/2,  VMachine.MAX_BYTE/2,  VMachine.MAX_BYTE/2], True),
+      ([+1, 0,  VMachine.MAX_BYTE/2,  0,  VMachine.MAX_BYTE/2,  0], True),
       ([+2,  0,  0,  0,  0,  0], False),
       ([-2,  0,  0,  0,  0,  0], False),
       ([-2,  0,  0, -1,  0,  0], False),
       ([+1,  0,  0, -1,  0,  0], False),
-      ([-1, MAX_BYTE,  0,  0,  0,  0], False),
-      ([1, 0,  0, 0,  0,  MAX_BYTE], False),
+      ([-1, VMachine.MAX_BYTE,  0,  0,  0,  0], False),
+      ([1, 0,  0, 0,  0,  VMachine.MAX_BYTE], False),
     ]
     for word, res in tests:
       self.assertEqual(VMachine.check_word(word), res)
@@ -45,33 +45,33 @@ class VMachineTestCase(unittest.TestCase):
       (
         {
           155: ([+1, 0, 0, 0, 0, 0], 2),
-          5: ([+1, 5, 50, 0, MAX_BYTE-1, 0], 2),
-          MEMORY_SIZE-1: ([+1, 1, 1, 1, 1, 1], 2)
+          5: ([+1, 5, 50, 0, VMachine.MAX_BYTE-1, 0], 2),
+          VMachine.MEMORY_SIZE-1: ([+1, 1, 1, 1, 1, 1], 2)
         },
         {
-          5: [+1, 5, 50, 0, MAX_BYTE-1, 0],
+          5: [+1, 5, 50, 0, VMachine.MAX_BYTE-1, 0],
           155: [+1, 0, 0, 0, 0, 0],
-          MEMORY_SIZE-1: [+1, 1, 1, 1, 1, 1]
+          VMachine.MEMORY_SIZE-1: [+1, 1, 1, 1, 1, 1]
         },
         []
       ),
       (
         {
-          155: ([+1, MAX_BYTE, 0, 0, 0, 0], 1),
-          5: ([+1, 5, 50, 0, MAX_BYTE-1, 0], 2),
-          MEMORY_SIZE+1: ([+1, 1, 1, 1, 1, 1], 3)
+          155: ([+1, VMachine.MAX_BYTE, 0, 0, 0, 0], 1),
+          5: ([+1, 5, 50, 0, VMachine.MAX_BYTE-1, 0], 2),
+          VMachine.MEMORY_SIZE+1: ([+1, 1, 1, 1, 1, 1], 3)
         },
         {
-          5: [+1, 5, 50, 0, MAX_BYTE-1, 0]
+          5: [+1, 5, 50, 0, VMachine.MAX_BYTE-1, 0]
         },
         [
-          ( 1, InvalidMixWordError((1, MAX_BYTE, 0, 0, 0, 0)) ),
-          ( 3, InvalidMemAddrError(MEMORY_SIZE+1) ),
+          ( 1, InvalidMixWordError((1, VMachine.MAX_BYTE, 0, 0, 0, 0)) ),
+          ( 3, InvalidMemAddrError(VMachine.MEMORY_SIZE+1) ),
         ]
       )
     ]
     for memory, memory_dict, errors in tests:
-      vm = VMachine(memory)
+      vm = VMachine(memory, 0)
       self.assertEqual(vm.errors, errors)
       self.assertTrue(vm.cmp_memory(memory_dict))
 

@@ -23,13 +23,16 @@ def main():
     print_errors(errors)
     return ERR_SYNTAX[0]
 
-  vmachine = VMachine(memory)
+  vmachine = VMachine(memory, start_address)
   if len(vmachine.errors) > 0:
     print ERR_VM_INIT[1]
     print_errors(vmachine.errors)
     return ERR_VM_INIT[0]
 
-  #vmachine.run(start_address)
+  vmachine.print_state(sys.stdout)
+  while not vmachine.halted:
+    vmachine.step()
+  vmachine.print_state(sys.stdout)
 
 # if we executing module
 if __name__ == '__main__':
