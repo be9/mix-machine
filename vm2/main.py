@@ -1,5 +1,6 @@
 import sys
 from read_memory import *
+from virt_machine import *
 
 def print_errors(errors):
   for error in errors:
@@ -22,6 +23,13 @@ def main():
     print_errors(errors)
     return ERR_SYNTAX[0]
 
+  vmachine = VMachine(memory)
+  if len(vmachine.errors) > 0:
+    print ERR_VM_INIT[1]
+    print_errors(vmachine.errors)
+    return ERR_VM_INIT[0]
+
+  #vmachine.run(start_address)
 
 # if we executing module
 if __name__ == '__main__':
