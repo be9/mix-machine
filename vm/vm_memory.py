@@ -21,12 +21,14 @@ class Memory:
 	def __init__(self):
 		self.mem = [Word(0) for i in xrange(0, MEM_SIZE)]
 	
-	def _check_addr(self, addr):
+	@staticmethod
+	def _check_addr(addr):
 		if addr < 0 or addr > MEM_SIZE-1:
 			raise AddressOutOfRangeError(addr)
 		return True
 	
-	def _check_range(self, addr_b, addr_e):
+	@staticmethod
+	def _check_range(addr_b, addr_e):
 		if addr_b >= addr_e:
 			raise BadRangeError()
 		if addr_b < 0:
