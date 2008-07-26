@@ -4,7 +4,7 @@ from errors import *
 from exec_addr_manipulation import *    # ALL DONE
 from exec_cmp import *                  # ALL DONE
 from exec_load import *                 # ALL DONE
-from exec_others import *               # NOP and HLT
+from exec_others import *               # NOP, HLT, NUM, CHAR
 from exec_store import *                # ALL DONE
 from exec_math import *                 # ALL DONE
 from exec_shift import *                # ALL DONE
@@ -49,6 +49,8 @@ codes = {
   ( 2, 0) : (sub, False),
   ( 3, 0) : (mul, False),
   ( 4, 0) : (div, False),
+  ( 5, 0) : (num, True),
+  ( 5, 1) : (char, True),
   ( 5, 2) : (hlt, True),
   ( 6, 0) : (sla, True),
   ( 6, 1) : (sra, True),

@@ -11,7 +11,7 @@ class Word:
   def from_dec(num):
     mask = MAX_BYTE - 1  # 1<<6 - 1
     u_num = abs(num)
-    return [Word.sign(num)] + [ (u_num >> shift) & mask for shift in xrange(24, -1, -6) ]
+    return [Word.sign(num)] + [ (u_num >> shift) & mask for shift in xrange(24, -1, -6) ] # 24 = 6 * (5-1)
 
   @staticmethod
   def norm_2bytes(addr):
