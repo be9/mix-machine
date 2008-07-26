@@ -42,7 +42,7 @@ while not vm.context.is_halted:
 	print "--[trace]-----------------------------------------------"
 	vm.trace()
 	print str(vm.context)
-	word = vm.context.mem.get(vm.context.regs["L"].int())
+	word = vm.context.mem.get(vm.context.rL.int())
 	parsed_cmd = ParsedCommand(word, vm.context)
 	print str(word) + ":\t" + str(cmdList.get_command(parsed_cmd.w_code(), parsed_cmd.w_fmt()))
 	print "--------------------------------------------------------"

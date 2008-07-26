@@ -7,7 +7,7 @@ from vm_context import VMContext
 from vm_command_parser import ParsedCommand
 
 #import vm_command_addr
-#import vm_command_cmp
+import vm_command_cmp
 #import vm_command_io
 import vm_command_jump
 #import vm_command_load
@@ -29,20 +29,20 @@ class VM:
 		
 	
 	def trace(self):
-		word = self.context.mem.get(self.context.regs["L"].int())
+		word = self.context.mem.get(self.context.rL.int())
 				
 		parsed_cmd = ParsedCommand(word, self.context)
 		
 		code = parsed_cmd.w_code()
 		fmt = parsed_cmd.w_fmt()
 		
-		command = cmdList.get_command(code, fmt)
+		command = self.cmd_list.get_command(code, fmt)
 		
 		try:
 			command.func(parsed_cmd, self.context)
 			
 			if not command.is_jump:
-				self.context.regs["L"] = Word(self.context.regs["L"].int() + 1)
+				self.context.rL = Word(self.context.rL.int() + 1)
 			self.context.instructions += command.time
 			
 		except VMRuntimeError, err:

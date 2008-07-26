@@ -43,4 +43,7 @@ class ParsedCommand:
 		return I
 	
 	def M(self):
-		return self.w_addr() + self.I()
+		if self.I() != 0:
+			return self.w_addr() + self.context.rI[self.I()]
+		else:
+			return self.w_addr()

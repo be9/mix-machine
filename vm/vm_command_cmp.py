@@ -2,17 +2,17 @@ from vm_word import Word
 from vm_command import cmdList
 
 def cmpa(command, context):
-	data = context.mem.get(command["M"])
-	context.flags["CF"] = cmp(context.regs["A"].int(command["F"]), data.int(command["F"]))
+	data = context.mem.get(command.M())
+	context.CF = cmp(context.rA.int(command.F()), data.int(command.F()))
 
 def cmpx(command, context):
-	data = context.mem.get(command["M"])
-	context.flags["CF"] = cmp(context.regs["A"].int(command["F"]), data.int(command["F"]))
+	data = context.mem.get(command.M())
+	context.CF = cmp(context.rX.int(command.F()), data.int(command.F()))
 
 def cmpi(command, context):
-	data = context.mem.get(command["M"])
-	I = context.get_reg_index(command.code() - 56)
-	context.flags["CF"] = cmp(I.regs["A"].int(command["F"]), data.int(command["F"]))
+	data = context.mem.get(command.M())
+	I = context.rI[command.code() - 56]
+	context.CF = cmp(I.int(command.F()), data.int(command.F()))
 
 cmdList.add_command(56,	-1, cmpa, 1,	"CMPA")
 cmdList.add_command(63,	-1, cmpx, 1,	"CMPX")
