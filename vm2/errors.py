@@ -44,4 +44,6 @@ class UnknownInstructionError(VMError):
 
 class InvalidIndError(VMError):
   """Invalid index part (%s)"""
-  
+
+class InvalidFieldSpecError(VMError):
+  """Invalid field specification (%s)"""
