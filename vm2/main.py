@@ -26,16 +26,12 @@ def main():
 
 
   vmachine = VMachine(memory, start_address)
-  if len(vmachine.errors) > 0:
-    print ERR_VM_INIT[1]
-    print_errors(vmachine.errors)
-    return ERR_VM_INIT[0]
-
 
   vmachine.print_state(sys.stdout)
   while not vmachine.halted and len(vmachine.errors) == 0:
     vmachine.step()
   vmachine.print_state(sys.stdout)
+  print vmachine[1]
 
   if len(vmachine.errors) > 0:
     print ERR_VM_RUN[1]

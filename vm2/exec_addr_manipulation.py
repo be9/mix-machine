@@ -1,8 +1,9 @@
 # inc, dec, ent, enn
+from word_parser import *
 
 #------------------ENT------------------
 def _ent(vmachine, reg): # getr - function to GET Register from
-  vmachine.__dict__["r" + reg] = vmachine.dec2mix(vmachine.word_parser.get_full_addr())
+  vmachine.__dict__["r" + reg] = Word(WordParser.get_full_addr(vmachine))
   vmachine.cur_addr += 1
 
 def enta(vmachine):
@@ -14,11 +15,10 @@ def entx(vmachine):
 
 #------------------INC------------------
 def _inc(vmachine, reg):
-  vmachine.__dict__["r" + reg] = vmachine.sum_words(
-                                    vmachine.__dict__["r" + reg],
-                                    vmachine.dec2mix(vmachine.word_parser.get_full_addr())
-                                 )
-  vmachine.clear_rI(reg)
+  vmachine.__dict__["r" + reg] = Word( vmachine.__dict__["r" + reg][:] + WordParser.get_full_addr(vmachine) )
+  if vmachine.clear_rI(reg):
+    #FIX ME - overflow
+    pass
   vmachine.cur_addr += 1
 
 def inc1(vmachine):
@@ -28,13 +28,13 @@ def inc2(vmachine):
   _inc(vmachine, "2")
 
 def inc3(vmachine):
-  _inc(vmachine, "2")
+  _inc(vmachine, "3")
 
 def inc4(vmachine):
-  _inc(vmachine, "2")
+  _inc(vmachine, "4")
 
 def inc5(vmachine):
-  _inc(vmachine, "2")
+  _inc(vmachine, "5")
 
 def inc6(vmachine):
-  _inc(vmachine, "2")
+  _inc(vmachine, "6")

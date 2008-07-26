@@ -1,4 +1,6 @@
 from errors import *
+from word import *
+from virt_machine import *
 
 # input format:
 # required FIRST line - start address
@@ -44,7 +46,12 @@ def read_memory(lines):
       else:
         if res[0] in memory:
           errors.append( (i + 1, RepeatedAddressError(res[0])) )
+        elif not VMachine.check_mem_addr(res[0]):
+          errors.append( (i + 1, InvalidMemAddrError(res[0])) )
         else:
-          memory[res[0]] = (res[1], i + 1)
+          if Word.is_word_list(res[1]):
+            memory[res[0]] = Word(res[1])
+          else:
+            errors.append( (i + 1, InvalidMixWordError(tuple(res[1]))) )
 
   return (memory, start_address, errors)
