@@ -1,7 +1,7 @@
 import sys
 
 class VMError(Exception):
-	def __init__(self, err):
+	def __init__(self, err = ""):
 		self.err = err
 	def __str__(self):
 		return str(self.err)

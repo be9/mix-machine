@@ -3,9 +3,7 @@ from vm_memory import *
 from vm_errors import VMError, VMRuntimeError
 
 class VMContextInvalidIndexError(VMError):
-	def __init__(self, index):
-		self = VMError("Invalid number of index register")
-		self.index = index
+	pass
 
 class VMContext:
 	def __init__(self):
