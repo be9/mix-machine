@@ -1,11 +1,12 @@
 
 from errors import *
 
-from exec_addr_manipulation import *    # FIX ME - overflow like in math
+from exec_addr_manipulation import *    # ALL DONE
 from exec_cmp import *                  # ALL DONE
 from exec_load import *                 # ALL DONE
 from exec_others import *               # NOP and HLT
 from exec_store import *                # ALL DONE
+from exec_math import *                 # ALL DONE
 
 def find_nearest_down(array, value):
   # returns (result, Bool), where Bool - if result is exact (codes has value in keys)
@@ -44,6 +45,10 @@ def _debug_fail():
 # boolean - is field-part fixed
 codes = {
   (0, 0) : (nop, False),
+  (1, 0) : (add, False),
+  (2, 0) : (sub, False),
+  (3, 0) : (mul, False),
+  (4, 0) : (div, False),
   (5, 2) : (hlt, True),
   ( 8, 0) : (lda, False),
   ( 9, 0) : (ld1, False),

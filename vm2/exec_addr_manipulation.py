@@ -1,18 +1,16 @@
 # inc, dec, ent, enn (c_code = 48..55)
 
-# FIX ME - overflow
+# ALL DONE
 
 from word_parser import *
 
 def _linear_manipulation(vmachine, reg, sign, inc_action):
   """Inc-Action is 1 or 0"""
-  vmachine.__dict__["r" + reg] = Word(\
-      inc_action * vmachine.__dict__["r" + reg][:] +\
-      sign * WordParser.get_full_addr(vmachine)\
-  )
-  if vmachine.clear_rI(reg):
-    #FIX ME - overflow
-    pass
+  result = inc_action * vmachine.__dict__["r" + reg][:] + sign * WordParser.get_full_addr(vmachine, True, False)
+  if abs(result) >= MAX_BYTE**2:
+    result = Word.norm_2bytes(result)
+    vmachine.of = True
+  vmachine.__dict__["r" + reg] = Word(result)
   vmachine.cur_addr += 1
 
 #----------------ENT/ENN--------------------
