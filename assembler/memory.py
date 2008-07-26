@@ -60,7 +60,7 @@ class Memory:
     if not ( 0 <= l <= 5 and 0 <= r <= 5 and l <= r ):
       return None
     value_word = Memory.dec2mix(value)
-    for i in xrange(r, l - 1, -1): # [r, ..., l]
+    for i in xrange(r, max(l - 1, 0), -1): # [r, ..., l]
       word[i] = value_word[5 - r + i]
     if l == 0:
       word[0] = value_word[0]
