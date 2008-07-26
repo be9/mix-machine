@@ -9,8 +9,8 @@ class VMEvent(Exception):
 	
 class VMStop(VMEvent):
 	def __init__(self):
-		VMEvent.__init__("stop")
+		VMEvent.__init__(self, "stop")
 		
 class VMHalt(VMEvent):
 	def __init__(self):
-		VMEvent.__init__("halt")
+		VMEvent.__init__(self, "halt")
