@@ -30,7 +30,7 @@ class ParsedCommand:
 		F = divmod(self.w_fmt(), 8)
 		
 		if F[0] < 0 or F[0] > F[1] or F[1] > 5:
-			raise "illegal fmt for command"
+			raise CommandIllegalFormat()
 		
 		return F
 	
@@ -38,12 +38,12 @@ class ParsedCommand:
 		I = self.w_index()
 		
 		if  I < 0 or I > 6:
-			raise "illegal index for command"
+			raise CommandIllegalIndex()
 		
 		return I
 	
 	def M(self):
 		if self.I() != 0:
-			return self.w_addr() + self.context.rI[self.I()]
+			return int( self.w_addr() + self.context.rI[self.I()].int() )
 		else:
-			return self.w_addr()
+			return int( self.w_addr() )

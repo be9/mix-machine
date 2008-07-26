@@ -12,6 +12,7 @@ def char(command, context):
 	pass
 
 def hlt(command, context):
+	context.is_halted = True
 	raise VMHalt()
 
 	

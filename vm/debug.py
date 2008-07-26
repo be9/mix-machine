@@ -6,9 +6,11 @@ from vm_command_parser import ParsedCommand
 
 vm = VM()
 
+vm.context.rI[1] = Word(10)
+
 #		Addr	Index	Fmt	Code	# Offset	Asm
 mem = [	Word([	1,0,18,	0,	5,	0]),	# 0		
-	Word([	1,0,17,	0,	13,	0]),	# 1		
+	Word([	1,0,0,	1,	0,	39]),	# 1		
 	Word([	1,0,18,	0,	5,	0]),	# 2		
 	Word([	1,0,18,	0,	19,	0]),	# 3		
 	Word([	1,0,0,	0,	0,	0]),	# 4		
