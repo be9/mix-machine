@@ -7,30 +7,16 @@ class VMContextInvalidIndexError(VMError):
 
 class VMContext:
 	def __init__(self):
-		#self.regs = {	"A" :	Word(0),
-		#		"X" : 	Word(0),
-		#		"I1" :	Word(0),
-		#		"I2" :	Word(0),
-		#		"I3" :	Word(0),
-		#		"I4" :	Word(0),
-		#		"I5" :	Word(0),
-		#		"J" : 	Word(0),
-		#		"L" :	Word(0) }
-				
 		self.rA = Word(0)
 		self.rX = Word(0)
 		self.rI = [Word(0), Word(0), Word(0), Word(0), Word(0), Word(0), Word(0)]	# must be different instances, rI[0] unused
 		self.rJ = Word(0)
 		self.rL = Word(0)
-		
-		#self.flags = {  "OF" : 0,
-		#		"CF" : 0 }
 				
 		self.OF = 0
 		self.CF = 0
 	
 		self.mem = Memory()
-		self.mem.fill(0)
 		
 		self.instructions = 0
 		
@@ -42,10 +28,10 @@ class VMContext:
 		self.rI = [Word(0), Word(0), Word(0), Word(0), Word(0), Word(0), Word(0)]
 		self.rJ = Word(0)
 		self.rL = Word(0)
-			
+	
 		self.OF = 0
 		self.CF = 0
-					
+
 		self.mem.fill(0)
 		
 		self.instructions = 0

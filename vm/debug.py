@@ -34,7 +34,7 @@ mem = [	Word([	1,0,18,	0,	5,	0]),	# 0
 	Word([	1,0,0,	0,	2,	5]),	# 19		HLT
 	]
 
-vm.context.mem.set_range(mem, 0)
+vm.context.mem.set_range(0, mem)
 for i in vm.context.mem.get_range(0, 20):
 	print str(i)
 
