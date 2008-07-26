@@ -1,4 +1,4 @@
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 
 class Command:
 	def __init__(self, code, fmt, func, time, label, is_jump):
@@ -14,10 +14,12 @@ class Command:
 	def __str__(self):
 		return str(self.code) + ":" + str(self.fmt) + " : " + str(self.label)
 
-class CommandListBadKeyError(VMError):
-	def __init__(self, key):
-		self = VMError("Invalid command key: (code, fmt)")
-		self.key = key
+class CommandAlreadyExistError(VMError):
+	pass
+
+# runtime error
+class CommandNotFonudError(VMRuntimeError):
+	pass
 
 class CommandList:
 	def __init__(self):
@@ -43,4 +45,4 @@ class CommandList:
 		
 		return ret
 
-cmdList = CommandList()
+cmdList = CommandList()		# global command list, for adding commands

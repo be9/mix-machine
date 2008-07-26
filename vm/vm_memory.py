@@ -1,5 +1,5 @@
 from vm_word import Word
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 from copy import copy
 
 MEM_SIZE = 4000	# memory size in words
@@ -17,12 +17,12 @@ class BadRangeSizeError(VMError):
 		self.size_real = size_real
 		
 # runtime errors
-class AddressOutOfRangeError(VMError):
+class AddressOutOfRangeError(VMRuntimeError):
 	def __init__(self, addr):
 		self = VMError("Adress out of range")
 		self.addr = addr
 
-class ReadLockedAddresError(VMError):
+class ReadLockedAddresError(VMRuntimeError):
 	def __init__(self, addr):
 		self = VMError("Operating with locked memory")
 		self.addr = addr

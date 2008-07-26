@@ -1,11 +1,12 @@
 from vm_word import Word
 from vm_context import VMContext
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 
-class CommandIllegalIndex(VMError):
+# runtime errors
+class CommandIllegalIndex(VMRuntimeError):
 	pass
 
-class CommandIllegalFormat(VMError):
+class CommandIllegalFormat(VMRuntimeError):
 	pass
 	
 

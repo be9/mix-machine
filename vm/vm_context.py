@@ -1,6 +1,6 @@
 from vm_word import Word
 from vm_memory import *
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 
 class VMContextInvalidIndexError(VMError):
 	def __init__(self, index):
