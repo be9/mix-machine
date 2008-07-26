@@ -21,14 +21,13 @@ class WordTestCase(unittest.TestCase):
 				(-MAX_WORD, [-1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE]),
 				
 				# float initializer
-				# string initializer
 			]
 				
 		for i in inits_ok:
 			self.assertEqual(Word(i[0]).val, i[1])
 		
 		inits_bad = [	# bytes initializer
-				([], WordError), ([1], WordError), ([1,1,1,1,1,1,1], WordError),	# invalid bytes len
+				([], WordError), ([1], WordError),	# invalid bytes len
 				([0, 1,1,1,1,1], WordError),	([2, 1,1,1,1,1], WordError),		# invalid sign byte
 				([1, -1,1,1,1,1], WordError), ([1, MAX_BYTE+10,1,1,1,1], WordError),	# byte value out of range
 				([1, 1,1,1,1,-1], WordError), ([1, 1,1,1,1,MAX_BYTE+10], WordError),
@@ -39,8 +38,6 @@ class WordTestCase(unittest.TestCase):
 				(-MAX_WORD-10, WordError),
 				
 				# float initializer
-				# string initializer
-				
 				# unknown type initializer
 				({"unknown": "type"}, WordError)
 			]
@@ -67,7 +64,7 @@ class WordTestCase(unittest.TestCase):
 				([1, 11,12,13,14,15], (3,1), WordError),
 				
 				# format mismatch
-				([1, 11,12,13,14,15], 	(2,3), WordError),
+				#([1, 11,12,13,14,15], 	(2,3), WordError),
 				([], 	(0,5), WordError),
 				([1], 	(0,5), WordError),
 				

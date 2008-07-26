@@ -3,6 +3,13 @@ from vm_word import Word
 from vm_command import cmdList
 from vm_command_parser import ParsedCommand
 
+from vm_memory import AddressOutOfRangeError
+from vm_command import CommandNotFonudError
+from vm_events import VMEvent, VMStop, VMHalt
+from vm_errors import VMError, VMRuntimeError
+from vm_command_parser import CommandInvalidIndexError, CommandInvalidFormatError
+
+
 
 vm = VM()
 
@@ -42,7 +49,21 @@ while not vm.context.is_halted:
 	raw_input()
 	
 	print "--[trace]-----------------------------------------------"
-	vm.trace()
+	try:
+		vm.trace()
+	except:
+		VMEvent
+		
+		AddressOutOfRangeError
+		CommandNotFonudError
+		
+		VMError
+		VMRuntimeError
+		
+		CommandInvalidIndexError
+		CommandInvalidFormatError
+		
+		
 	print str(vm.context)
 	word = vm.context.mem.get(vm.context.rL.int())
 	parsed_cmd = ParsedCommand(word, vm.context)
