@@ -60,7 +60,7 @@ class VMachine:
     self.cur_addr = start_address
     self.halted = False
 
-  def print_state(self, file):
+  def debug_state(self, file):
     file.write("HLT: %s\n" % self.halted)
     file.write("CA:  %s\n" % self.cur_addr)
     file.write("rA:  %s\n" % self.rA)
@@ -78,6 +78,12 @@ class VMachine:
       file.write("GREATER")
     file.write("\n")
     file.write("OF:  %s\n" % self.of)
+
+  def debug_mem(self, file, begin, end):
+    if begin > end:
+      return
+    for i in xrange(begin, end + 1):
+      file.write("%04i %s\n" % (i, self[i]))
 
   def step(self):
     try:
