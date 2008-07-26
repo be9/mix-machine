@@ -5,12 +5,12 @@
 from word_parser import *
 
 def _st(vmachine, reg):
-  if src == "Z":
+  if reg == "Z":
     src = Word()
   else:
     src = vmachine.__dict__["r" + reg]
   # dst - vmachine[addr]
-  addr = WordParser.get_full_addr(vmachine, True)
+  addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
   vmachine[addr][left:right] = src[:]
   vmachine.cur_addr += 1

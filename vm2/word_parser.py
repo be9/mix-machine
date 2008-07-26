@@ -3,7 +3,7 @@ from word import *
 
 class WordParser:
   @staticmethod
-  def get_full_addr(vmachine, check_mix_addr = False):
+  def get_full_addr(vmachine, check_overflow = False, check_mix_addr = False):
     word = vmachine.get_cur_word()
     addr = word[0:2]
     ind = word[3]
@@ -11,8 +11,9 @@ class WordParser:
       raise InvalidIndError(ind)
     addr += vmachine.__dict__["r"+str(ind)][:]
     if abs(addr) >= MAX_BYTE**2:
-      #FIX ME - overflow
-      addr = Word.sign(addr) * ( abs(addr) % MAX_BYTE**2  )
+      addr = Word.norm_2bytes(addr)
+      if check_overflow:
+        vmachine.of = True
     if check_mix_addr and not vmachine.check_mem_addr(addr):
       raise InvalidMemAddrError(addr)
     return addr
@@ -22,6 +23,6 @@ class WordParser:
     word = vmachine.get_cur_word()
     l = word[4] / 8
     r = word[4] % 8
-    if not (0 <= l <= r <= 6):
-      raise InvalidFieldSpecError("%i:%i=%i" % l, r, word[4])
+    if not (0 <= l <= r <= 5):
+      raise InvalidFieldSpecError("%i:%i=%i" % (l, r, word[4]))
     return (l, r)

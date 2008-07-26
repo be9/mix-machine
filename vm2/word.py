@@ -13,6 +13,10 @@ class Word:
     u_num = abs(num)
     return [Word.sign(num)] + [ (u_num >> shift) & mask for shift in xrange(24, -1, -6) ]
 
+  @staticmethod
+  def norm_2bytes(addr):
+    return Word.sign(addr) * (abs(addr) % MAX_BYTE**2)
+
   # or you can write word[:]
   def to_dec(self):
     return self.word_list[0] * reduce(lambda x,y: (x << 6) | y, self.word_list[1:], 0)
@@ -64,5 +68,7 @@ class Word:
       self.word_list = obj
     elif isinstance(obj, int):
       self.word_list = self.from_dec(obj)
+    elif isinstance(obj, Word):
+      self.word_list = obj.word_list[:]
     else:
       self.word_list = [+1, 0, 0, 0, 0, 0]
