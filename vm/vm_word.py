@@ -29,14 +29,16 @@ class Word:
 
 	# convert different types into private data type
 	
-	def _check_int(self, int):
+	@staticmethod
+	def _check_int(int):
 		if abs(int) > MAX_WORD:
 			raise WordError()
 		
 		return True
 	
-	def _int_to_val(self, int):
-		self._check_int(int)
+	@staticmethod
+	def _int_to_val(int):
+		Word._check_int(int)
 		
 		if int >= 0:
 			res = [1,0,0,0,0,0]
@@ -48,7 +50,8 @@ class Word:
 			
 		return res
 	
-	def _check_bytes(self, bytes):
+	@staticmethod
+	def _check_bytes(bytes):
 		if len(bytes) < 6:
 			raise WordError()
 		
@@ -61,8 +64,9 @@ class Word:
 			
 		return True
 
-	def _bytes_to_val(self, bytes):
-		self._check_bytes(bytes)
+	@staticmethod
+	def _bytes_to_val(bytes):
+		Word._check_bytes(bytes)
 		return bytes
 	
 	#def _check_float(self, float):
@@ -72,7 +76,8 @@ class Word:
 	#	return [1,0,0,0,0,0]
 
 	# user operations with words
-	def _check_fmt(self, fmt):
+	@staticmethod
+	def _check_fmt(fmt):
 		if fmt[0] < 0 or fmt[1] < fmt[0] or fmt[1] > 5:
 			raise WordError()
 		
