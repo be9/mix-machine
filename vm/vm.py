@@ -1,6 +1,6 @@
 from vm_word import Word
 from vm_memory import Memory, AddressOutOfRangeError
-from vm_command import cmdList, CommandNotFonudError
+from vm_command import cmdList, CommandNotFoundError
 from vm_events import VMEvent, VMStop, VMHalt
 from vm_errors import VMError, VMRuntimeError
 from vm_context import VMContext

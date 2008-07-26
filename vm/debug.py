@@ -4,7 +4,7 @@ from vm_command import cmdList
 from vm_command_parser import ParsedCommand
 
 from vm_memory import AddressOutOfRangeError
-from vm_command import CommandNotFonudError
+from vm_command import CommandNotFoundError
 from vm_events import VMEvent, VMStop, VMHalt
 from vm_errors import VMError, VMRuntimeError
 from vm_command_parser import CommandInvalidIndexError, CommandInvalidFormatError
@@ -55,7 +55,7 @@ while not vm.context.is_halted:
 		VMEvent
 		
 		AddressOutOfRangeError
-		CommandNotFonudError
+		CommandNotFoundError
 		
 		VMError
 		VMRuntimeError

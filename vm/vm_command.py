@@ -30,7 +30,7 @@ class CommandAlreadyExistError(VMError):
 	pass
 
 # runtime error
-class CommandNotFonudError(VMRuntimeError):
+class CommandNotFoundError(VMRuntimeError):
 	pass
 
 class CommandList:
@@ -56,7 +56,7 @@ class CommandList:
 			try:
 				ret = self.commands[key]
 			except KeyError:
-				raise CommandNotFonudError()
+				raise CommandNotFoundError()
 		
 		return ret
 
