@@ -47,3 +47,6 @@ class InvalidIndError(VMError):
 
 class InvalidFieldSpecError(VMError):
   """Invalid field specification (%s)"""
+
+class NegativeShiftError(VMError):
+  """Shift is invalid for negative number of bytes (%s)"""

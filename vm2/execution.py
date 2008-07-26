@@ -7,6 +7,7 @@ from exec_load import *                 # ALL DONE
 from exec_others import *               # NOP and HLT
 from exec_store import *                # ALL DONE
 from exec_math import *                 # ALL DONE
+from exec_shift import *                # ALL DONE
 
 def find_nearest_down(array, value):
   # returns (result, Bool), where Bool - if result is exact (codes has value in keys)
@@ -37,19 +38,24 @@ def execute(vmachine):
 
 
 
-
 def _debug_fail():
   print "FAILED!!!!"
   raise "FAILED!!!!"
 
 # boolean - is field-part fixed
 codes = {
-  (0, 0) : (nop, False),
-  (1, 0) : (add, False),
-  (2, 0) : (sub, False),
-  (3, 0) : (mul, False),
-  (4, 0) : (div, False),
-  (5, 2) : (hlt, True),
+  ( 0, 0) : (nop, False),
+  ( 1, 0) : (add, False),
+  ( 2, 0) : (sub, False),
+  ( 3, 0) : (mul, False),
+  ( 4, 0) : (div, False),
+  ( 5, 2) : (hlt, True),
+  ( 6, 0) : (sla, True),
+  ( 6, 1) : (sra, True),
+  ( 6, 2) : (slax, True),
+  ( 6, 3) : (srax, True),
+  ( 6, 4) : (slc, True),
+  ( 6, 5) : (src, True),
   ( 8, 0) : (lda, False),
   ( 9, 0) : (ld1, False),
   (10, 0) : (ld2, False),
