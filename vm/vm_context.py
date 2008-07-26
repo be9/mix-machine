@@ -9,7 +9,7 @@ class VMContext:
 	def __init__(self):
 		self.rA = Word(0)
 		self.rX = Word(0)
-		self.rI = [Word(0), Word(0), Word(0), Word(0), Word(0), Word(0), Word(0)]	# must be different instances, rI[0] unused
+		self.rI = [Word(0) for i in xrange(0, 7)]	# must be different instances, rI[0] unused
 		self.rJ = Word(0)
 		self.rL = Word(0)
 				
@@ -25,7 +25,7 @@ class VMContext:
 	def reset(self):
 		self.rA = Word(0)
 		self.rX = Word(0)
-		self.rI = [Word(0), Word(0), Word(0), Word(0), Word(0), Word(0), Word(0)]
+		self.rI = [Word(0) for i in xrange(0, 7)]
 		self.rJ = Word(0)
 		self.rL = Word(0)
 	
