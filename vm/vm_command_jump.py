@@ -3,120 +3,120 @@ from vm_command import cmdList
 
 #	Common jumps
 def jmp(cmd, context):
-	context.regs["J"] = Word(context.get_reg_l().int() + 1)
-	context.regs["L"] = Word(cmd.M())
+	context.rJ = Word(context.rL.int() + 1)
+	context.rL = Word(cmd.M())
 
 def jsj(command, context):
-	context.regs["L"] = Word(cmd.M())
+	context.rL = Word(cmd.M())
 
 #	OF jumps
 def jov(command, context):
-	if context.flags["OF"]:
-		context.flags["OF"] = 0
+	if context.OF:
+		context.OF = 0
 		jmp(command, context)
 
 def jnov(command, context):
-	if not context.flags["OF"]:
+	if not context.OF:
 		jmp(command, context)
 
 #	CF jumps
 def jl(command, context):
-	if context.flags["CF"] < 0:
+	if context.CF < 0:
 		jmp(command, context)
 
 def je(command, context):
-	if context.flags["CF"] == 0:
+	if context.CF == 0:
 		jmp(command, context)
 	
 def jg(command, context):
-	if context.flags["CF"] > 0:
+	if context.CF > 0:
 		jmp(command, context)
 
 def jge(command, context):
-	if context.flags["CF"] >= 0:
+	if context.CF >= 0:
 		jmp(command, context)
 	
 def jne(command, context):
-	if context.flags["CF"] != 0:
+	if context.CF != 0:
 		jmp(command, context)
 		
 def jle(command, context):
-	if context.flags["CF"] <= 0:
+	if context.CF <= 0:
 		jmp(command, context)
 	
 #	rA jumps
 def jan(command, context):
-	if context.regs["A"] < 0:
+	if context.rA < 0:
 		jmp(command, context)
 	
 def jaz(command, context):
-	if context.regs["A"] == 0:
+	if context.rA == 0:
 		jmp(command, context)
 
 def jap(command, context):
-	if context.regs["A"] > 0:
+	if context.rA > 0:
 		jmp(command, context)
 
 def jann(command, context):
-	if not context.regs["A"] < 0:
+	if not context.rA < 0:
 		jmp(command, context)
 	
 def janz(command, context):
-	if not context.regs["A"] == 0:
+	if not context.rA == 0:
 		jmp(command, context)
 	
 def janp(command, context):
-	if not context.regs["A"] > 0:
+	if not context.rA > 0:
 		jmp(command, context)
 
 #	rX jumps
 def jxn(command, context):
-	if context.regs["X"] < 0:
+	if context.rX < 0:
 		jmp(command, context)
 	
 def jxz(command, context):
-	if context.regs["X"] == 0:
+	if context.rX == 0:
 		jmp(command, context)
 
 def jxp(command, context):
-	if context.regs["X"] > 0:
+	if context.rX > 0:
 		jmp(command, context)
 
 def jxnn(command, context):
-	if not context.regs["X"] < 0:
+	if not context.rX < 0:
 		jmp(command, context)
 	
 def jxnz(command, context):
-	if not context.regs["X"] == 0:
+	if not context.rX == 0:
 		jmp(command, context)
 	
 def jxnp(command, context):
-	if not context.regs["X"] > 0:
+	if not context.rX > 0:
 		jmp(command, context)
 
 #	rI jumps
 def jin(command, context):
-	if context.get_reg_index(command["w_code"] - 40) < 0:
+	if context.rI[command.w_code() - 40] < 0:
 		jmp(command, context)
 	
 def jiz(command, context):
-	if context.get_reg_index(command["w_code"] - 40) == 0:
+	if context.rI[command.w_code() - 40] == 0:
 		jmp(command, context)
 	
 def jip(command, context):
-	if context.get_reg_index(command["w_code"] - 40) > 0:
+	if context.rI[command.w_code() - 40] > 0:
 		jmp(command, context)
 
 def jinn(command, context):
-	if not context.get_reg_index(command["w_code"] - 40) < 0:
+	if not context.rI[command.w_code() - 40] < 0:
 		jmp(command, context)
 
 def jinz(command, context):
-	if not context.get_reg_index(command["w_code"] - 40) == 0:
+	if not context.rI[command.w_code() - 40] == 0:
 		jmp(command, context)
 
 def jinp(command, context):
-	if not context.get_reg_index(command["w_code"] - 40) > 0:
+	if not context.rI[command.w_code() - 40] > 0:
 		jmp(command, context)
 
 cmdList.add_command(39, 0, jmp,		1, "JMP",	True)

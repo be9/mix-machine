@@ -6,9 +6,11 @@ from vm_command_parser import ParsedCommand
 
 vm = VM()
 
+vm.context.rI[1] = Word(10)
+
 #		Addr	Index	Fmt	Code	# Offset	Asm
 mem = [	Word([	1,0,18,	0,	5,	0]),	# 0		
-	Word([	1,0,17,	0,	13,	0]),	# 1		
+	Word([	1,0,0,	1,	0,	39]),	# 1		
 	Word([	1,0,18,	0,	5,	0]),	# 2		
 	Word([	1,0,18,	0,	19,	0]),	# 3		
 	Word([	1,0,0,	0,	0,	0]),	# 4		
@@ -32,7 +34,7 @@ mem = [	Word([	1,0,18,	0,	5,	0]),	# 0
 	Word([	1,0,0,	0,	2,	5]),	# 19		HLT
 	]
 
-vm.context.mem.set_range(mem, 0)
+vm.context.mem.set_range(0, mem)
 for i in vm.context.mem.get_range(0, 20):
 	print str(i)
 
@@ -42,7 +44,7 @@ while not vm.context.is_halted:
 	print "--[trace]-----------------------------------------------"
 	vm.trace()
 	print str(vm.context)
-	word = vm.context.mem.get(vm.context.regs["L"].int())
+	word = vm.context.mem.get(vm.context.rL.int())
 	parsed_cmd = ParsedCommand(word, vm.context)
 	print str(word) + ":\t" + str(cmdList.get_command(parsed_cmd.w_code(), parsed_cmd.w_fmt()))
 	print "--------------------------------------------------------"

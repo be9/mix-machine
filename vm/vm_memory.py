@@ -1,49 +1,41 @@
 from vm_word import Word
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 from copy import copy
 
 MEM_SIZE = 4000	# memory size in words
 
 class BadRangeError(VMError):
-	def __init__(self, addr_b, addr_e):
-		self = VMError("Bad addresses in range")
-		self.addr_b = addr_b
-		self.addr_e = addr_e
+	pass
 
 class BadRangeSizeError(VMError):
-	def __init__(self, size_need, size_real):
-		self = VMError("Size of given values do not match to range")
-		self.size_need = size_need
-		self.size_real = size_real
+	pass
 		
 # runtime errors
-class AddressOutOfRangeError(VMError):
-	def __init__(self, addr):
-		self = VMError("Adress out of range")
-		self.addr = addr
+class AddressOutOfRangeError(VMRuntimeError):
+	pass
 
-class ReadLockedAddresError(VMError):
-	def __init__(self, addr):
-		self = VMError("Operating with locked memory")
-		self.addr = addr
+class ReadLockedAddresError(VMRuntimeError):
+	pass
 
 class Memory:
 	def __init__(self):
-		self.mem = [Word(0)]*MEM_SIZE
+		self.mem = [Word(0) for i in xrange(0, MEM_SIZE)]
 	
 	def _check_addr(self, addr):
 		if addr < 0 or addr > MEM_SIZE-1:
 			raise AddressOutOfRangeError(addr)
+		return True
 	
 	def _check_range(self, addr_b, addr_e):
 		if addr_b >= addr_e:
-			raise BadRangeError(addr_b, addr_e)
+			raise BadRangeError()
 		if addr_b < 0:
-			raise AddressOutOfRangeError(addr_b)
+			raise AddressOutOfRangeError()
 		elif addr_e > MEM_SIZE-1:
-			raise AddressOutOfRangeError(addr_e)
+			raise AddressOutOfRangeError()
+		return True
 	
-	def set(self, val, addr):
+	def set(self, addr, val):
 		self._check_addr(addr)
 		self.mem[addr] = Word(val)
 	
@@ -51,18 +43,14 @@ class Memory:
 		self._check_addr(addr)
 		return self.mem[addr]
 	
-	def set_range(self, values, addr_b, addr_e = None):
-		if not addr_e:
-			addr_e = addr_b + len(values)
+	def set_range(self, addr_b, values):
+		addr_e = addr_b + len(values) -1
 		self._check_range(addr_b, addr_e)
-		
-		if len(values) != addr_e - addr_b:
-			raise BadRangeSizeError(addr_e - addr_b, len(values))
-		self.mem[addr_b: addr_e] = [Word(val) for val in values]
+		self.mem[addr_b: addr_e] = [Word(values[i]) for i in xrange(0, len(values))]
 	
 	def get_range(self, addr_b, addr_e):
 		self._check_range(addr_b, addr_e)
-		return self.mem[addr_b: addr_e]
+		return self.mem[addr_b: addr_e+1]
 	
 	def lock_range(self, addr_b, addr_e):
 		pass
@@ -74,7 +62,7 @@ class Memory:
 		pass
 	
 	def fill(self, val):
-		self.mem = [Word(val)]*MEM_SIZE
+		self.mem = [Word(val) for i in xrange(0, MEM_SIZE)]
 			
 	# debug
 	def __str__(self):

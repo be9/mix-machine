@@ -1,11 +1,12 @@
 from vm_word import Word
 from vm_context import VMContext
-from vm_errors import VMError
+from vm_errors import VMError, VMRuntimeError
 
-class CommandIllegalIndex(VMError):
+# runtime errors
+class CommandInvalidIndexError(VMRuntimeError):
 	pass
 
-class CommandIllegalFormat(VMError):
+class CommandInvalidFormatError(VMRuntimeError):
 	pass
 	
 
@@ -30,7 +31,7 @@ class ParsedCommand:
 		F = divmod(self.w_fmt(), 8)
 		
 		if F[0] < 0 or F[0] > F[1] or F[1] > 5:
-			raise "illegal fmt for command"
+			raise CommandInvalidFormatError()
 		
 		return F
 	
@@ -38,9 +39,12 @@ class ParsedCommand:
 		I = self.w_index()
 		
 		if  I < 0 or I > 6:
-			raise "illegal index for command"
+			raise CommandInvalidIndexError()
 		
 		return I
 	
 	def M(self):
-		return self.w_addr() + self.I()
+		if self.I() != 0:
+			return int( self.w_addr() + self.context.rI[self.I()].int() )
+		else:
+			return int( self.w_addr() )

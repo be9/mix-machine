@@ -25,7 +25,7 @@ class WordTestCase(unittest.TestCase):
 			]
 				
 		for i in inits_ok:
-			self.assertEqual(Word(i[0])._Word__val, i[1])
+			self.assertEqual(Word(i[0]).val, i[1])
 		
 		inits_bad = [	# bytes initializer
 				([], WordError), ([1], WordError), ([1,1,1,1,1,1,1], WordError),	# invalid bytes len
@@ -59,7 +59,7 @@ class WordTestCase(unittest.TestCase):
 			
 		for i in ops_ok:
 			w = Word([1, 10, 20, 30, 40, 50])
-			self.assertEqual(w.set_bytes(i[0], i[1])._Word__val, i[2])
+			self.assertEqual(w.set_bytes(i[0], i[1]).val, i[2])
 			
 		ops_bad = [	# invalid format
 				([1, 11,12,13,14,15], (-1,5), WordError),
