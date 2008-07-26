@@ -1,13 +1,14 @@
 from vm import VM
-from vm_word import Word, CmdWord
+from vm_word import Word
 from vm_command import cmdList
+from vm_command_parser import ParsedCommand
 
 
 vm = VM()
 
 #		Addr	Index	Fmt	Code	# Offset	Asm
-mem = [	Word([	1,0,18,	0,	19,	8]),	# 0		
-	Word([	1,0,17,	0,	2,	0]),	# 1		
+mem = [	Word([	1,0,18,	0,	5,	0]),	# 0		
+	Word([	1,0,17,	0,	13,	0]),	# 1		
 	Word([	1,0,18,	0,	5,	0]),	# 2		
 	Word([	1,0,18,	0,	19,	0]),	# 3		
 	Word([	1,0,0,	0,	0,	0]),	# 4		
@@ -41,6 +42,7 @@ while not vm.context.is_halted:
 	print "--[trace]-----------------------------------------------"
 	vm.trace()
 	print str(vm.context)
-	word = CmdWord(vm.context.mem.get(vm.context.regs["L"].int()))
-	print str(word) + ":\t" + str(cmdList.get_command(word.code(), word.fmt()))
+	word = vm.context.mem.get(vm.context.regs["L"].int())
+	parsed_cmd = ParsedCommand(word, vm.context)
+	print str(word) + ":\t" + str(cmdList.get_command(parsed_cmd.w_code(), parsed_cmd.w_fmt()))
 	print "--------------------------------------------------------"

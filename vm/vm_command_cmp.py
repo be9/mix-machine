@@ -2,23 +2,17 @@ from vm_word import Word
 from vm_command import cmdList
 
 def cmpa(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.flags["CF"] = cmp(context.regs["A"].int(F), M.int(F))
-	return context.get_reg_l().int() + 1
+	data = context.mem.get(command["M"])
+	context.flags["CF"] = cmp(context.regs["A"].int(command["F"]), data.int(command["F"]))
 
 def cmpx(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
-	context.flags["CF"] = cmp(context.regs["X"].int(F), M.int(F))
-	return context.get_reg_l().int() + 1
+	data = context.mem.get(command["M"])
+	context.flags["CF"] = cmp(context.regs["A"].int(command["F"]), data.int(command["F"]))
 
 def cmpi(command, context):
-	M = context.mem.get(command.addr() + context.get_reg_index(command.index()).int())
-	F = divmod(command.fmt(), 8)
+	data = context.mem.get(command["M"])
 	I = context.get_reg_index(command.code() - 56)
-	context.flags["CF"] = cmp(I.int(F), M.int(F))
-	return context.get_reg_l().int() + 1
+	context.flags["CF"] = cmp(I.regs["A"].int(command["F"]), data.int(command["F"]))
 
 cmdList.add_command(56,	-1, cmpa, 1,	"CMPA")
 cmdList.add_command(63,	-1, cmpx, 1,	"CMPX")
