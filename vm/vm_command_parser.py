@@ -9,7 +9,6 @@ class CommandInvalidIndexError(VMRuntimeError):
 class CommandInvalidFormatError(VMRuntimeError):
 	pass
 	
-
 class ParsedCommand:
 	def __init__(self, word, context):
 		self.word = word
@@ -28,20 +27,20 @@ class ParsedCommand:
 		return self.word.int((5,5))
 		
 	def F(self):
-		F = divmod(self.w_fmt(), 8)
+		l, r = divmod(self.w_fmt(), 8)
 		
-		if F[0] < 0 or F[0] > F[1] or F[1] > 5:
-			raise CommandInvalidFormatError()
+		if l < 0 or l > r or r > 5:
+			raise CommandInvalidFormatError
 		
-		return F
+		return l, r
 	
 	def I(self):
-		I = self.w_index()
+		idx = self.w_index()
 		
-		if  I < 0 or I > 6:
-			raise CommandInvalidIndexError()
+		if not 0 <= idx <= 6:
+			raise CommandInvalidIndexError
 		
-		return I
+		return idx
 	
 	def M(self):
 		if self.I() != 0:
