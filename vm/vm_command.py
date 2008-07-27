@@ -34,30 +34,28 @@ class CommandNotFoundError(VMRuntimeError):
 	pass
 
 class CommandList:
-	def __init__(self):
-		self.commands = {}
-	
-	def add_command(self, code, fmt, func, time, label, is_jump = False):
-		key = (code, fmt)
-		if self.commands.has_key((code, -1)):
-			raise CommandAlreadyExistError()
-		
-		if self.commands.has_key((code, fmt)):
-			raise CommandAlreadyExistError()
-		
-		self.commands[key] = Command(code, fmt, func, time, label, is_jump)
-	
-	def get_command(self, code, fmt = -1):
-		key = (code, fmt)
-		try:
-			ret = self.commands[key]
-		except KeyError:
-			key = (code, -1)
-			try:
-				ret = self.commands[key]
-			except KeyError:
-				raise CommandNotFoundError()
-		
-		return ret
+  def __init__(self):
+    self.commands = {}
+    self.multicodes = set()
+
+  def add_command(self, code, fmt, func, time, label, is_jump = False):
+    key = (code, fmt)
+
+    if (code, -1) in self.commands or key in self.commands or \
+        (code in self.multicodes and fmt == -1):
+      raise CommandAlreadyExistError
+
+    self.commands[key] = Command(code, fmt, func, time, label, is_jump)
+
+    if fmt != -1:
+      self.multicodes.add(code)
+
+  def get_command(self, code, fmt = -1):
+    if (code, fmt) in self.commands:
+      return self.commands[(code, fmt)]
+    elif (code, -1) in self.commands:
+      return self.commands[(code, -1)]
+    else:
+      raise CommandNotFoundError
 
 cmdList = CommandList()		# global command list, for adding commands

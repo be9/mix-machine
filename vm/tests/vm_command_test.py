@@ -19,7 +19,7 @@ class CommandListTestCase(unittest.TestCase):
 		self.assertRaises(CommandAlreadyExistError, lst.add_command, 1, -1, None, 0,  "")
 		self.assertRaises(CommandAlreadyExistError, lst.add_command, 1, 0, None, 0,  "")
 		self.assertRaises(CommandAlreadyExistError, lst.add_command, 2, 0, None, 0,  "")
-		#self.assertRaises(CommandAlreadyExistError, lst.add_command, 2, -1, None, 0,  "")
+		self.assertRaises(CommandAlreadyExistError, lst.add_command, 2, -1, None, 0,  "")
 		
 	def testGet(self):
 		lst = CommandList()
