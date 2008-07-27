@@ -12,7 +12,7 @@ class VMachine:
 
   def __setitem__(self, index, word):
     """Can raise exception"""
-    self.memory[index][:] = word[:]
+    self.memory[index].word_list = word.word_list
  
   @staticmethod
   def check_mem_addr(addr):
@@ -20,10 +20,10 @@ class VMachine:
 
   def cmp_memory(self, memory_dict):
     """Need for testing"""
-    positive_zero = Word()
+    positive_zero = [+1, 0, 0, 0, 0, 0]
     if not isinstance(memory_dict, dict) or \
-       any( (i     in memory_dict and self[i] != memory_dict[i]) or
-            (i not in memory_dict and self[i] != positive_zero)
+       any( (i     in memory_dict and self[i].word_list != memory_dict[i].word_list) or
+            (i not in memory_dict and self[i].word_list != positive_zero)
             for i in xrange(VMachine.MEMORY_SIZE)):
       return False
     else:

@@ -23,9 +23,9 @@ class VMachineTestCase(unittest.TestCase):
     tests = [
       (
         {
-          155: [+1, 0, 0, 0, 0, 0],
-          5: [+1, 5, 50, 0, MAX_BYTE-1, 0],
-          VMachine.MEMORY_SIZE-1: [+1, 1, 1, 1, 1, 1]
+          155: Word([+1, 0, 0, 0, 0, 0]),
+          5: Word([+1, 5, 50, 0, MAX_BYTE-1, 0]),
+          VMachine.MEMORY_SIZE-1: Word([+1, 1, 1, 1, 1, 1])
         },
         {
           5: Word([+1, 5, 50, 0, MAX_BYTE-1, 0]),
