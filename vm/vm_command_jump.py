@@ -15,35 +15,6 @@ def jov(command, context):
 		context.OF = 0
 		jmp(command, context)
 
-def jnov(command, context):
-	if not context.OF:
-		jmp(command, context)
-
-#	CF jumps
-def jl(command, context):
-	if context.CF < 0:
-		jmp(command, context)
-
-def je(command, context):
-	if context.CF == 0:
-		jmp(command, context)
-	
-def jg(command, context):
-	if context.CF > 0:
-		jmp(command, context)
-
-def jge(command, context):
-	if context.CF >= 0:
-		jmp(command, context)
-	
-def jne(command, context):
-	if context.CF != 0:
-		jmp(command, context)
-		
-def jle(command, context):
-	if context.CF <= 0:
-		jmp(command, context)
-	
 #	rA jumps
 def jan(command, context):
 	if context.rA < 0:
@@ -120,8 +91,25 @@ def jinp(command, context):
 		jmp(command, context)
 
 cmdList.add_command(39, 0, jmp,		1, "JMP",	True)
-cmdList.add_command(39, 1, jsj,		1, "JSJ", 	True)
-cmdList.add_command(39, 2, jov,		1, "JOV", 	True)
+cmdList.add_command(39, 1, jsj,		1, "JSJ",	True)
+cmdList.add_command(39, 2, jov,		1, "JOV",	True)
+
+for c, f, cond, name in (
+      (39, 3, lambda cmd, ctx: not ctx.OF,   "JNOV"),
+      (39, 4, lambda cmd, ctx: ctx.CF < 0,   "JL"),
+      (39, 5, lambda cmd, ctx: ctx.CF == 0,  "JE"),
+      (39, 6, lambda cmd, ctx: ctx.CF > 0,   "JG"),
+      (39, 7, lambda cmd, ctx: ctx.CF >= 0,  "JGE"),
+      (39, 8, lambda cmd, ctx: ctx.CF != 0,  "JNE"),
+      (39, 9, lambda cmd, ctx: ctx.CF <= 0,  "JLE")):
+  
+  def cond_jump(cmd, ctx):
+    if cond(cmd, ctx):
+      jmp(cmd, ctx)
+  
+  cmdList.add_command(c, f, cond_jump, 1, name, True)
+
+"""
 cmdList.add_command(39, 3, jnov,	1, "JNOV", 	True)
 cmdList.add_command(39, 4, jl,		1, "JL", 	True)
 cmdList.add_command(39, 5, je,		1, "JE", 	True)
@@ -129,6 +117,7 @@ cmdList.add_command(39, 6, jg,		1, "JG", 	True)
 cmdList.add_command(39, 7, jge,		1, "JGE", 	True)
 cmdList.add_command(39, 8, jne,		1, "JNE", 	True)
 cmdList.add_command(39, 9, jle,		1, "JLE", 	True)
+"""
 
 cmdList.add_command(40, 0, jan,		1, "JAN", 	True)
 cmdList.add_command(40, 1, jaz,		1, "JAZ", 	True)
