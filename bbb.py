@@ -52,7 +52,8 @@ class VM3:
       'J': [+1, 0, 0, 0, 0, 0],
       'CA': 3333,
       'CF': -1,
-      'OF': 1
+      'OF': 1,
+      'HLT': 0
     }
 
 class MathTestCase(unittest.TestCase):
