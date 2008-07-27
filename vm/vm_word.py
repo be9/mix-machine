@@ -33,8 +33,6 @@ class Word:
 	def _check_int(int):
 		if abs(int) > MAX_WORD:
 			raise WordError()
-		
-		return True
 	
 	@staticmethod
 	def _int_to_val(int):
@@ -61,8 +59,6 @@ class Word:
 		for byte in bytes[1:6]:
 			if int(byte) > MAX_BYTE or int(byte) < 0:
 				raise WordError()
-			
-		return True
 
 	@staticmethod
 	def _bytes_to_val(bytes):
@@ -80,8 +76,6 @@ class Word:
 	def _check_fmt(fmt):
 		if fmt[0] < 0 or fmt[1] < fmt[0] or fmt[1] > 5:
 			raise WordError()
-		
-		return True
 	
 	def set_bytes(self, bytes, fmt=(0,5)):
 		self._check_fmt(fmt)

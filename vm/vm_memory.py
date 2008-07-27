@@ -40,7 +40,7 @@ class Memory:
   def set_range(self, addr_b, values):
     addr_e = addr_b + len(values) -1
     self._check_range(addr_b, addr_e)
-    self.mem[addr_b: addr_e] = [Word(values[i]) for _ in xrange(len(values))]
+    self.mem[addr_b: addr_e] = [Word(values[i]) for i in xrange(len(values))]
 
   def get_range(self, addr_b, addr_e):
     self._check_range(addr_b, addr_e)

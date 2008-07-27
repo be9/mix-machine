@@ -20,12 +20,12 @@ class MemoryTestCase(unittest.TestCase):
 		mem = Memory()
 		
 		for i in xrange(0, MEM_SIZE):
-			self.assertTrue(mem._check_addr(i))
+			mem._check_addr(i)
 				
 		self.assertRaises(AddressOutOfRangeError, mem._check_addr, MEM_SIZE)
 		self.assertRaises(AddressOutOfRangeError, mem._check_addr, -1)
 		
-		self.assertTrue(mem._check_range(0, MEM_SIZE-1))
+		mem._check_range(0, MEM_SIZE-1)
 		
 		self.assertRaises(BadRangeError, mem._check_range, 0, 0)
 		self.assertRaises(BadRangeError, mem._check_range, 1, 0)
