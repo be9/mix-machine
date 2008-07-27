@@ -12,7 +12,7 @@ def _s(vmachine, src, dir, cycle = False):
   shift = WordParser.get_full_addr(vmachine)
   if shift < 0:
     raise NegativeShiftError(shift)
-  shift = min(shift, length - 1)
+  shift = shift % length if cycle else min(shift, length - 1)
 
   dst = [0 for _ in xrange(length)]
   if dir == "l":
