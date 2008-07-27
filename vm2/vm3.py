@@ -1,13 +1,16 @@
 from virt_machine import *
 from errors import *
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../vm3'))
+import vm3_errors
 
 error_dict = {
-  InvalidMemAddrError     : 1,
-  InvalidIndError         : 2,
-  InvalidFieldSpecError   : 3,
-  UnknownInstructionError : 4,
-  InvalidCurAddrError     : 5,
-  NegativeShiftError      : 6
+  InvalidMemAddrError     : vm3_errors.InvalidAddress,
+  InvalidIndError         : vm3_errors.InvalidIndex,
+  InvalidFieldSpecError   : vm3_errors.InvalidFieldSpec,
+  UnknownInstructionError : vm3_errors.UnknownInstruction,
+  InvalidCurAddrError     : vm3_errors.InvalidCA,
+  NegativeShiftError      : vm3_errors.NegativeShift
 }
 
 class VM3:
@@ -17,13 +20,16 @@ class VM3:
 
   def execute(self, at = None, start = None):
     assert( (at is not None) ^ (start is not None) )
-    if at is not None:
-      self.vm.cur_addr = at
-      self.vm.step()
-    else:
-      self.vm.cur_addr = start
-      while not self.vm.halted and len(self.vm.errors) == 0:
+    try:
+      if at is not None:
+        self.vm.cur_addr = at
         self.vm.step()
+      else:
+        self.vm.cur_addr = start
+        while not self.vm.halted:
+          self.vm.step()
+    except VMError, e:
+      raise error_dict[e]
 
   def load(self, mega):
     memory_part = dict( [(addr, Word(word)) for addr, word in mega.items() if isinstance(addr, int)] )
@@ -57,8 +63,4 @@ class VM3:
     mega["OF"] = int(self.vm.of)
     mega["HLT"] = int(self.vm.halted)
 
-    if len(self.vm.errors) > 0: # can only be == 1
-      mega["error"] = error_dict(type( self.vm.errors[0][1] ))
-    else:
-      mega["error"] = 0
     return mega
