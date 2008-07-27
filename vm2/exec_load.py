@@ -13,50 +13,19 @@ def _ld(vmachine, reg, sign = 1):
     # overflow, but nothing do (see Knuth)
     pass
 
-def lda(vmachine):
-  _ld(vmachine, "A")
-
-def ld1(vmachine):
-  _ld(vmachine, "1")
-
-def ld2(vmachine):
-  _ld(vmachine, "2")
-
-def ld3(vmachine):
-  _ld(vmachine, "3")
-
-def ld4(vmachine):
-  _ld(vmachine, "4")
-
-def ld5(vmachine):
-  _ld(vmachine, "5")
-
-def ld6(vmachine):
-  _ld(vmachine, "6")
-
-def ldx(vmachine):
-  _ld(vmachine, "X")
-
-def ldan(vmachine):
-  _ld(vmachine, "A", -1)
-
-def ld1n(vmachine):
-  _ld(vmachine, "1", -1)
-
-def ld2n(vmachine):
-  _ld(vmachine, "2", -1)
-
-def ld3n(vmachine):
-  _ld(vmachine, "3", -1)
-
-def ld4n(vmachine):
-  _ld(vmachine, "4", -1)
-
-def ld5n(vmachine):
-  _ld(vmachine, "5", -1)
-
-def ld6n(vmachine):
-  _ld(vmachine, "6", -1)
-
-def ldxn(vmachine):
-  _ld(vmachine, "X", -1)
+def lda(vmachine):  _ld(vmachine, "A")
+def ld1(vmachine):  _ld(vmachine, "1")
+def ld2(vmachine):  _ld(vmachine, "2")
+def ld3(vmachine):  _ld(vmachine, "3")
+def ld4(vmachine):  _ld(vmachine, "4")
+def ld5(vmachine):  _ld(vmachine, "5")
+def ld6(vmachine):  _ld(vmachine, "6")
+def ldx(vmachine):  _ld(vmachine, "X")
+def ldan(vmachine):  _ld(vmachine, "A", -1)
+def ld1n(vmachine):  _ld(vmachine, "1", -1)
+def ld2n(vmachine):  _ld(vmachine, "2", -1)
+def ld3n(vmachine):  _ld(vmachine, "3", -1)
+def ld4n(vmachine):  _ld(vmachine, "4", -1)
+def ld5n(vmachine):  _ld(vmachine, "5", -1)
+def ld6n(vmachine):  _ld(vmachine, "6", -1)
+def ldxn(vmachine):  _ld(vmachine, "X", -1)

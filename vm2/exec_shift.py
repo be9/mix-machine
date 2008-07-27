@@ -30,12 +30,8 @@ def _s(vmachine, src, dir, cycle = False):
 def _sa(vmachine, dir):
   vmachine.rA.word_list[1:6] = _s(vmachine, vmachine.rA.word_list[1:6], dir)
 
-def sla(vmachine):
-  _sa(vmachine, "l")
-
-def sra(vmachine):
-  _sa(vmachine, "r")
-
+def sla(vmachine):    _sa(vmachine, "l")
+def sra(vmachine):    _sa(vmachine, "r")
 
 
 def _sax(vmachine, dir, cycle = False):
@@ -43,14 +39,7 @@ def _sax(vmachine, dir, cycle = False):
   vmachine.rA.word_list[1:6] = res[0:5]
   vmachine.rX.word_list[1:6] = res[5:10]
 
-def slax(vmachine):
-  _sax(vmachine, "l")
-
-def srax(vmachine):
-  _sax(vmachine, "r")
-
-def slc(vmachine):
-  _sax(vmachine, "l", True)
-
-def src(vmachine):
-  _sax(vmachine, "r", True)
+def slax(vmachine):   _sax(vmachine, "l")
+def srax(vmachine):   _sax(vmachine, "r")
+def slc(vmachine):    _sax(vmachine, "l", True)
+def src(vmachine):    _sax(vmachine, "r", True)

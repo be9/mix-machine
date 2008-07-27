@@ -5,11 +5,10 @@
 from word import *
 
 def nop(vmachine):
-  vmachine.cur_addr += 1
+  pass
 
 def hlt(vmachine):
   vmachine.halted = True
-  vmachine.cur_addr += 1
 
 def num(vmachine):
   # vmachine.rA.word_list[1:6] + vmachine.rX.word_list[1:6] - array of all bytes

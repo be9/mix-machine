@@ -11,11 +11,8 @@ def _add(vmachine, sign = 1):
 
   vmachine.rA = Word(vmachine.rA[:] + sign * vmachine[addr][left:right])
 
-def add(vmachine):
-  _add(vmachine)
-
-def sub(vmachine):
-  _add(vmachine, -1)
+def add(vmachine): _add(vmachine)
+def sub(vmachine): _add(vmachine, -1)
 
 def mul(vmachine):
   addr = WordParser.get_full_addr(vmachine, False, True)
