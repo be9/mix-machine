@@ -50,3 +50,6 @@ class InvalidFieldSpecError(VMError):
 
 class NegativeShiftError(VMError):
   """Shift is invalid for negative number of bytes (%s)"""
+
+class InvalidCurAddrError(VMError):
+  """Mix-machine's current address is out of memory range (%s)"""

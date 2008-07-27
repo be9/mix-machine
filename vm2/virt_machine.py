@@ -61,6 +61,10 @@ class VMachine:
     self.halted = False
 
   def debug_state(self, file):
+    try:
+      file.write("CUR: %s\n" % self.get_cur_word())
+    except:
+      file.write("CUR: None\n")
     file.write("HLT: %s\n" % self.halted)
     file.write("CA:  %s\n" % self.cur_addr)
     file.write("rA:  %s\n" % self.rA)
@@ -86,7 +90,10 @@ class VMachine:
       file.write("%04i %s\n" % (i, self[i]))
 
   def step(self):
-    try:
-      execute(self)
-    except VMError, e:
-      self.errors.append( (self.cur_addr, e) )
+    if self.check_mem_addr(self.cur_addr):
+      try:
+        execute(self)
+      except VMError, e:
+        self.errors.append( (self.cur_addr, e) )
+    else:
+      self.errors.append( (self.cur_addr, InvalidCurAddrError(self.cur_addr)) )

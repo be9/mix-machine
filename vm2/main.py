@@ -27,13 +27,10 @@ def main():
 
   vmachine = VMachine(memory, start_address)
 
-  vmachine.debug_state(sys.stdout)
-  vmachine.debug_mem(sys.stdout, 0, 8)
   while not vmachine.halted and len(vmachine.errors) == 0:
+    print "----------------------"
+    vmachine.debug_state(sys.stdout)
     vmachine.step()
-  print "----------------------"
-  vmachine.debug_state(sys.stdout)
-  vmachine.debug_mem(sys.stdout, 0, 8)
 
   if len(vmachine.errors) > 0:
     print ERR_VM_RUN[1]
