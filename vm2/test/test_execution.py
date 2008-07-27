@@ -5,7 +5,7 @@ from execution import *
 from errors import *
 
 class ExecutionTestCase(unittest.TestCase):
-  def testFinder(self):
+  def blahTestFinder(self):
     array = [0, 10, 20, 25]
     tests = [
       (0, (0, True)),

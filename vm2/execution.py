@@ -9,34 +9,18 @@ from exec_store import *                # ALL DONE
 from exec_math import *                 # ALL DONE
 from exec_shift import *                # ALL DONE
 
-def find_nearest_down(array, value):
-  # returns (result, Bool), where Bool - if result is exact (codes has value in keys)
-  result = array[0]
-  for x in array:
-    if x < value:
-      result = x
-    elif x == value:
-      return (value, True)
-    else:
-      break
-  return (result, False)
-
 def execute(vmachine):
   # some common stuff
   word = vmachine.get_cur_word()
   f = word[4]
   c = word[5]
 
-  # list of sorted keys for search
-  codes_sorted = codes.keys()
-  codes_sorted.sort()
-  # find instruction whith this codes
-  nearest, exact = find_nearest_down(codes_sorted, (c, f))
-  if codes[nearest][1] and not exact:
+  proc = codes.get(c, codes.get((c,f), None))
+
+  if proc is not None:
+    proc(vmachine)
+  else:
     raise UnknownInstructionError(tuple(word))
-  codes[nearest][0](vmachine)
-
-
 
 def _debug_fail():
   print "FAILED!!!!"
@@ -44,84 +28,84 @@ def _debug_fail():
 
 # boolean - is field-part fixed
 codes = {
-  ( 0, 0) : (nop, False),
-  ( 1, 0) : (add, False),
-  ( 2, 0) : (sub, False),
-  ( 3, 0) : (mul, False),
-  ( 4, 0) : (div, False),
-  ( 5, 0) : (num, True),
-  ( 5, 1) : (char, True),
-  ( 5, 2) : (hlt, True),
-  ( 6, 0) : (sla, True),
-  ( 6, 1) : (sra, True),
-  ( 6, 2) : (slax, True),
-  ( 6, 3) : (srax, True),
-  ( 6, 4) : (slc, True),
-  ( 6, 5) : (src, True),
-  ( 8, 0) : (lda, False),
-  ( 9, 0) : (ld1, False),
-  (10, 0) : (ld2, False),
-  (11, 0) : (ld3, False),
-  (12, 0) : (ld4, False),
-  (13, 0) : (ld5, False),
-  (14, 0) : (ld6, False),
-  (15, 0) : (ldx, False),
-  (16, 0) : (ldan, False),
-  (17, 0) : (ld1n, False),
-  (18, 0) : (ld2n, False),
-  (19, 0) : (ld3n, False),
-  (20, 0) : (ld4n, False),
-  (21, 0) : (ld5n, False),
-  (22, 0) : (ld6n, False),
-  (23, 0) : (ldxn, False),
-  (24, 0) : (sta, False),
-  (25, 0) : (st1, False),
-  (26, 0) : (st2, False),
-  (27, 0) : (st3, False),
-  (28, 0) : (st4, False),
-  (29, 0) : (st5, False),
-  (30, 0) : (st6, False),
-  (31, 0) : (stx, False),
-  (32, 0) : (stj, False),
-  (33, 0) : (stz, False),
-  (48, 0) : (inca, True),
-  (48, 1) : (deca, True),
-  (48, 2) : (enta, True),
-  (48, 3) : (enna, True),
-  (49, 0) : (inc1, True),
-  (49, 1) : (dec1, True),
-  (49, 2) : (ent1, True),
-  (49, 3) : (enn1, True),
-  (50, 0) : (inc2, True),
-  (50, 1) : (dec2, True),
-  (50, 2) : (ent2, True),
-  (50, 3) : (enn2, True),
-  (51, 0) : (inc3, True),
-  (51, 1) : (dec3, True),
-  (51, 2) : (ent3, True),
-  (51, 3) : (enn3, True),
-  (52, 0) : (inc4, True),
-  (52, 1) : (dec4, True),
-  (52, 2) : (ent4, True),
-  (52, 3) : (enn4, True),
-  (53, 0) : (inc5, True),
-  (53, 1) : (dec5, True),
-  (53, 2) : (ent5, True),
-  (53, 3) : (enn5, True),
-  (54, 0) : (inc6, True),
-  (54, 1) : (dec6, True),
-  (54, 2) : (ent6, True),
-  (54, 3) : (enn6, True),
-  (55, 0) : (incx, True),
-  (55, 1) : (decx, True),
-  (55, 2) : (entx, True),
-  (55, 3) : (ennx, True),
-  (56, 0) : (cmpa, False),
-  (57, 0) : (cmp1, False),
-  (58, 0) : (cmp2, False),
-  (59, 0) : (cmp3, False),
-  (60, 0) : (cmp4, False),
-  (61, 0) : (cmp5, False),
-  (62, 0) : (cmp6, False),
-  (63, 0) : (cmpx, False),
+  ( 0   ) : nop,
+  ( 1   ) : add,
+  ( 2   ) : sub,
+  ( 3   ) : mul,
+  ( 4   ) : div,
+  ( 5, 0) : num,
+  ( 5, 1) : char,
+  ( 5, 2) : hlt,
+  ( 6, 0) : sla,
+  ( 6, 1) : sra,
+  ( 6, 2) : slax,
+  ( 6, 3) : srax,
+  ( 6, 4) : slc,
+  ( 6, 5) : src,
+  ( 8   ) : lda,
+  ( 9   ) : ld1,
+  (10   ) : ld2,
+  (11   ) : ld3,
+  (12   ) : ld4,
+  (13   ) : ld5,
+  (14   ) : ld6,
+  (15   ) : ldx,
+  (16   ) : ldan,
+  (17   ) : ld1n,
+  (18   ) : ld2n,
+  (19   ) : ld3n,
+  (20   ) : ld4n,
+  (21   ) : ld5n,
+  (22   ) : ld6n,
+  (23   ) : ldxn,
+  (24   ) : sta,
+  (25   ) : st1,
+  (26   ) : st2,
+  (27   ) : st3,
+  (28   ) : st4,
+  (29   ) : st5,
+  (30   ) : st6,
+  (31   ) : stx,
+  (32   ) : stj,
+  (33   ) : stz,
+  (48, 0) : inca,
+  (48, 1) : deca,
+  (48, 2) : enta,
+  (48, 3) : enna,
+  (49, 0) : inc1,
+  (49, 1) : dec1,
+  (49, 2) : ent1,
+  (49, 3) : enn1,
+  (50, 0) : inc2,
+  (50, 1) : dec2,
+  (50, 2) : ent2,
+  (50, 3) : enn2,
+  (51, 0) : inc3,
+  (51, 1) : dec3,
+  (51, 2) : ent3,
+  (51, 3) : enn3,
+  (52, 0) : inc4,
+  (52, 1) : dec4,
+  (52, 2) : ent4,
+  (52, 3) : enn4,
+  (53, 0) : inc5,
+  (53, 1) : dec5,
+  (53, 2) : ent5,
+  (53, 3) : enn5,
+  (54, 0) : inc6,
+  (54, 1) : dec6,
+  (54, 2) : ent6,
+  (54, 3) : enn6,
+  (55, 0) : incx,
+  (55, 1) : decx,
+  (55, 2) : entx,
+  (55, 3) : ennx,
+  (56   ) : cmpa,
+  (57   ) : cmp1,
+  (58   ) : cmp2,
+  (59   ) : cmp3,
+  (60   ) : cmp4,
+  (61   ) : cmp5,
+  (62   ) : cmp6,
+  (63   ) : cmpx,
 }
