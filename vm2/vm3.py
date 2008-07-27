@@ -17,7 +17,7 @@ class VM3:
 
   def execute(self, at = None, start = None):
     assert( (at is not None) ^ (start is not None) )
-    if at is nNegativeShiftErrorot None:
+    if at is not None:
       self.vm.cur_addr = at
       self.vm.step()
     else:
