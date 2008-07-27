@@ -38,6 +38,7 @@ class VM3:
     if mega.get("CA") is not None: self.vm.cur_addr = mega["CA"]
     if mega.get("CF") is not None: self.vm.cf = mega["CF"]
     if mega.get("OF") is not None: self.vm.of = bool(mega["OF"])
+    if mega.get("HLT") is not None: self.vm.halted = bool(mega["HLT"])
 
     assert(len(self.vm.errors) == 0)
 
@@ -54,6 +55,7 @@ class VM3:
     mega["CA"] = self.vm.cur_addr
     mega["CF"] = self.vm.cf
     mega["OF"] = int(self.vm.of)
+    mega["HLT"] = int(self.vm.halted)
 
     if len(self.vm.errors) > 0: # can only be == 1
       mega["error"] = error_dict(type( self.vm.errors[0][1] ))

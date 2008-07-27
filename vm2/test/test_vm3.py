@@ -23,7 +23,8 @@ class VM3TestCase(unittest.TestCase):
       'J': [+1, 0, 0, 0, 5, 4],
       'CA': 666,
       'CF': -1,
-      'OF': 1
+      'OF': 1,
+      'HLT': 0
     }
     vm3.load(mega)
     self.assertTrue(vm3.vm.cmp_memory({
@@ -43,6 +44,7 @@ class VM3TestCase(unittest.TestCase):
     self.assertEqual(vm3.vm.cur_addr, mega["CA"])
     self.assertEqual(vm3.vm.cf, mega["CF"])
     self.assertEqual(int(vm3.vm.of), mega["OF"])
+    self.assertEqual(int(vm3.vm.halted), mega["HLT"])
 
     new_mega = vm3.state()
     self.assertTrue(all(
@@ -50,7 +52,7 @@ class VM3TestCase(unittest.TestCase):
       (i not in mega and new_mega[i] == [+1, 0, 0, 0, 0, 0])
       for i in xrange(vm3.vm.MEMORY_SIZE)
     ))
-    for arg in "A X I1 I2 I3 I4 I5 I6 J CA CF OF".split():
+    for arg in "A X I1 I2 I3 I4 I5 I6 J CA CF OF HLT".split():
       self.assertEqual(mega[arg], new_mega[arg])
 
     self.assertEqual(new_mega["error"], 0)
