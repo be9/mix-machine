@@ -1,6 +1,6 @@
 from vm_word import Word
 from vm_memory import Memory, AddressOutOfRangeError
-from vm_command import cmdList, CommandNotFonudError
+from vm_command import cmdList, CommandNotFoundError
 from vm_events import VMEvent, VMStop, VMHalt
 from vm_errors import VMError, VMRuntimeError
 from vm_context import VMContext
@@ -24,13 +24,6 @@ class VM:
 		self.context = VMContext()
 		self.cmd_list = cmdList
 		
-	def fill_memory(self, mem):
-		pass
-					
-	def dump_memory(self, begin, end):
-		pass
-		
-	
 	def trace(self):
 		if self.context.is_halted:
 			raise VMHaledError()
@@ -55,17 +48,4 @@ class VM:
 			self.context.is_halted = True
 	
 	def run(self):
-		pass
-		
-	def reset(self):
-		pass
-	
-	# breakpoints
-	def set_brakepoint(self):
-		pass
-	def remove_brakepoint(self):
-		pass
-	def remove_all_brakepoints(self):
-		pass
-	def get_all_breakpoints(self):
 		pass

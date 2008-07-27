@@ -7,7 +7,7 @@ def _cmp(vmachine, reg):
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
-  vmachine.cf = cmp(vmachine.__dict__["r" + reg][left:right], vmachine[addr][left:right])
+  vmachine.cf = cmp(vmachine.reg(reg)[left:right], vmachine[addr][left:right])
 
 def cmpa(vmachine):  _cmp(vmachine, "A")
 def cmp1(vmachine):  _cmp(vmachine, "1")

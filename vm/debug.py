@@ -4,7 +4,7 @@ from vm_command import cmdList
 from vm_command_parser import ParsedCommand
 
 from vm_memory import AddressOutOfRangeError
-from vm_command import CommandNotFonudError
+from vm_command import CommandNotFoundError
 from vm_events import VMEvent, VMStop, VMHalt
 from vm_errors import VMError, VMRuntimeError
 from vm_command_parser import CommandInvalidIndexError, CommandInvalidFormatError
@@ -51,18 +51,34 @@ while not vm.context.is_halted:
 	print "--[trace]-----------------------------------------------"
 	try:
 		vm.trace()
-	except:
-		VMEvent
+	
+	except AddressOutOfRangeError:
+		print "\nError: addres out of range [0, 3999]"
+		break
+	
+	except CommandNotFoundError:
+		print "\nError: unsupported command or invalid format"
+		break
+	
+	except CommandInvalidIndexError:
+		print "\nError: invalid index register [0,6]"
+		break
+	
+	except CommandInvalidFormatError:
+	 	print "\nError: invalid format"
+		break
+	
+	except VMEvent:
+		print "\nError: unhandled event"
+		break
+	
+	except VMError:
+		print "\nError: unhandled error"
+		break
 		
-		AddressOutOfRangeError
-		CommandNotFonudError
-		
-		VMError
-		VMRuntimeError
-		
-		CommandInvalidIndexError
-		CommandInvalidFormatError
-		
+	except VMRuntimeError:
+		print "\nError: unhandled runtime error"
+		break
 		
 	print str(vm.context)
 	word = vm.context.mem.get(vm.context.rL.int())

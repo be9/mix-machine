@@ -19,7 +19,7 @@ class CommandListTestCase(unittest.TestCase):
 		self.assertRaises(CommandAlreadyExistError, lst.add_command, 1, -1, None, 0,  "")
 		self.assertRaises(CommandAlreadyExistError, lst.add_command, 1, 0, None, 0,  "")
 		self.assertRaises(CommandAlreadyExistError, lst.add_command, 2, 0, None, 0,  "")
-		#self.assertRaises(CommandAlreadyExistError, lst.add_command, 2, -1, None, 0,  "")
+		self.assertRaises(CommandAlreadyExistError, lst.add_command, 2, -1, None, 0,  "")
 		
 	def testGet(self):
 		lst = CommandList()
@@ -33,11 +33,11 @@ class CommandListTestCase(unittest.TestCase):
 		
 		self.assertEqual(lst.get_command(2,0), Command(2,0,None,0,"",False))
 		
-		self.assertRaises(CommandNotFonudError, lst.get_command, 2, -1)
-		self.assertRaises(CommandNotFonudError, lst.get_command, 2, 1)
+		self.assertRaises(CommandNotFoundError, lst.get_command, 2, -1)
+		self.assertRaises(CommandNotFoundError, lst.get_command, 2, 1)
 		
-		self.assertRaises(CommandNotFonudError, lst.get_command, 3, -1)
-		self.assertRaises(CommandNotFonudError, lst.get_command, 3, 0)
+		self.assertRaises(CommandNotFoundError, lst.get_command, 3, -1)
+		self.assertRaises(CommandNotFoundError, lst.get_command, 3, 0)
 		
 suite = unittest.makeSuite(CommandListTestCase, 'test')
 
