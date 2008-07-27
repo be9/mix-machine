@@ -15,18 +15,17 @@ import vm_command_load
 #import vm_command_store
 import vm_command_other
 
-class VMHaledError(VMRuntimeError):
+class VMHaltedError(VMRuntimeError):
 	pass
 
 class VM:
 	"""The main interface for MIX machine"""
 	def __init__(self):
 		self.context = VMContext()
-		self.cmd_list = cmdList
 		
 	def trace(self):
 		if self.context.is_halted:
-			raise VMHaledError()
+			raise VMHaltedError()
 		
 		word = self.context.mem.get(self.context.rL.int())
 				
@@ -35,7 +34,7 @@ class VM:
 		code = parsed_cmd.w_code()
 		fmt = parsed_cmd.w_fmt()
 		
-		command = self.cmd_list.get_command(code, fmt)
+		command = cmdList.get_command(code, fmt)
 		
 		try:
 			command.func(parsed_cmd, self.context)
