@@ -23,8 +23,8 @@ class WordTestCase(unittest.TestCase):
 				# float initializer
 			]
 				
-		for i in inits_ok:
-			self.assertEqual(Word(i[0]).val, i[1])
+		for init, res in inits_ok:
+			self.assertEqual(Word(init).val, res)
 		
 		inits_bad = [	# bytes initializer
 				([], WordError), ([1], WordError),	# invalid bytes len
@@ -42,8 +42,8 @@ class WordTestCase(unittest.TestCase):
 				({"unknown": "type"}, WordError)
 			]
 				
-		for i in inits_bad:
-			self.assertRaises(i[1], Word, i[0])
+		for init, exc in inits_bad:
+			self.assertRaises(exc, Word, init)
 
 	def testSetBytes(self):
 		w = Word([1, 10, 20, 30, 40, 50])
@@ -54,9 +54,9 @@ class WordTestCase(unittest.TestCase):
 				([13], 			(3,3), [1, 10, 20, 13, 40, 50])
 			]
 			
-		for i in ops_ok:
+		for bytes, fmt, res in ops_ok:
 			w = Word([1, 10, 20, 30, 40, 50])
-			self.assertEqual(w.set_bytes(i[0], i[1]).val, i[2])
+			self.assertEqual(w.set_bytes(bytes, fmt).val, res)
 			
 		ops_bad = [	# invalid format
 				([1, 11,12,13,14,15], (-1,5), WordError),
@@ -79,9 +79,9 @@ class WordTestCase(unittest.TestCase):
 				([1, 1,1,1,1,MAX_BYTE+10],	(0,5), WordError)
 			]
 			
-		for i in ops_bad:
+		for bytes, fmt, exc in ops_bad:
 			w = Word([1, 10, 20, 30, 40, 50])
-			self.assertRaises(i[2], w.set_bytes, i[0], i[1])
+			self.assertRaises(exc, w.set_bytes, bytes, fmt)
 
 	def testGetBytes(self):
 		w = Word([-1, 11, 12, 13, 14, 15])
@@ -92,8 +92,8 @@ class WordTestCase(unittest.TestCase):
 				((3,3), [13])
 			]
 			
-		for i in ops_ok:
-			self.assertEqual(w.get_bytes(i[0]), i[1])
+		for fmt, res in ops_ok:
+			self.assertEqual(w.get_bytes(fmt), res)
 			
 		ops_bad = [	# invalid format
 				((-1,5), WordError),
@@ -101,8 +101,8 @@ class WordTestCase(unittest.TestCase):
 				((3,1), WordError),
 			]
 			
-		for i in ops_bad:
-			self.assertRaises(i[1], w.set_bytes, i[0])
+		for fmt, exc in ops_bad:
+			self.assertRaises(exc, w.set_bytes, fmt)
 
 
 	def testCasts(self):
