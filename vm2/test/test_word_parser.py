@@ -19,6 +19,12 @@ class WordParserTestCase(unittest.TestCase):
       self.r6 = Word(r6)
       self.of = False
 
+    def reg(self, r):
+      return self.__dict__["r" + r]
+
+    def set_reg(self, r, w):
+      self.__dict__["r" + r] = w
+
     def get_cur_word(self):
       return self.word
 
