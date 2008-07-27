@@ -46,8 +46,9 @@ class VMachine:
     else:
       return False
 
-  def init_memory(self, memory):
-    self.memory = [ Word() for _ in xrange(self.MEMORY_SIZE)]
+  def set_memory(self, memory, reset):
+    if reset:
+      self.memory = [ Word() for _ in xrange(self.MEMORY_SIZE)]
     for addr, word in memory.items():
       # checking for correct input done in read_memory
       self[addr] = word
@@ -61,7 +62,7 @@ class VMachine:
 
   def __init__(self, memory, start_address):
     self.errors = []
-    self.init_memory(memory)
+    self.set_memory(memory, reset = True)
     self.init_stuff()
     self.cur_addr = start_address
     self.halted = False
