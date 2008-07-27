@@ -8,7 +8,7 @@ def _ld(vmachine, reg, sign = 1):
   src = vmachine[WordParser.get_full_addr(vmachine, False, True)]
   # dst - rREG
   left, right = WordParser.get_field_spec(vmachine)
-  vmachine.__dict__["r" + reg] = Word(sign * src[left:right])
+  vmachine.set_reg(reg, Word(sign * src[left:right]))
   if vmachine.clear_rI(reg):
     # overflow, but nothing do (see Knuth)
     pass

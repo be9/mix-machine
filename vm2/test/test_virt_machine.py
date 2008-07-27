@@ -40,6 +40,21 @@ class VMachineTestCase(unittest.TestCase):
       self.assertEqual(vm.errors, errors)
       self.assertTrue(vm.cmp_memory(memory_dict))
 
+  def testReg(self):
+    vm = VMachine({}, 0)
+    self.assertEqual(vm.reg("A"), Word())
+    self.assertEqual(vm.reg("X"), Word())
+    self.assertEqual(vm.reg("1"), Word())
+    self.assertEqual(vm.reg("6"), Word())
+  
+  def testSetReg(self):
+    vm = VMachine({}, 0)
+    vm.set_reg("A", Word(666))
+    self.assertEqual(vm.rA, Word(666))
+    vm.set_reg("X", Word(777))
+    self.assertEqual(vm.rA, Word(666))
+    self.assertEqual(vm.rX, Word(777))
+
 suite = unittest.makeSuite(VMachineTestCase, 'test')
 
 if __name__ == "__main__":

@@ -6,11 +6,11 @@ from word_parser import *
 
 def _linear_manipulation(vmachine, reg, sign, inc_action):
   """Inc-Action is 1 or 0"""
-  result = inc_action * vmachine.__dict__["r" + reg][:] + sign * WordParser.get_full_addr(vmachine, True, False)
+  result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, True, False)
   if abs(result) >= MAX_BYTE**2:
     result = Word.norm_2bytes(result)
     vmachine.of = True
-  vmachine.__dict__["r" + reg] = Word(result)
+  vmachine.set_reg(reg, Word(result))
   vmachine.cur_addr += 1
 
 #----------------ENT/ENN--------------------
