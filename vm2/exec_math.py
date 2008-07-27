@@ -25,7 +25,6 @@ def mul(vmachine):
   vmachine.rA[1:5] = result / MAX_BYTE**5
   vmachine.rX[1:5] = result % MAX_BYTE**5
   vmachine.rA[0] = vmachine.rX[0] = sign
-  vmachine.cur_addr += 1
 
 def div(vmachine):
   addr = WordParser.get_full_addr(vmachine, False, True)
@@ -35,11 +34,9 @@ def div(vmachine):
   divisor = vmachine[addr][left:right]
   if divisor == 0 or vmachine.rA[1:5] >= abs(divisor): # see Knuth book
     vmachine.of = True
-    vmachine.cur_addr += 1
     return
 
   print dividend, divisor
   vmachine.rX[0] = vmachine.rA[0]
   vmachine.rX[1:5] = dividend % divisor
   vmachine.rA[0:5] = dividend / divisor
-  vmachine.cur_addr += 1

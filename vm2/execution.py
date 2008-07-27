@@ -16,13 +16,18 @@ def execute(vmachine):
   f = word[4]
   c = word[5]
 
-
   proc = codes.get(c, codes.get((c,f), None))
 
   if proc is not None:
+    vmachine.jump_to = None
+
     proc(vmachine)
-    if c not in ([34] + range(38, 48)): # c_codes of all jump instructions
+    
+    if vmachine.jump_to is None:
       vmachine.cur_addr += 1
+    else:
+      vmachine.cur_addr = vmachine.jump_to
+
   else:
     raise UnknownInstructionError(tuple(word))
 
