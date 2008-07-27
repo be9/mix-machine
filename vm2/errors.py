@@ -21,6 +21,7 @@ class VMError(Exception):
   def __cmp__(self, another):
     return cmp(self.__str__(), another.__str__())
 
+
 class InvalidStartAddressError(VMError):
   """Invalid start address in input file (%s)"""
 
@@ -33,11 +34,13 @@ class TooShortInputLineError(VMError):
 class RepeatedAddressError(VMError):
   """This address repeated in input file (%s)"""
 
+class InvalidMixWordError(VMError):
+  """Invalid mix-word (%s  %s %s %s %s %s)"""
+
+
 class InvalidMemAddrError(VMError):
   """Invalid memory address (%s)"""
 
-class InvalidMixWordError(VMError):
-  """Invalid mix-word (%s  %s %s %s %s %s)"""
 
 class UnknownInstructionError(VMError):
   """Invalid mix-instruction at this word (%+2i %02i %02i %02i %02i %02i)"""
