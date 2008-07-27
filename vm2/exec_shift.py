@@ -6,16 +6,19 @@ from errors import *
 from word import *
 from word_parser import *
 
+LEFT  = 0
+RIGHT = 1
+
 def _s(vmachine, src, dir, cycle = False):
-  assert(dir in ("l", "r"))
+  assert(dir in (LEFT, RIGHT))
   length = len(src)
   shift = WordParser.get_full_addr(vmachine)
   if shift < 0:
     raise NegativeShiftError(shift)
   shift = shift % length if cycle else min(shift, length - 1)
 
-  dst = [0 for _ in xrange(length)]
-  if dir == "l":
+  dst = [0] * length
+  if dir == LEFT:
     dst[0 : length-shift] = src[shift : length]
     if cycle:
       dst[length-shift : length] = src[0 : shift]
@@ -26,12 +29,11 @@ def _s(vmachine, src, dir, cycle = False):
   return dst
 
 
-
 def _sa(vmachine, dir):
   vmachine.rA.word_list[1:6] = _s(vmachine, vmachine.rA.word_list[1:6], dir)
 
-def sla(vmachine):    _sa(vmachine, "l")
-def sra(vmachine):    _sa(vmachine, "r")
+def sla(vmachine):    _sa(vmachine, LEFT)
+def sra(vmachine):    _sa(vmachine, RIGHT)
 
 
 def _sax(vmachine, dir, cycle = False):
@@ -39,7 +41,7 @@ def _sax(vmachine, dir, cycle = False):
   vmachine.rA.word_list[1:6] = res[0:5]
   vmachine.rX.word_list[1:6] = res[5:10]
 
-def slax(vmachine):   _sax(vmachine, "l")
-def srax(vmachine):   _sax(vmachine, "r")
-def slc(vmachine):    _sax(vmachine, "l", True)
-def src(vmachine):    _sax(vmachine, "r", True)
+def slax(vmachine):   _sax(vmachine, LEFT)
+def srax(vmachine):   _sax(vmachine, RIGHT)
+def slc(vmachine):    _sax(vmachine, LEFT, True)
+def src(vmachine):    _sax(vmachine, RIGHT, True)
