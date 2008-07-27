@@ -12,7 +12,6 @@ def _ld(vmachine, reg, sign = 1):
   if vmachine.clear_rI(reg):
     # overflow, but nothing do (see Knuth)
     pass
-  vmachine.cur_addr += 1
 
 def lda(vmachine):
   _ld(vmachine, "A")

@@ -35,8 +35,8 @@ def execute(vmachine):
   if codes[nearest][1] and not exact:
     raise UnknownInstructionError(tuple(word))
   codes[nearest][0](vmachine)
-
-
+  if nearest[0] not in ([34] + range(38, 48)): # c_codes of all jump instructions
+    vmachine.cur_addr += 1
 
 def _debug_fail():
   print "FAILED!!!!"

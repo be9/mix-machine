@@ -8,7 +8,6 @@ def _cmp(vmachine, reg):
   left, right = WordParser.get_field_spec(vmachine)
 
   vmachine.cf = cmp(vmachine.__dict__["r" + reg][left:right], vmachine[addr][left:right])
-  vmachine.cur_addr += 1
 
 def cmpa(vmachine):
   _cmp(vmachine, "A")

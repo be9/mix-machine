@@ -10,7 +10,6 @@ def _add(vmachine, sign = 1):
   left, right = WordParser.get_field_spec(vmachine)
 
   vmachine.rA = Word(vmachine.rA[:] + sign * vmachine[addr][left:right])
-  vmachine.cur_addr += 1
 
 def add(vmachine):
   _add(vmachine)

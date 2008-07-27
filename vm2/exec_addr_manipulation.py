@@ -11,7 +11,6 @@ def _linear_manipulation(vmachine, reg, sign, inc_action):
     result = Word.norm_2bytes(result)
     vmachine.of = True
   vmachine.__dict__["r" + reg] = Word(result)
-  vmachine.cur_addr += 1
 
 #----------------ENT/ENN--------------------
 def _ent(vmachine, reg, sign = 1):

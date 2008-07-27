@@ -23,8 +23,6 @@ def _s(vmachine, src, dir, cycle = False):
     dst[shift : length] = src[0 : length-shift]
     if cycle:
       dst[0 : shift] = src[length-shift : length]
-
-  vmachine.cur_addr += 1
   return dst
 
 

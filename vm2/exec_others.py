@@ -17,7 +17,6 @@ def num(vmachine):
   # int - convert it to int
   # % MB**10 - to avoid overflow
   vmachine.rA[1:5] = int(reduce(lambda x, y : x+str(y % 10), vmachine.rA.word_list[1:6] + vmachine.rX.word_list[1:6], "")) % MAX_BYTE**10
-  vmachine.cur_addr += 1
 
 def char(vmachine):
   # vmachine.rA[1:5] - num for convert
@@ -28,4 +27,3 @@ def char(vmachine):
     seq = [30] + seq
   vmachine.rA.word_list[1:6] = seq[0:5]
   vmachine.rX.word_list[1:6] = seq[5:10]
-  vmachine.cur_addr += 1
