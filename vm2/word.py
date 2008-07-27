@@ -53,7 +53,7 @@ class Word:
       self[i] = new[5 - r + i]
 
   def is_zero(self):
-    return True if self[1:5] == 0 else False
+    return self[1:5] == 0
 
   def __cmp__(self, cmp_word):
     if self.is_zero() and cmp_word.is_zero():

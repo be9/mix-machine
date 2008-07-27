@@ -34,8 +34,8 @@ def execute(vmachine):
 
 # boolean - is field-part fixed
 codes = {
-  ( 0   ) :  nop,
-  ( 1   ) :  add,
+  ( 0   ) : nop,
+  ( 1   ) : add,
   ( 2   ) : sub,
   ( 3   ) : mul,
   ( 4   ) : div,
