@@ -43,7 +43,7 @@ class VM3BaseTestCase(unittest.TestCase):
   def exec1(self, regs = {}, memory = {}, startadr = 0):
     self.init_vm(regs, memory)
 
-    self.vm.execute(at=startadr)
+    self.cycles = self.vm.execute(at=startadr)
 
     self.ctx_after = self.vm.state()
     self.ctx_diff = self.do_diff()
