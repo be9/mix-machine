@@ -24,7 +24,7 @@ class VM3:
         pass
 
     def execute(at = None, start = None):
-        """ Runs 1 command at "at", or from "start" to "HLT" instruction """
+        """ Runs 1 command at "at", or from "start" to "HLT" instruction and returns number of elapsed cycles"""
         pass
 
     def load(mega):
