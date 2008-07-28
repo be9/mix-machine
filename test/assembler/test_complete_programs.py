@@ -2,7 +2,7 @@ from __future__ import with_statement
 
 import unittest, sys, os, fnmatch
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'assembler'))
 from parse_line import parse_lines
 from errors import *
 from assemble import Assembler

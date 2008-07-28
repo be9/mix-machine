@@ -4,7 +4,7 @@
 
 import unittest, sys, os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'assembler'))
 from operations import *
 
 class OperationsTestCase(unittest.TestCase):
