@@ -14,7 +14,7 @@ def _j(vmachine, condition, save_j = True, reset_of = False):
     vmachine.of = False
 
   if save_j:
-    vmachine.rJ[:] = vmachine.cur_addr + 1
+    vmachine.rJ[4:5] = vmachine.cur_addr + 1
 
   vmachine.jump_to = WordParser.get_full_addr(vmachine, False, True)
 

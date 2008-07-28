@@ -1,14 +1,14 @@
 
 from errors import *
 
-from exec_addr_manipulation import *    # ALL DONE
-from exec_cmp import *                  # ALL DONE
-from exec_load import *                 # ALL DONE
-from exec_others import *               # NOP, HLT, NUM, CHAR
-from exec_store import *                # ALL DONE
-from exec_math import *                 # ALL DONE
-from exec_shift import *                # ALL DONE
-from exec_jump import *                 # done all but JBUS and JRED
+from exec_addr_manipulation import *    # ALL DONE - !!! no sign watching !!!
+from exec_cmp import *                  # ALL DONE - DONE SIGN WATCHING
+from exec_load import *                 # ALL DONE - DONE SIGN WATCHING
+from exec_others import *               # NOP, HLT, NUM, CHAR - DONE SIGN WATCHING
+from exec_store import *                # ALL DONE - DONE SIGN WATCHING
+from exec_math import *                 # ALL DONE - DONE SIGN WATCHING
+from exec_shift import *                # ALL DONE - DONE SIGN WATCHING
+from exec_jump import *                 # done all but JBUS and JRED - DONE SIGN WATCHING
 
 def execute(vmachine):
   # some common stuff

@@ -7,10 +7,16 @@ from word_parser import *
 def _ld(vmachine, reg, sign = 1):
   vmachine.cycles += 2
 
+  # src - can be cell with address [-1, 0, 0] =(2dec)= 0
   src = vmachine[WordParser.get_full_addr(vmachine, False, True)]
   # dst - rREG
   left, right = WordParser.get_field_spec(vmachine)
-  vmachine.set_reg(reg, Word(sign * src[left:right]))
+
+  # result will be loaded to reg
+  result = Word(src[max(1, left):right])
+  result[0] = src[0] if left == 0 else +1
+
+  vmachine.set_reg(reg, result)
   if vmachine.clear_rI(reg):
     # overflow, but nothing do (see Knuth)
     pass

@@ -12,7 +12,9 @@ def _st(vmachine, reg):
   # dst - vmachine[addr]
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
-  vmachine[addr][left:right] = src[:]
+
+  vmachine[addr][max(1, left):right] = src[1:5]
+  vmachine[addr][0] = src[0] if left == 0 else vmachine[addr][0]
 
 
 def sta(vmachine):  _st(vmachine, "A")

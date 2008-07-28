@@ -53,6 +53,8 @@ class WordTestCase(unittest.TestCase):
     self.assertEqual(word, Word([-1, 1, 0, 1 ,0 ,0]))
     word[0:3] = 1 * MAX_BYTE**2 + 1
     self.assertEqual(word, Word([+1, 1, 0, 1 ,0 ,0]))
+    word[1:0] = -1
+    self.assertEqual(word, Word([+1, 1, 0, 1 ,0 ,0]))
 
     self.assertEqual(word[:], 1 * MAX_BYTE**4 + 1 * MAX_BYTE**2)
 
