@@ -19,6 +19,7 @@ class VM3:
     assert(len(self.vm.errors) == 0)
 
   def execute(self, at = None, start = None):
+    """Returns number of cycles"""
     assert( (at is not None) ^ (start is not None) )
     try:
       if at is not None:
@@ -28,6 +29,7 @@ class VM3:
         self.vm.cur_addr = start
         while not self.vm.halted:
           self.vm.step()
+      return self.vm.cycles
     except VMError, e:
       raise error_dict[e]
 
