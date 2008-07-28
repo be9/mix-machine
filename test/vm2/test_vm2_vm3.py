@@ -1,7 +1,7 @@
 import unittest, sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
-from vm3 import *
+from vm2_vm3 import *
 from word import *
 from errors import *
 
