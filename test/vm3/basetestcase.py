@@ -1,6 +1,10 @@
 import unittest
 import copy
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm3'))
+from vm3_errors import *
+
 _initial_regs_values = {
   'A': [+1, 11, 22, 33, 44, 55],
   'X': [-1, 22, 33, 44, 55, 11],
@@ -22,9 +26,9 @@ class VM3BaseTestCase(unittest.TestCase):
   def set_vm_class(klass):
     VM3BaseTestCase.vm_class = klass
 
-  def check1(self, regs, memory, diff, cycles):
-    self.assertEqual(self.exec1(regs, memory), diff)
-    self.assertEqual(self.cycles, cycles)
+  def check1(self, regs = {}, memory = {}, startadr = 0, diff = {}, cycles = 0, message = None):
+    self.assertEqual(self.exec1(regs, memory, startadr), diff, message)
+    self.assertEqual(self.cycles, cycles, message)
 
   def setUp(self):
     self.vm = VM3BaseTestCase.vm_class()
@@ -44,7 +48,7 @@ class VM3BaseTestCase(unittest.TestCase):
 
     self.vm.load(ctx)
 
-  def exec1(self, regs = {}, memory = {}, startadr = 0):
+  def exec1(self, regs, memory, startadr):
     self.init_vm(regs, memory)
 
     self.cycles = self.vm.execute(at=startadr)
