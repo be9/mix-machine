@@ -3,10 +3,12 @@ import basetestcase
 
 class VM3MathTestCase(basetestcase.VM3BaseTestCase):
   def testADD(self):
-    self.assertEqual(self.exec1(regs={'A': [+1, 0, 0, 0, 0, 0]}, memory={0: [+1, 0, 0, 0, 5, 1]}),
-        {'CA': 1, 'A': [+1, 0, 0, 0, 5, 1]})
-
-    self.assertEqual(self.cycles, 2)
+    self.check1(
+      regs = {'A': [+1, 0, 0, 0, 0, 0]},
+      memory = {0: [+1, 0, 0, 0, 5, 1]},
+      diff = {'CA': 1, 'A': [+1, 0, 0, 0, 5, 1]},
+      cycles = 2
+    )
 
 suite = unittest.makeSuite(VM3MathTestCase, 'test')
 

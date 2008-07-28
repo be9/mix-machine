@@ -21,10 +21,14 @@ class VM3BaseTestCase(unittest.TestCase):
   @staticmethod
   def set_vm_class(klass):
     VM3BaseTestCase.vm_class = klass
-  
+
+  def check1(self, regs, memory, diff, cycles):
+    self.assertEqual(self.exec1(regs, memory), diff)
+    self.assertEqual(self.cycles, cycles)
+
   def setUp(self):
     self.vm = VM3BaseTestCase.vm_class()
-  
+
   def init_vm(self, regs = {}, memory = {}):
     ctx = {}
 
