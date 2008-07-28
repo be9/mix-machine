@@ -23,6 +23,7 @@ class VM3:
     """Returns number of cycles"""
     assert( (at is not None) ^ (start is not None) )
     try:
+      self.vm.cycles = 0
       if at is not None:
         self.vm.cur_addr = at
         self.vm.step()
