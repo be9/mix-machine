@@ -9,7 +9,7 @@ class Add:
         self.ov = 0
 
         int_res = int(self.op1) + int(self.op2)
-        sign = 1 if int_res > 0 else -1     # how to take sign(x) !?
+        sign = 1 if int_res >= 0 else -1     # how to take sign(x) !?
 
         ov_test, int_res = divmod(abs(int_res), MAX_WORD+1)
         int_res *= sign
