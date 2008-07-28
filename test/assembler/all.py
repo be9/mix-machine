@@ -17,4 +17,5 @@ def suite():
     test_memory.suite, test_operations.suite, test_parse_argument.suite, test_assemble.suite,
     test_complete_programs.suite))
 
-unittest.TextTestRunner().run(suite())
+if __name__ == "__main__":
+  unittest.TextTestRunner().run(suite())

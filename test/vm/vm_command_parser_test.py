@@ -1,6 +1,6 @@
 import unittest, sys, os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm'))
 from vm_command_parser import *
 from vm_context import VMContext
 from vm_word	import Word
