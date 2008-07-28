@@ -11,7 +11,17 @@ def _add(vmachine, sign = 1):
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
-  vmachine.rA = Word(vmachine.rA[:] + sign * vmachine[addr][left:right])
+  result = vmachine.rA[:] + sign * vmachine[addr][left:right]
+
+  if abs(result) >= MAX_BYTE**10:
+    vmachine.of = True
+
+  # "if result == 0 than we should save previous sign" - Knuth
+  sign = vmachine.rA[0]
+  vmachine.rA = Word(result)
+  if result == 0:
+    vmachine.rA[0] = sign
+
 
 
 def add(vmachine): _add(vmachine)
