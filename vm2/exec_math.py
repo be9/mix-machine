@@ -33,13 +33,13 @@ def mul(vmachine):
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
-  result = vmachine.rA[:] * vmachine[addr][left:right]
-  sign = Word.sign(result)
-  result = abs(result)
+  # multiply unsigned words
+  result = vmachine.rA[1:5] * vmachine[addr][max(1, left):right]
+  # signs of rA and rX from Knuth
+  vmachine.rA[0] = vmachine.rX[0] = vmachine.rA[0] * vmachine[addr][0]
 
   vmachine.rA[1:5] = result / MAX_BYTE**5
   vmachine.rX[1:5] = result % MAX_BYTE**5
-  vmachine.rA[0] = vmachine.rX[0] = sign
 
 
 def div(vmachine):
@@ -48,12 +48,14 @@ def div(vmachine):
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
-  dividend = vmachine.rA[0] * (vmachine.rA[1:5] * MAX_BYTE**5 + vmachine.rX[1:5])
-  divisor = vmachine[addr][left:right]
-  if divisor == 0 or vmachine.rA[1:5] >= abs(divisor): # see Knuth book
+  u_divisor = vmachine[addr][max(1, left):right]
+  divisor_sign = vmachine[addr][0] if left == 0 else 1
+  if u_divisor == 0 or vmachine.rA[1:5] >= u_divisor: # from Knuth book
     vmachine.of = True
     return
+  u_dividend = vmachine.rA[1:5] * MAX_BYTE**5 + vmachine.rX[1:5]
 
-  vmachine.rX[0] = vmachine.rA[0]
-  vmachine.rX[1:5] = dividend % divisor
-  vmachine.rA[0:5] = dividend / divisor
+  vmachine.rX[0] = vmachine.rA[0] # sign of rX is previous sign of rA
+  vmachine.rA[0] = vmachine.rA[0] * divisor_sign # sign of rA - division sign
+  vmachine.rX[1:5] = u_dividend % u_divisor
+  vmachine.rA[1:5] = u_dividend / u_divisor
