@@ -7,7 +7,7 @@ def suite():
   return unittest.TestSuite(
     (
   	  assembler.all.suite(),
-    	vm.all.suite(),
+    	  vm.all.suite(),
   	  vm2.all.suite()
     )
   )
