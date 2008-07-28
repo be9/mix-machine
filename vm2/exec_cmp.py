@@ -4,6 +4,8 @@
 from word_parser import *
 
 def _cmp(vmachine, reg):
+  vmachine.cycles += 2
+
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 

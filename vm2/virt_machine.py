@@ -66,12 +66,14 @@ class VMachine:
     self.init_stuff()
     self.cur_addr = start_address
     self.halted = False
+    self.cycles = 0
 
   def debug_state(self, file):
     try:
       file.write("CUR: %s\n" % self.get_cur_word())
     except:
       file.write("CUR: None\n")
+    file.write("CYCLES: %s\n" % self.cycles)
     file.write("HLT: %s\n" % self.halted)
     file.write("CA:  %s\n" % self.cur_addr)
     file.write("rA:  %s\n" % self.rA)

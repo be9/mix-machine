@@ -4,17 +4,19 @@
 
 from word_parser import *
 
-def _j(vm, condition, save_j = True, reset_of = False):
-  if not condition(vm):
+def _j(vmachine, condition, save_j = True, reset_of = False):
+  vmachine.cycles += 1
+
+  if not condition(vmachine):
     return
 
   if reset_of:
-    vm.of = False
-  
+    vmachine.of = False
+
   if save_j:
-    vm.rJ[:] = vm.cur_addr + 1
-  
-  vm.jump_to = WordParser.get_full_addr(vm, False, True)
+    vmachine.rJ[:] = vmachine.cur_addr + 1
+
+  vmachine.jump_to = WordParser.get_full_addr(vmachine, False, True)
 
 #def jbus(vmachine): _j(vmachine, lambda vm: True)
 #def jred(vmachine): _j(vmachine, lambda vm: True)

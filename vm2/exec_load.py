@@ -5,6 +5,8 @@
 from word_parser import *
 
 def _ld(vmachine, reg, sign = 1):
+  vmachine.cycles += 2
+
   src = vmachine[WordParser.get_full_addr(vmachine, False, True)]
   # dst - rREG
   left, right = WordParser.get_field_spec(vmachine)

@@ -5,6 +5,8 @@
 from word_parser import *
 
 def _linear_manipulation(vmachine, reg, sign, inc_action):
+  vmachine.cycles += 1
+
   """Inc-Action is 1 or 0"""
   result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, True, False)
   if abs(result) >= MAX_BYTE**2:
