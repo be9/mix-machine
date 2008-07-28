@@ -13,7 +13,7 @@ def _add(vmachine, sign = 1):
 
   result = vmachine.rA[:] + sign * vmachine[addr][left:right]
 
-  if abs(result) >= MAX_BYTE**10:
+  if abs(result) >= MAX_BYTE**5:
     vmachine.of = True
 
   # "if result == 0 than we should save previous sign" - Knuth
