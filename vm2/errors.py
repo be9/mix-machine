@@ -56,3 +56,6 @@ class NegativeShiftError(VMError):
 
 class InvalidCurAddrError(VMError):
   """Mix-machine's current address is out of memory range (%s)"""
+
+class InvalidMoveError(VMError):
+  """Can't move %s words from %s to %s"""

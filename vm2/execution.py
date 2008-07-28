@@ -4,7 +4,7 @@ from errors import *
 from exec_addr_manipulation import *    # ALL DONE - !!! no sign watching !!!
 from exec_cmp import *                  # ALL DONE - DONE SIGN WATCHING
 from exec_load import *                 # ALL DONE - DONE SIGN WATCHING
-from exec_others import *               # NOP, HLT, NUM, CHAR - DONE SIGN WATCHING
+from exec_others import *               # NOP, HLT, NUM, CHAR, MOVE - DONE SIGN WATCHING
 from exec_store import *                # ALL DONE - DONE SIGN WATCHING
 from exec_math import *                 # ALL DONE - DONE SIGN WATCHING
 from exec_shift import *                # ALL DONE - DONE SIGN WATCHING
@@ -48,6 +48,7 @@ codes = {
   ( 6, 3) : srax,
   ( 6, 4) : slc,
   ( 6, 5) : src,
+  ( 7   ) : move,
   ( 8   ) : lda,
   ( 9   ) : ld1,
   (10   ) : ld2,

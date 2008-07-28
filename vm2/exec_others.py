@@ -3,6 +3,7 @@
 # ALL DONE
 
 from word import *
+from word_parser import *
 
 def nop(vmachine):
   vmachine.cycles += 1
@@ -31,3 +32,24 @@ def char(vmachine):
   seq = [30] * (10 - len(seq)) + seq
   vmachine.rA.word_list[1:6] = seq[0:5]
   vmachine.rX.word_list[1:6] = seq[5:10]
+
+def move(vmachine):
+  # T = 1 + 2*F
+  vmachine.cycles += 1
+
+  num = WordParser.get_field(vmachine)
+  if num == 0:
+    return
+  src = WordParser.get_full_addr(vmachine, False, True)
+  dst = vmachine.r1[:]
+  try:
+    for i in xrange(num):
+      vmachine[dst] = vmachine[src+i]
+      dst += 1 # dst - like r1 always contains address of next destination word
+      vmachine.cycles += 2
+  except IndexError:
+    # it's not written in Knuth book, but it's very logically, 
+    vmachine.r1[:] = dst
+    raise InvalidMoveError( (num, src, dst) )
+  else:
+    vmachine.r1[:] = dst

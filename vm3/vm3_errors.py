@@ -18,3 +18,6 @@ class InvalidCA(VM3Error):
 
 class NegativeShift(VM3Error):
   pass
+
+class InvalidMove(VM3Error):
+  pass

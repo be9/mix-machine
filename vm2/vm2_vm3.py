@@ -10,7 +10,8 @@ error_dict = {
   InvalidFieldSpecError   : vm3_errors.InvalidFieldSpec,
   UnknownInstructionError : vm3_errors.UnknownInstruction,
   InvalidCurAddrError     : vm3_errors.InvalidCA,
-  NegativeShiftError      : vm3_errors.NegativeShift
+  NegativeShiftError      : vm3_errors.NegativeShift,
+  InvalidMoveError        : vm3_errors.InvalidMove
 }
 
 class VM3:

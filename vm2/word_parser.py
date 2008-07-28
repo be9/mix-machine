@@ -26,3 +26,7 @@ class WordParser:
     if not (0 <= l <= r <= 5):
       raise InvalidFieldSpecError("%i:%i=%i" % (l, r, word[4]))
     return (l, r)
+
+  @staticmethod
+  def get_field(vmachine):
+    return vmachine.get_cur_word()[4]

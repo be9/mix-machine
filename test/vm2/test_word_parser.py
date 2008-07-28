@@ -93,6 +93,10 @@ class WordParserTestCase(unittest.TestCase):
       vmachine.word = Word([1, 0, 0, 0, field, 0])
       self.assertRaises(InvalidFieldSpecError, WordParser.get_field_spec, vmachine)
 
+    for field in (0, 1, 10, 20, 33, 63):
+      vmachine.word = Word([1, 0, 0, 0, field, 0])
+      self.assertEqual(WordParser.get_field(vmachine), field)
+
 suite = unittest.makeSuite(WordParserTestCase, 'test')
 
 if __name__ == "__main__":
