@@ -28,6 +28,6 @@ def char(vmachine):
   # str(num) - convert to string
   # map(lambda x : int(x) + 30, s) - get list of mix-chars
   seq = map(lambda x : int(x) + 30, str(vmachine.rA[1:5]))
-  seq = [30] * min(0, 10-len(seq)) + seq
+  seq = [30] * (10 - len(seq)) + seq
   vmachine.rA.word_list[1:6] = seq[0:5]
   vmachine.rX.word_list[1:6] = seq[5:10]

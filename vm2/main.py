@@ -36,6 +36,8 @@ def main():
       print "----------------------"
       vmachine.debug_state(sys.stdout)
       vmachine.step()
+    print "----------------------"
+    vmachine.debug_state(sys.stdout)
   except VMError, error:
     print ERR_VM_RUN[1]
     print_error(None, error)
