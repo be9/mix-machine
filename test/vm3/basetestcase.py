@@ -15,7 +15,6 @@ _initial_regs_values = {
   'CF': 0,
   'OF': 0,
   'HLT': 0,
-  'error': 0
 }
 
 class VM3BaseTestCase(unittest.TestCase):
