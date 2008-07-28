@@ -15,4 +15,5 @@ def suite():
     )
   )
 
-unittest.TextTestRunner().run(suite())
+if __name__ == "__main__":
+  unittest.TextTestRunner().run(suite())
