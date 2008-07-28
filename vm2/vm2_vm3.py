@@ -1,7 +1,7 @@
 from virt_machine import *
 from errors import *
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../vm3'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm3'))
 import vm3_errors
 
 error_dict = {
@@ -33,7 +33,7 @@ class VM3:
           self.vm.step()
       return self.vm.cycles
     except VMError, e:
-      raise error_dict[e]
+      raise error_dict[type(e)]
 
   def load(self, mega):
     memory_part = dict( [(addr, Word(word)) for addr, word in mega.items() if isinstance(addr, int)] )
