@@ -11,7 +11,7 @@ class Word:
   def from_dec(num):
     mask = MAX_BYTE - 1  # 1<<6 - 1
     u_num = abs(num)
-    return [Word.sign(num)] + [ (u_num >> shift) & mask for shift in xrange(24, -1, -6) ] # 24 = 6 * (5-1)
+    return [Word.sign(num)] + [ int((u_num >> shift) & mask) for shift in xrange(24, -1, -6) ] # 24 = 6 * (5-1)
 
   @staticmethod
   def norm_2bytes(addr):
@@ -64,9 +64,9 @@ class Word:
     return reduce(lambda x, y: "%s %02i" % (x, y), word.word_list[1:6], "+" if word[0] == 1 else "-")
 
   def __init__(self, obj = None):
-    if isinstance(obj, list):
-      self.word_list = obj
-    elif isinstance(obj, int):
+    if isinstance(obj, list) or isinstance(obj, tuple):
+      self.word_list = list(obj)
+    elif isinstance(obj, int) or isinstance(obj, long):
       self.word_list = self.from_dec(obj)
     elif isinstance(obj, Word):
       self.word_list = obj.word_list[:]
