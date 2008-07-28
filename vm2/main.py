@@ -1,10 +1,14 @@
 import sys
 from read_memory import *
 from virt_machine import *
+from errors import *
+
+def print_error(line, error):
+  print "%s: %s" % (line if line is not None else 'GLOBAL', error)
 
 def print_errors(errors):
   for error in errors:
-    print "%i: %s" % (error[0], error[1])
+    print_error(error[0], error[1])
 
 def main():
   if len(sys.argv) != 2: # 1st - program name, 2nd - input filename
@@ -27,14 +31,16 @@ def main():
 
   vmachine = VMachine(memory, start_address)
 
-  while not vmachine.halted and len(vmachine.errors) == 0:
+  try:
+    while not vmachine.halted:
+      print "----------------------"
+      vmachine.debug_state(sys.stdout)
+      vmachine.step()
     print "----------------------"
     vmachine.debug_state(sys.stdout)
-    vmachine.step()
-
-  if len(vmachine.errors) > 0:
+  except VMError, error:
     print ERR_VM_RUN[1]
-    print_errors(vmachine.errors)
+    print_error(None, error)
     return ERR_VM_RUN[0]
 
 # if we executing module

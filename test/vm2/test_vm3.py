@@ -55,8 +55,6 @@ class VM3TestCase(unittest.TestCase):
     for arg in "A X I1 I2 I3 I4 I5 I6 J CA CF OF HLT".split():
       self.assertEqual(mega[arg], new_mega[arg])
 
-    self.assertEqual(new_mega["error"], 0)
-
 
 suite = unittest.makeSuite(VM3TestCase, 'test')
 

@@ -1,17 +1,20 @@
-class InvalidAddress(Exception):
+class VM3Error(Exception):
   pass
 
-class InvalidIndex(Exception):
+class InvalidAddress(VM3Error):
   pass
 
-class InvalidFieldSpec(Exception):
+class InvalidIndex(VM3Error):
   pass
 
-class UnknownInstruction(Exception):
+class InvalidFieldSpec(VM3Error):
   pass
 
-class InvalidCA(Exception):
+class UnknownInstruction(VM3Error):
   pass
 
-class NegativeShift(Exception):
+class InvalidCA(VM3Error):
+  pass
+
+class NegativeShift(VM3Error):
   pass

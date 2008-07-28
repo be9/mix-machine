@@ -6,15 +6,20 @@ from word import *
 from word_parser import *
 
 def _add(vmachine, sign = 1):
+  vmachine.cycles += 2
+
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
   vmachine.rA = Word(vmachine.rA[:] + sign * vmachine[addr][left:right])
 
+
 def add(vmachine): _add(vmachine)
 def sub(vmachine): _add(vmachine, -1)
 
 def mul(vmachine):
+  vmachine.cycles += 10
+
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
@@ -26,7 +31,10 @@ def mul(vmachine):
   vmachine.rX[1:5] = result % MAX_BYTE**5
   vmachine.rA[0] = vmachine.rX[0] = sign
 
+
 def div(vmachine):
+  vmachine.cycles += 12
+
   addr = WordParser.get_full_addr(vmachine, False, True)
   left, right = WordParser.get_field_spec(vmachine)
 
@@ -36,7 +44,6 @@ def div(vmachine):
     vmachine.of = True
     return
 
-  print dividend, divisor
   vmachine.rX[0] = vmachine.rA[0]
   vmachine.rX[1:5] = dividend % divisor
   vmachine.rA[0:5] = dividend / divisor
