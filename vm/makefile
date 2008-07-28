@@ -6,4 +6,4 @@ clean:
 run:
 	python ./debug.py
 check:
-	python ./tests/all.py
+	python ../test/all.py
