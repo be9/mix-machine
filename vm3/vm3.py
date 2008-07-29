@@ -23,14 +23,14 @@ class VM3:
     def __init__(self):
         pass
 
-    def execute(at = None, start = None):
-        """ Runs 1 command at "at", or from "start" to "HLT" instruction and returns number of elapsed cycles"""
+    def execute(self, at = None, start = None):
+        """ Runs 1 command at "at", or from "start" to "HLT" instruction and returns number of elapsed cycles """
         pass
 
-    def load(mega):
+    def load(self, mega):
         """ Loads initial state of VM form MEGA hash """
         pass
 
-    def state():
+    def state(self):
         """ Returns state of VM in MEGA hash """
         return {}
