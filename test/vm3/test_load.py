@@ -1,11 +1,6 @@
 import unittest
 from basetestcase import *
 
-
-if not VM3BaseTestCase.check_vm_class():
-  sys.exit()
-
-
 class VM3LoadTestCase(VM3BaseTestCase):
   def testNormal(self):
     self.check1(
