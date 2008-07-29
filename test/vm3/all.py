@@ -3,16 +3,22 @@ import sys
 import os
 import basetestcase
 
-import test_math
-import test_load
+test_modules = {}
+for name in ('math', 'load'): # ADD NEW TESTS HERE
+  test_modules[name] = __import__("test_" + name)
 
-def suite():
-  return unittest.TestSuite(
-    (
-      test_math.suite,
-      test_load.suite
-    )
-  )
+
+def suite(args):
+  if len(args) == 0:
+    print ">> Testing: all"
+    suites = [module.suite for module in test_modules.values()]
+  else:
+    names = [name for name in test_modules.keys() if name in args]
+    print ">> Testing:", " ".join(names)
+    suites = [test_modules[name].suite for name in names]
+
+  return unittest.TestSuite(suites)
+
 
 if __name__ == "__main__":
   from optparse import OptionParser
@@ -40,7 +46,7 @@ if __name__ == "__main__":
     import hotshot.stats
 
     prof = hotshot.Profile("vm.prof")
-    exp = prof.runcall(unittest.TextTestRunner().run, suite())
+    exp = prof.runcall(unittest.TextTestRunner().run, suite(args))
     prof.close()
     
     print ">> Please wait for the profiling results..."
@@ -50,4 +56,4 @@ if __name__ == "__main__":
     stats.sort_stats('time', 'calls')
     stats.print_stats(40)
   else:
-    unittest.TextTestRunner().run(suite())
+    unittest.TextTestRunner().run(suite(args))
