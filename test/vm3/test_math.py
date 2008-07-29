@@ -74,20 +74,20 @@ class VM3MathTestCase(VM3BaseTestCase):
       message = "overflow test, divizion by zero"
     )
 
-    self.assertRaises(InvalidIndex, self.check1,
+    self.assertRaises(InvalidIndex, self.exec1,
       memory = {
         10 : [+1, 63, 63, 44, 5, 4]
       },
       startadr = 10,
     )
-    self.assertRaises(InvalidAddress, self.check1,
+    self.assertRaises(InvalidAddress, self.exec1,
       regs = {"I6" : [+1, 0, 0, 0, 62, 31]},
       memory = {
         10 : [+1, 0, 1, 6, 5, 4]
       },
       startadr = 10,
     )
-    self.assertRaises(InvalidFieldSpec, self.check1,
+    self.assertRaises(InvalidFieldSpec, self.exec1,
       memory = {
         10 : [+1, 2, 0, 0, 63, 4]
       },
@@ -127,19 +127,19 @@ class VM3MathTestCase(VM3BaseTestCase):
       message = "sign saving for multiplying by zero"
     )
 
-    self.assertRaises(InvalidFieldSpec, self.check1,
+    self.assertRaises(InvalidFieldSpec, self.exec1,
       memory = {
         10 : [+1, 0, 0, 0, 44, 3] # = (5:4)
       },
       startadr = 10,
     )
-    self.assertRaises(InvalidAddress, self.check1,
+    self.assertRaises(InvalidAddress, self.exec1,
       memory = {
         10 : [+1, 63, 63, 0, 5, 3]
       },
       startadr = 10,
     )
-    self.assertRaises(InvalidIndex, self.check1,
+    self.assertRaises(InvalidIndex, self.exec1,
       memory = {
         10 : [+1, 63, 63, 44, 5, 3]
       },
@@ -279,39 +279,27 @@ class VM3MathTestCase(VM3BaseTestCase):
 
 
 
-    self.assertRaises(InvalidFieldSpec, self.check1,
-      regs = {'A': [+1, 5, 4, 3, 2, 1]},
-      memory = {0: [+1, 0, 0, 0,26, 1]}, # 26 = (3:2)
-      diff = {'CA': 1, 'A': [+1, 5, 4, 3, 2, 29]},
-      cycles = 2
+    self.assertRaises(InvalidFieldSpec, self.exec1,
+      memory = {0: [+1, 0, 0, 0,26, 1]} # 26 = (3:2)
     )
-    self.assertRaises(InvalidFieldSpec, self.check1,
-      regs = {'A': [+1, 5, 4, 3, 2, 1]},
-      memory = {0: [+1, 0, 0, 0,26, 2]}, # 26 = (3:2)
-      diff = {'CA': 1, 'A': [+1, 5, 4, 3, 2, 29]},
-      cycles = 2
+    self.assertRaises(InvalidFieldSpec, self.exec1,
+      memory = {0: [+1, 0, 0, 0,26, 2]} # 26 = (3:2)
     )
 
-    self.assertRaises(InvalidAddress, self.check1,
-      regs = {'A': [-1, 63, 60, 60, 60, 60]},
+    self.assertRaises(InvalidAddress, self.exec1,
       memory = {
         0  : [-1, 2, 3, 2, 1, 4],
         10 : [-1, 0, 1, 0, 5, 1]
       },
-      startadr = 10,
-      diff = {'CA': 11, 'OF' : 1, 'A': [-1, 1, 63, 62, 62, 0]},
-      cycles = 2
+      startadr = 10
     )
 
-    self.assertRaises(InvalidIndex, self.check1,
-      regs = {'A': [-1, 63, 60, 60, 60, 60]},
+    self.assertRaises(InvalidIndex, self.exec1,
       memory = {
         0  : [-1, 2, 3, 2, 1, 4],
         10 : [+1, 63, 1, 8, 5, 1]
       },
-      startadr = 10,
-      diff = {'CA': 11, 'OF' : 1, 'A': [-1, 1, 63, 62, 62, 0]},
-      cycles = 2
+      startadr = 10
     )
 
 suite = unittest.makeSuite(VM3MathTestCase, 'test')

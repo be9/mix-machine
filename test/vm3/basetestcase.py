@@ -48,7 +48,7 @@ class VM3BaseTestCase(unittest.TestCase):
 
     self.vm.load(ctx)
 
-  def exec1(self, regs, memory, startadr):
+  def exec1(self, regs = {}, memory = {}, startadr = 0):
     self.init_vm(regs, memory)
 
     self.cycles = self.vm.execute(at=startadr)
