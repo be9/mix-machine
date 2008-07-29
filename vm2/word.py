@@ -64,11 +64,11 @@ class Word:
     return reduce(lambda x, y: "%s %02i" % (x, y), word.word_list[1:6], "+" if word[0] == 1 else "-")
 
   def __init__(self, obj = None):
-    if isinstance(obj, list) or isinstance(obj, tuple):
+    if obj is None:
+      self.word_list = [+1, 0, 0, 0, 0, 0]
+    elif isinstance(obj, list) or isinstance(obj, tuple):
       self.word_list = list(obj)
     elif isinstance(obj, int) or isinstance(obj, long):
       self.word_list = self.from_dec(obj)
     elif isinstance(obj, Word):
       self.word_list = obj.word_list[:]
-    else:
-      self.word_list = [+1, 0, 0, 0, 0, 0]

@@ -12,8 +12,8 @@ class VMachine:
 
   def __setitem__(self, index, word):
     """Can raise exception"""
-    self.memory[index].word_list = word.word_list
- 
+    self.memory[index] = word
+
   @staticmethod
   def check_mem_addr(addr):
     return 0 <= addr < VMachine.MEMORY_SIZE
@@ -33,7 +33,7 @@ class VMachine:
     return self.__dict__["r" + r]
 
   def set_reg(self, r, w):
-    self.__dict__["r" + r] = w
+    self.__dict__["r" + r] = Word(w)
 
   def get_cur_word(self):
     return self[self.cur_addr]
