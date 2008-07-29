@@ -76,16 +76,15 @@ class Div:
             
         self.ov = 0
 
-        int_op2 = int(self.op2)
+        int_op2 = abs(int(self.op2))
         if int_op2 == 0:
             self.ov = 1
             
         else:
-            sign = self.op1_h.sign() * self.op2.sign()
-            
             int_op1 = abs(int(self.op1_h)) * (MAX_WORD+1)
             int_op1 += abs(int(self.op1_l))
-            int_op1 *= self.op1_h.sign()
+
+            sign = 1 if int_op1 == 0 else self.op1_h.sign() * self.op2.sign() 
 
             int_q, int_r  = divmod(int_op1, int_op2)
 
@@ -93,5 +92,7 @@ class Div:
                 self.ov = 1
 
             else:
-                self.res_q = Word(int_q * sign)
-                self.res_r = Word(int_r * self.op1_h.sign())    # Knuth division %)
+                self.res_q = Word(int_q)
+                self.res_q.sign(sign)
+                self.res_r = Word(int_r)
+                self.res_r.sign(self.op1_h.sign()) # Knuth division %)
