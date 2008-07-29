@@ -30,6 +30,28 @@ class WordMathTestCase(unittest.TestCase):
             self.assertEqual(a.res.get_bytes(), res)
             self.assertEqual(a.ov, ov)
 
+    def testSub(self):
+        ops = [ ([1,0,0,0,0,0], [1,0,0,0,0,0], [1,0,0,0,0,0], 0),
+                ([-1,0,0,0,0,0], [-1,0,0,0,0,0], [-1,0,0,0,0,0], 0),
+                ([-1,0,0,0,0,0], [1,0,0,0,0,0], [-1,0,0,0,0,0], 0),
+                ([1,0,0,0,0,0], [-1,0,0,0,0,0], [1,0,0,0,0,0], 0),
+                
+                ([1,1,2,3,4,5], [-1,1,2,3,4,5], [1,2,4,6,8,10], 0),
+                ([1,1,2,3,4,5], [1,1,2,3,4,5], [1,0,0,0,0,0], 0),
+                ([-1,1,2,3,4,5], [-1,1,2,3,4,5], [-1,0,0,0,0,0], 0),
+                
+                ([1,1,2,3,4,5], [-1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE], [1,1,2,3,4,4], 1),
+                ([-1,1,2,3,4,5], [1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE], [-1,1,2,3,4,4], 1),
+
+                ([1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE], [-1,0,0,0,0,1], [1,0,0,0,0,0], 1),
+                ([-1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE], [1,0,0,0,0,1], [-1,0,0,0,0,0], 1)
+                ]
+
+        for op1, op2, res, ov in ops:
+            a = Sub(Word(op1), Word(op2))
+            self.assertEqual(a.res.get_bytes(), res)
+            self.assertEqual(a.ov, ov)
+
 suite = unittest.makeSuite(WordMathTestCase, 'test')
 
 if __name__ == "__main__":

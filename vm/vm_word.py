@@ -84,9 +84,9 @@ class Word:
 		
 		return self.val[fmt[0]: fmt[1]+1]
 
-	def sign(self, sign = None):
-                if sign is not None:
-                        self.set_bytes(list(sign), (0,0))
+	def sign(self, s = None):
+                if s is not None:
+                        self.set_bytes([s], (0,0))
                 else:
                         return self.get_bytes((0,0))[0]         
 	
