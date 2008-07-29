@@ -84,8 +84,37 @@ class VM3StoreTestCase(VM3BaseTestCase):
         cycles = 2
       )
 
+    self.check1(
+      regs = { 'J' : [+1, 0, 0, 0, 40, 50]},
+      memory = {
+        10: [+1, 0, 50, 0, 4, 32], # sti 0:4
+        50: [-1, 1, 2, 3, 4, 5]
+      },
+      startadr = 10,
+      diff = {
+        'CA' : 11,
+        50 : [+1, 0, 0, 40, 50, 5]
+      },
+      cycles = 2
+    )
+
   def testRaises(self):
-    pass
+    for c_code in xrange(24, 33+1):
+      self.assertRaises(InvalidAddress, self.exec1,
+        memory = {
+          0 : [+1, 63, 63, 0, 5, c_code]
+        }
+      )
+      self.assertRaises(InvalidIndex, self.exec1,
+        memory = {
+          0 : [+1, 63, 63, 44, 5, c_code]
+        }
+      )
+      self.assertRaises(InvalidFieldSpec, self.exec1,
+        memory = {
+          0 : [+1, 3, 63, 0, 8, c_code] # 8 = 1:0
+        }
+      )
 
 
 suite = unittest.makeSuite(VM3StoreTestCase, 'test')
