@@ -55,12 +55,12 @@ class VM3:
 
   def state(self):
     """Returns MEGA hash"""
-    mega = dict([ (i, self.vm[i].word_list) for i in xrange(self.vm.MEMORY_SIZE) ])
+    mega = dict([ (i, self.vm[i].word_list[:]) for i in xrange(self.vm.MEMORY_SIZE) ])
 
     for reg in "AXJ":
-      mega[reg] = self.vm.reg(reg).word_list
+      mega[reg] = self.vm.reg(reg).word_list[:]
     for reg in "123456":
-      mega["I"+reg] = self.vm.reg(reg).word_list
+      mega["I"+reg] = self.vm.reg(reg).word_list[:]
 
     mega["CA"] = self.vm.cur_addr
     mega["CF"] = self.vm.cf
