@@ -52,6 +52,30 @@ class WordMathTestCase(unittest.TestCase):
             self.assertEqual(a.res.get_bytes(), res)
             self.assertEqual(a.ov, ov)
 
+    def testMul(self):
+        ops = [ ([1,0,0,0,0,0], [1,0,0,0,0,0], [1,0,0,0,0,0], [1,0,0,0,0,0]),
+                ([1,0,0,0,0,1], [1,0,0,0,0,0], [1,0,0,0,0,0], [1,0,0,0,0,0]),
+                ([1,0,0,0,0,0], [1,0,0,0,0,1], [1,0,0,0,0,0], [1,0,0,0,0,0]),
+                ([1,0,0,0,0,1], [1,0,0,0,0,1], [1,0,0,0,0,0], [1,0,0,0,0,1]),
+                
+                ([1,0,0,0,0,1], [1,0,0,0,0,1], [1,0,0,0,0,0], [1,0,0,0,0,1]),
+                ([-1,0,0,0,0,1], [1,0,0,0,0,1], [-1,0,0,0,0,0], [-1,0,0,0,0,1]),
+                ([-1,0,0,0,0,1], [-1,0,0,0,0,1], [1,0,0,0,0,0], [1,0,0,0,0,1]),
+                ([1,0,0,0,0,1], [-1,0,0,0,0,1], [-1,0,0,0,0,0], [-1,0,0,0,0,1]),
+                
+                ([1,0,0,0,0,2], [1,0,0,0,0,2], [1,0,0,0,0,0], [1,0,0,0,0,4]),
+                
+                ([1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE], [1,0,0,0,0,2],
+                         [1,0,0,0,0,1], [1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE-1]),
+                ([1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE], [1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE],
+                         [1,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE,MAX_BYTE-1], [1,0,0,0,0,1]),
+                ]
+
+        for op1, op2, res_h, res_l in ops:
+            a = Mul(Word(op1), Word(op2))
+            self.assertEqual(a.res_h.get_bytes(), res_h)
+            self.assertEqual(a.res_l.get_bytes(), res_l)
+
 suite = unittest.makeSuite(WordMathTestCase, 'test')
 
 if __name__ == "__main__":
