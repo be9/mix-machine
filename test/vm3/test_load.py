@@ -159,4 +159,4 @@ class VM3LoadTestCase(VM3BaseTestCase):
 suite = unittest.makeSuite(VM3LoadTestCase, 'test')
 
 if __name__ == "__main__":
-  unittest.main()
+  unittest.TextTestRunner().run(suite)

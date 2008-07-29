@@ -311,4 +311,4 @@ class VM3MathTestCase(VM3BaseTestCase):
 suite = unittest.makeSuite(VM3MathTestCase, 'test')
 
 if __name__ == "__main__":
-	unittest.main()
+  unittest.TextTestRunner().run(suite)
