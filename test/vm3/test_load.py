@@ -133,21 +133,18 @@ class VM3LoadTestCase(VM3BaseTestCase):
     for c_code in xrange(8, 23+1):
       self.assertRaises(InvalidAddress, self.exec1,
         memory = {
-          10 : [+1, 63, 63, 0, 5, c_code]
-        },
-        startadr = 10,
+          0 : [+1, 63, 63, 0, 5, c_code]
+        }
       )
       self.assertRaises(InvalidIndex, self.exec1,
         memory = {
-          10 : [+1, 63, 63, 44, 5, c_code]
-        },
-        startadr = 10,
+          0 : [+1, 63, 63, 44, 5, c_code]
+        }
       )
       self.assertRaises(InvalidFieldSpec, self.exec1,
         memory = {
-          10 : [+1, 3, 63, 0, 8, c_code] # 8 = 1:0
-        },
-        startadr = 10,
+          0 : [+1, 3, 63, 0, 8, c_code] # 8 = 1:0
+        }
       )
 
 

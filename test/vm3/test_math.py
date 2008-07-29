@@ -76,22 +76,19 @@ class VM3MathTestCase(VM3BaseTestCase):
 
     self.assertRaises(InvalidIndex, self.exec1,
       memory = {
-        10 : [+1, 63, 63, 44, 5, 4]
-      },
-      startadr = 10,
+        0 : [+1, 63, 63, 44, 5, 4]
+      }
     )
     self.assertRaises(InvalidAddress, self.exec1,
       regs = {"I6" : [+1, 0, 0, 0, 62, 31]},
       memory = {
-        10 : [+1, 0, 1, 6, 5, 4]
-      },
-      startadr = 10,
+        0 : [+1, 0, 1, 6, 5, 4]
+      }
     )
     self.assertRaises(InvalidFieldSpec, self.exec1,
       memory = {
-        10 : [+1, 2, 0, 0, 63, 4]
-      },
-      startadr = 10,
+        0 : [+1, 2, 0, 0, 63, 4]
+      }
     )
 
 
