@@ -4,18 +4,18 @@ import os
 import basetestcase
 
 test_modules = {}
-for name in ('math', 'load', 'store'): # ADD NEW TESTS HERE
+module_names = ('load', 'store', 'math', 'addr_manip') # ADD NEW TESTS HERE
+for name in module_names:
   test_modules[name] = __import__("test_" + name)
 
 
 def suite(args):
   if len(args) == 0:
-    print ">> Testing: all"
-    suites = [module.suite for module in test_modules.values()]
+    names = module_names
   else:
-    names = [name for name in test_modules.keys() if name in args]
-    print ">> Testing:", " ".join(names)
-    suites = [test_modules[name].suite for name in names]
+    names = [name for name in module_names if name in args]
+  print ">> Testing:", " ".join(names)
+  suites = [test_modules[name].suite for name in names]
 
   return unittest.TestSuite(suites)
 
