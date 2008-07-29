@@ -42,6 +42,8 @@ if __name__ == "__main__":
     prof = hotshot.Profile("vm.prof")
     exp = prof.runcall(unittest.TextTestRunner().run, suite())
     prof.close()
+    
+    print ">> Please wait for the profiling results..."
 
     stats = hotshot.stats.load("vm.prof")
     stats.strip_dirs()

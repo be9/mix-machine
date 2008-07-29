@@ -36,14 +36,21 @@ class VM3:
       raise error_dict[type(e)]
 
   def load(self, mega):
-    memory_part = dict( [(addr, Word(word)) for addr, word in mega.items() if isinstance(addr, int)] )
+    memory_part = {}
+
+    for addr, word in mega.iteritems():
+      if isinstance(addr, int):
+        memory_part[addr] = Word(word)
+
     self.vm.set_memory(memory_part, reset = False)
 
     for reg in "AXJ":
-      if mega.get(reg) is not None: self.vm.set_reg(reg, Word(mega[reg]))
+      rv = mega.get(reg)
+      if rv is not None: self.vm.set_reg(reg, Word(rv))
 
     for reg in "123456":
-      if mega.get("I"+reg) is not None: self.vm.set_reg(reg, Word(mega["I"+reg]))
+      rv = mega.get("I"+reg)
+      if rv is not None: self.vm.set_reg(reg, Word(mega["I"+reg]))
 
     if mega.get("CA") is not None: self.vm.cur_addr = mega["CA"]
     if mega.get("CF") is not None: self.vm.cf = mega["CF"]
@@ -51,7 +58,6 @@ class VM3:
     if mega.get("HLT") is not None: self.vm.halted = bool(mega["HLT"])
 
     assert(len(self.vm.errors) == 0)
-
 
   def state(self):
     """Returns MEGA hash"""
