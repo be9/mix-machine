@@ -90,8 +90,6 @@ class VM31:
     def state(self):
         """ Returns state of VM in MEGA hash """
 
-        # addr - int, not str
-        #mega = dict([(str(i), self.vm.context.mem[i].get_bytes()) for i in xrange(0, MEM_SIZE)])
         mega =  dict([(    i , self.vm.context.mem[i].get_bytes()) for i in xrange(0, MEM_SIZE)])
 
         mega["A"] = self.vm.context.rA.get_bytes()
