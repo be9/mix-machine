@@ -18,9 +18,6 @@ class Word:
 		elif isinstance(obj, list) or isinstance(obj, tuple):
 			self.val = self._bytes_to_val(obj)
 			
-		#elif isinstance(obj, float):
-		#	self.val = self._float2val(obj)
-
 		elif isinstance(obj, Word):
 			self.val = copy(obj.val)
 			
@@ -65,13 +62,6 @@ class Word:
 		Word._check_bytes(bytes)
 		return bytes
 	
-	#def _check_float(self, float):
-	#	pass
-	
-	#def _float_to_val(self, float):
-	#	return [1,0,0,0,0,0]
-
-	# user operations with words
 	@staticmethod
 	def _check_fmt(fmt):
 		if fmt[0] < 0 or fmt[1] < fmt[0] or fmt[1] > 5:
@@ -93,6 +83,12 @@ class Word:
 		self._check_fmt(fmt)
 		
 		return self.val[fmt[0]: fmt[1]+1]
+
+	def get_sign(self):
+                return self.get_bytes((0,0))[0]
+
+        def set_sign(self, sign):
+                self.set_bytes(list(sign), (0,0))
 	
 	def int(self, fmt=(0,5)):
 		self._check_fmt(fmt)
@@ -106,9 +102,6 @@ class Word:
 			res *= self.val[0]
 		
 		return res
-	
-#	def float(self):
-#		return 0.0
 
 	def __int__(self):
 		return self.int()
