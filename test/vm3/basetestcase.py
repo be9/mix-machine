@@ -31,7 +31,11 @@ class VM3BaseTestCase(unittest.TestCase):
     if 'vm_class' in dir(VM3BaseTestCase):
       return True
     try:
-      number = int(raw_input("Enter number of VM for testing (1/2)? "))
+      import sys
+      if len(sys.argv) >= 2:
+        number = int(sys.argv[1])
+      else:
+        number = int(raw_input("Enter number of VM for testing (1/2)? "))
     except:
       return False
     else:

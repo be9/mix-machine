@@ -3,7 +3,6 @@ from basetestcase import *
 
 
 if not VM3BaseTestCase.check_vm_class():
-  import sys
   sys.exit()
 
 
