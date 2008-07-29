@@ -4,7 +4,7 @@ import os
 import basetestcase
 
 test_modules = {}
-for name in ('math', 'load'): # ADD NEW TESTS HERE
+for name in ('math', 'load', 'store'): # ADD NEW TESTS HERE
   test_modules[name] = __import__("test_" + name)
 
 
