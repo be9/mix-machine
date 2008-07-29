@@ -26,30 +26,6 @@ class VM3BaseTestCase(unittest.TestCase):
   def set_vm_class(klass):
     VM3BaseTestCase.vm_class = klass
 
-  @staticmethod
-  def check_vm_class():
-    if 'vm_class' in dir(VM3BaseTestCase):
-      return True
-    try:
-      import sys
-      if len(sys.argv) >= 2:
-        number = int(sys.argv[1])
-      else:
-        number = int(raw_input("Enter number of VM for testing (1/2)? "))
-    except:
-      return False
-    else:
-      if number == 1:
-        # FIX ME: loading of vm31
-        return False
-      elif number == 2:
-        sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
-        import vm2_vm3
-        VM3BaseTestCase.set_vm_class(vm2_vm3.VM3)
-        return True
-      else:
-        return False
-
   def check1(self, regs = {}, memory = {}, startadr = 0, diff = {}, cycles = 0, message = None):
     self.assertEqual(self.exec1(regs, memory, startadr), diff, message)
     self.assertEqual(self.cycles, cycles, message)
