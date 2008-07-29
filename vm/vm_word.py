@@ -12,7 +12,7 @@ class Word:
 	def __init__(self, obj):
 		self.val = [];
 		
-		if isinstance(obj, int):
+		if isinstance(obj, int) or isinstance(obj, long):
 			self.val = self._int_to_val(obj)
 			
 		elif isinstance(obj, list) or isinstance(obj, tuple):
@@ -27,21 +27,22 @@ class Word:
 	# convert different types into private data type
 	
 	@staticmethod
-	def _check_int(int):
-		if abs(int) > MAX_WORD:
+	def _check_int(i):
+		if abs(i) > MAX_WORD:
 			raise WordError()
 	
 	@staticmethod
-	def _int_to_val(int):
-		Word._check_int(int)
+	def _int_to_val(i):
+		Word._check_int(i)
 		
-		if int >= 0:
+		if i >= 0:
 			res = [1,0,0,0,0,0]
 		else:
 			res = [-1,0,0,0,0,0]
 			
-		for i in xrange(5, 0, -1):
-			int, res[i] = divmod(abs(int), MAX_BYTE+1)
+		for j in xrange(5, 0, -1):
+			i, res[j] = divmod(abs(i), MAX_BYTE+1)
+			res[j] = int(res[j])	
 			
 		return res
 	
