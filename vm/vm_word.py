@@ -84,11 +84,11 @@ class Word:
 		
 		return self.val[fmt[0]: fmt[1]+1]
 
-	def get_sign(self):
-                return self.get_bytes((0,0))[0]
-
-        def set_sign(self, sign):
-                self.set_bytes(list(sign), (0,0))
+	def sign(self, sign = None):
+                if sign is not None:
+                        self.set_bytes(list(sign), (0,0))
+                else:
+                        return self.get_bytes((0,0))[0]         
 	
 	def int(self, fmt=(0,5)):
 		self._check_fmt(fmt)
