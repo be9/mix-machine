@@ -28,5 +28,9 @@ class WordParser:
     return (l, r)
 
   @staticmethod
+  def get_sign(vmachine):
+    return vmachine.get_cur_word()[0]
+
+  @staticmethod
   def get_field(vmachine):
     return vmachine.get_cur_word()[4]

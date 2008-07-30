@@ -32,6 +32,13 @@ class WordParserTestCase(unittest.TestCase):
     def check_mem_addr(addr):
       return 0 <= addr < VMachine.MEMORY_SIZE
 
+  def testGetSign(self):
+    vmachine = self.MockVMachine(0)
+    for sign in (-1, 1):
+      vmachine.word = Word([sign, 44, 22, 0, 55, 1])
+      self.assertEqual(WordParser.get_sign(vmachine), sign)
+      vmachine.word = Word([sign, 0, 0, 0, 0, 0])
+      self.assertEqual(WordParser.get_sign(vmachine), sign)
 
   def testGetFullAddr(self):
     vmachine = self.MockVMachine(
