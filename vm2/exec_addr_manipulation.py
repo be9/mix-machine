@@ -9,10 +9,14 @@ def _linear_manipulation(vmachine, reg, sign, inc_action):
 
   """Inc-Action is 1 or 0"""
   result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, True, False)
-  if abs(result) >= MAX_BYTE**2:
-    result = Word.norm_2bytes(result)
-    vmachine.of = True
-  vmachine.set_reg(reg, Word(result))
+  if result == 0:
+    w_result = Word( [sign * WordParser.get_sign(vmachine), 0, 0, 0, 0, 0] )
+  else:
+    if abs(result) >= MAX_BYTE**2:
+      result = Word.norm_2bytes(result)
+      vmachine.of = True
+    w_result = Word(result)
+  vmachine.set_reg(reg, w_result)
 
 #----------------ENT/ENN--------------------
 def _ent(vmachine, reg, sign = 1):

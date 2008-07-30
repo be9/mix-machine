@@ -1,7 +1,7 @@
 
 from errors import *
 
-from exec_addr_manipulation import *    # ALL DONE - !!! no sign watching !!!
+from exec_addr_manipulation import *    # ALL DONE - DONE SIGN WATCHING
 from exec_cmp import *                  # ALL DONE - DONE SIGN WATCHING
 from exec_load import *                 # ALL DONE - DONE SIGN WATCHING
 from exec_others import *               # NOP, HLT, NUM, CHAR, MOVE - DONE SIGN WATCHING
