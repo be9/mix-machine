@@ -1,4 +1,4 @@
-# nop (c_code = 0), hlt, num, char (c_code = 5)
+# nop (c_code = 0), hlt, num, char (c_code = 5), move (c_code = 7)
 
 # ALL DONE
 
