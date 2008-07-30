@@ -4,11 +4,15 @@ from basetestcase import *
 class VM3AddrManipTestCase(VM3BaseTestCase):
   def testENTandENN(self):
     # testing normal work
-    indexes = "A I1 I2 I3 I4 I5 I6 X".split()
-    for i in xrange(len(indexes)):
-      index = indexes[i]
+    indexes = {
+      'A' : 48,
+      'I2' : 50,
+      'I6' : 54,
+      'X' : 55
+    }
+    for index, c_code in indexes.items():
       self.check1(
-        memory = { 0 : [-1, 33, 44, 0, 2, 48 + i]}, # ent
+        memory = { 0 : [-1, 33, 44, 0, 2, c_code]}, # ent
         diff = {
           'CA' : 1,
           index : [-1, 0, 0, 0, 33, 44]
@@ -16,7 +20,7 @@ class VM3AddrManipTestCase(VM3BaseTestCase):
         cycles = 1
       )
       self.check1(
-        memory = { 0 : [-1, 33, 44, 0, 3, 48 + i]}, # enn
+        memory = { 0 : [-1, 33, 44, 0, 3, c_code]}, # enn
         diff = {
           'CA' : 1,
           index : [+1, 0, 0, 0, 33, 44]
