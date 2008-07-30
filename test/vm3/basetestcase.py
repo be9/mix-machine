@@ -30,6 +30,16 @@ class VM3BaseTestCase(unittest.TestCase):
     self.assertEqual(self.exec1(regs, memory, startadr), diff, message)
     self.assertEqual(self.cycles, cycles, message)
 
+  def check_hlt(self, regs = {}, memory = {}, startadr = 0, diff = {}, cycles = 0, message = None):
+    self.assertEqual(self.exec_hlt(regs, memory, startadr), diff, message)
+    self.assertEqual(self.cycles, cycles, message)
+
+  def exec1(self, regs = {}, memory = {}, startadr = 0):
+    return self.execute(regs, memory, startadr, exec_at = True)
+
+  def exec_hlt(self, regs = {}, memory = {}, startadr = 0):
+    return self.execute(regs, memory, startadr, exec_at = False)
+
   def setUp(self):
     self.vm = VM3BaseTestCase.vm_class()
 
@@ -46,10 +56,13 @@ class VM3BaseTestCase(unittest.TestCase):
 
     self.vm.load(ctx)
 
-  def exec1(self, regs = {}, memory = {}, startadr = 0):
+  def execute(self, regs = {}, memory = {}, startadr = 0, exec_at = True):
     self.init_vm(regs, memory)
 
-    self.cycles = self.vm.execute(at=startadr)
+    if exec_at:
+      self.cycles = self.vm.execute(at=startadr)
+    else:
+      self.cycles = self.vm.execute(start=startadr)
 
     self.ctx_after = self.vm.state()
     self.ctx_diff = self.do_diff()
