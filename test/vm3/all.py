@@ -24,10 +24,11 @@ if __name__ == "__main__":
   from optparse import OptionParser
 
   parser = OptionParser()
-  parser.add_option("-p", "--profile", dest="profile", help="Enable profiling", default=False,
+  parser.add_option("-p", "--profile", dest="profile", help="enable profiling", default=False,
       action="store_true")
-  parser.add_option("-v", "--vm N", dest="vm", help="Select VM to use (1 or 2)",
+  parser.add_option("-v", "--vm N", dest="vm", help="select VM to use (1 or 2)",
       default="2")
+  parser.set_usage("all.py [OPTIONS] [NAMES]")
 
   (options, args) = parser.parse_args()
 
