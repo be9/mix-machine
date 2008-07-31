@@ -65,3 +65,9 @@ class InvalidDeviceError(VMError):
 
 class UnsupportedDeviceModeError(VMError):
   """Device doesn't support %s"""
+
+class InvalidCharError(VMError):
+  """This char is invalid in mix-machine (%s)"""
+
+class InvaliCharCodeError(VMError):
+  """There is no char corresponding to this number (%s)"""

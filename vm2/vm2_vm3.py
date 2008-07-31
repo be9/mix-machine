@@ -13,7 +13,9 @@ error_dict = {
   NegativeShiftError          : vm3_errors.NegativeShift,
   InvalidMoveError            : vm3_errors.InvalidMove,
   InvalidDeviceError          : vm3_errors.InvalidDevice,
-  UnsupportedDeviceModeError  : vm3_errors.UnsupportedDevice
+  UnsupportedDeviceModeError  : vm3_errors.UnsupportedDevice,
+  InvalidCharError            : vm3_errors.InvalidChar,
+  InvaliCharCodeError         : vm3_errors.InvalidCharCode
 }
 
 class VM3:

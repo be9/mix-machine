@@ -27,3 +27,9 @@ class InvalidDevice(VM3Error):
 
 class UnsupportedDeviceMode(VM3Error):
   pass
+
+class InvalidChar(VM3Error):
+  pass
+
+class InvalidCharCode(VM3Error):
+  pass
