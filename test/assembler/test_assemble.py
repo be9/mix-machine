@@ -39,7 +39,9 @@ class AssembleTestCase(unittest.TestCase):
         Line(None,          "LDA",  "LABEL%",   3),
         Line(None,          "HLT",  "64",       4),
         Line(None,          "CON",  "LABEL%",   5),
-        Line(None,          "END",  "7B",       6)
+        Line(None,          "ORIG", "0",        6),
+        Line(None,          "NOP",  None,       7),
+        Line(None,          "END",  "7B",       8)
       ],
       labels = {},
       local_labels = {},
@@ -52,7 +54,8 @@ class AssembleTestCase(unittest.TestCase):
         (2, UnexpectedStrInTheEndError("LABEL")),
         (3, UnexpectedStrInTheEndError("LABEL%")),
         (5, ExpectedWExpError("LABEL%")),
-        (6, InvalidLocalLabelError("7B"))
+        (7, RepeatedCellError("0")),
+        (8, InvalidLocalLabelError("7B"))
       ]
     )
 
@@ -120,32 +123,6 @@ class AssembleTestCase(unittest.TestCase):
         0: [+1,  0,  0,  0,  0, 10],
         1: [+1,  0,  0,  0,  5,  8],
         2: [+1,  0,  0,  0,  2,  5]
-      },
-      start_address = 1,
-      errors = []
-    )
-
-    # "selfmodified" program
-    self.check(
-      lines = [
-        Line(None,          "ORIG", "0",       1),
-        Line(None,          "CON",  "1",       2),
-        Line(None,          "ORIG", "0",       3),
-        Line(None,          "CON",  "2",       4),
-        Line(None,          "ORIG", "0",       5),
-        Line(None,          "CON",  "3",       6),
-        Line(None,          "ORIG", "0",       7),
-        Line(None,          "CON",  "4",       8),
-        Line(None,          "ORIG", "0",       9),
-        Line(None,          "CON",  "5",       10),
-        Line(None,          "HLT",  "0",       11),
-        Line(None,          "END",  "1",       12)
-      ],
-      labels = {},
-      local_labels = {},
-      memory_part = {
-         0: [+1,  0,  0,  0,  0,  5],
-         1: [+1,  0,  0,  0,  2,  5]
       },
       start_address = 1,
       errors = []
@@ -512,11 +489,10 @@ class AssembleTestCase(unittest.TestCase):
         Line(None,"ORIG","9B",5),
         Line("TESTLABEL","NOP",None,6),
         Line(None,"ORIG","TESTLABEL",7),
-        Line("TESTLABEL3","NOP",None,8),
-        Line("9H","EQU","745",9),
-        Line(None,"ORIG","9B",10),
-        Line("TESTLABEL2","NOP",None,11),
-        Line(None,"END","START",12)
+        Line("9H","EQU","745",8),
+        Line(None,"ORIG","9B",9),
+        Line("TESTLABEL2","NOP",None,10),
+        Line(None,"END","START",11)
       ],
 
       labels = {
@@ -524,12 +500,11 @@ class AssembleTestCase(unittest.TestCase):
         "START" : 18,
         "PRINTER" : 18,
         "TESTLABEL" : 547,
-        "TESTLABEL2" : 745,
-        "TESTLABEL3" : 547
+        "TESTLABEL2" : 745
       },
 
       local_labels = {
-        "9H" : [(547, 4), (745, 9)]
+        "9H" : [(547, 4), (745, 8)]
       },
       
       literals = [],
@@ -543,7 +518,7 @@ class AssembleTestCase(unittest.TestCase):
         Line("PRINTER666",  "EQU",  "18",         1),
         Line("0LABEL",      "CON",  "19",         2),
         Line("1LABEL",      "ALF",  "HELLO",      3),
-        Line("9L",          "ORIG", "0LABEL",     4),
+        Line("9L",          "ORIG", "0LABEL+10", 4),
         Line("9H",          "LDA",  "=357=",      5),
         Line("123456789L",  "NOP",  None,         6),
         Line("0H",          "ENTA", "=357=",      7),
@@ -557,12 +532,12 @@ class AssembleTestCase(unittest.TestCase):
         "0LABEL" : 0,
         "1LABEL" : 1,
         "9L" : 2,
-        "123456789L" : 1
+        "123456789L" : 11
       },
       
       local_labels = {
-        "0H" : [(2, 7)],
-        "9H" : [(0, 5), (100, 9)]
+        "0H" : [(12, 7)],
+        "9H" : [(10, 5), (100, 9)]
       },
 
       literals = [ 357, 357 ],

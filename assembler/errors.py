@@ -95,3 +95,6 @@ class NoFreeSpaceForLiteralsError(AssemblyError):
 
 class FieldFixedError(AssemblyError):
   """Field part for this instruction is fixed (%s), can't be changed"""
+
+class RepeatedCellError(AssemblyError):
+  """Can't assemble to one memory cell twice (%s)"""
