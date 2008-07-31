@@ -59,3 +59,6 @@ class InvalidCurAddrError(VMError):
 
 class InvalidMoveError(VMError):
   """Can't move %s words from %s to %s"""
+
+class InvalidDeviceError(VMError):
+  """Device #%s is unsupported"""

@@ -21,3 +21,6 @@ class NegativeShift(VM3Error):
 
 class InvalidMove(VM3Error):
   pass
+
+class InvalidDevice(VM3Error):
+  pass

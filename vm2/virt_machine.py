@@ -2,6 +2,7 @@ from errors import *
 from execution import *
 from word_parser import *
 from word import *
+from device import *
 
 class VMachine:
   MEMORY_SIZE = 4000
@@ -64,6 +65,11 @@ class VMachine:
     self.errors = []
     self.set_memory(memory, reset = True)
     self.init_stuff()
+    self.device = {
+      18 : Device(self, mode = "w", block_size = 24), # printer
+      19 : Device(self, mode = "r", block_size = 14)  # input terminal
+    }
+    self.locked_cells = set()
     self.cur_addr = start_address
     self.halted = False
     self.cycles = 0

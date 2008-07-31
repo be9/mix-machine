@@ -9,6 +9,7 @@ from exec_store import *                # ALL DONE - DONE SIGN WATCHING
 from exec_math import *                 # ALL DONE - DONE SIGN WATCHING
 from exec_shift import *                # ALL DONE - DONE SIGN WATCHING
 from exec_jump import *                 # done all but JBUS and JRED - DONE SIGN WATCHING
+from exec_io import *                   #
 
 def execute(vmachine):
   # some common stuff
@@ -75,6 +76,11 @@ codes = {
   (31   ) : stx,
   (32   ) : stj,
   (33   ) : stz,
+# (34   ) : jbus,
+  (35   ) : ioc,
+  (36   ) : _in,
+  (37   ) : out,
+# (38   ) : jred,
   (39, 0) : jmp,
   (39, 1) : jsj,
   (39, 2) : jov,

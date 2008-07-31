@@ -11,7 +11,8 @@ error_dict = {
   UnknownInstructionError : vm3_errors.UnknownInstruction,
   InvalidCurAddrError     : vm3_errors.InvalidCA,
   NegativeShiftError      : vm3_errors.NegativeShift,
-  InvalidMoveError        : vm3_errors.InvalidMove
+  InvalidMoveError        : vm3_errors.InvalidMove,
+  InvalidDeviceError      : vm3_errors.InvalidDevice
 }
 
 class VM3:
