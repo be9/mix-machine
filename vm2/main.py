@@ -31,8 +31,8 @@ def main():
 
 
   vmachine = VMachine(memory, start_address)
-  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24, busy_time = 24*2)) # printer
-  vmachine.set_device(19, FileDevice(mode = "r", block_size = 14, busy_time = 14*2)) # input terminal
+  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24 * 5, busy_time = 24*2)) # printer
+  vmachine.set_device(19, FileDevice(mode = "r", block_size = 14 * 5, busy_time = 14*2)) # input terminal
 
   try:
     while not vmachine.halted:
