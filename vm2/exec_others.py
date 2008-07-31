@@ -42,14 +42,16 @@ def move(vmachine):
     return
   src = WordParser.get_full_addr(vmachine, False, True)
   dst = vmachine.r1[:]
+  if dst <0 or src < 0:
+    raise InvalidMoveError( (num, src, dst) )
+  # now all addresses would be greater than dst or src, so they are >= 0
   try:
     for i in xrange(num):
       vmachine[dst] = vmachine[src+i]
       dst += 1 # dst - like r1 always contains address of next destination word
       vmachine.cycles += 2
   except IndexError:
-    # it's not written in Knuth book, but it's very logically, 
-    vmachine.r1[:] = dst
+    vmachine.r1[:] = dst # it's not written in Knuth book, but it's very logically,
     raise InvalidMoveError( (num, src, dst) )
   else:
     vmachine.r1[:] = dst
