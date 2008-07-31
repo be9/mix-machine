@@ -2,6 +2,7 @@ import sys
 from read_memory import *
 from virt_machine import *
 from errors import *
+from device import *
 
 def print_error(line, error):
   print "%s: %s" % (line if line is not None else 'GLOBAL', error)
@@ -30,6 +31,8 @@ def main():
 
 
   vmachine = VMachine(memory, start_address)
+  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24, busy_time = 24*2)) # printer
+  vmachine.set_device(19, FileDevice(mode = "r", block_size = 14, busy_time = 14*2)) # input terminal
 
   try:
     while not vmachine.halted:

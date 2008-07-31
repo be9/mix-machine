@@ -2,7 +2,6 @@ from errors import *
 from execution import *
 from word_parser import *
 from word import *
-from device import *
 
 class VMachine:
   MEMORY_SIZE = 4000
@@ -61,14 +60,18 @@ class VMachine:
     self.of = False
     # self.devices = ... TODO
 
+  def set_device(self, number, device_instance):
+    if 0 <= number < Word.MAX_BYTE:
+      self.devices[number] = device_instance
+      return True
+    else:
+      return False
+
   def __init__(self, memory, start_address):
     self.errors = []
     self.set_memory(memory, reset = True)
     self.init_stuff()
-    self.device = {
-      18 : Device(self, mode = "w", block_size = 24), # printer
-      19 : Device(self, mode = "r", block_size = 14)  # input terminal
-    }
+    self.devices = {}
     self.locked_cells = set()
     self.cur_addr = start_address
     self.halted = False
