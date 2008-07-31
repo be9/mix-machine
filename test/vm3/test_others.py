@@ -40,7 +40,132 @@ class VM3OthersTestCase(VM3BaseTestCase):
     )
 
   def testMOVE(self):
-    pass
+    self.check1(
+      regs = {
+        'I1' : [+1, 0, 0, 0, 1, 0]
+      },
+      memory = {
+        0 : [+1, 0, 0, 0, 2, 7],
+        1 : [-1, 1, 2, 3, 4, 5]
+      },
+      diff = {
+        'CA' : 1,
+        'I1': [+1, 0, 0, 0, 1, 2],
+        64+0 : [+1, 0, 0, 0, 2, 7],
+        64+1 : [-1, 1, 2, 3, 4, 5]
+      },
+      cycles = 5,
+      message = "move 2 from 0 to 64"
+    )
+
+    self.check1(
+      regs = {
+        'I1' : [+1, 0, 0, 0, 1, 0]
+      },
+      memory = {
+        0 : [+1, 0, 3, 0, 10, 7],
+        3 : [-1, 1, 0, 9, 8, 7],
+        4 : [+1, 2, 1, 0, 9, 8],
+        5 : [-1, 3, 2, 1, 0, 9],
+        6 : [+1, 4, 3, 2, 1, 0],
+        7 : [-1, 5, 4, 3, 2, 1],
+        8 : [+1, 6, 5, 4, 3, 2],
+        9 : [-1, 7, 6, 5, 4, 3],
+        10: [+1, 8, 7, 6, 5, 4],
+        11: [-1, 9, 8, 7, 6, 5],
+        12: [+1, 0, 9, 8, 7, 6],
+      },
+      diff = {
+        'CA' : 1,
+        'I1': [+1, 0, 0, 0, 1, 10],
+        64+0 : [-1, 1, 0, 9, 8, 7],
+        64+1 : [+1, 2, 1, 0, 9, 8],
+        64+2 : [-1, 3, 2, 1, 0, 9],
+        64+3 : [+1, 4, 3, 2, 1, 0],
+        64+4 : [-1, 5, 4, 3, 2, 1],
+        64+5 : [+1, 6, 5, 4, 3, 2],
+        64+6 : [-1, 7, 6, 5, 4, 3],
+        64+7 : [+1, 8, 7, 6, 5, 4],
+        64+8 : [-1, 9, 8, 7, 6, 5],
+        64+9 : [+1, 0, 9, 8, 7, 6],
+      },
+      cycles = 21,
+      message = "move 10 from 3 to 64"
+    )
+    self.check1(
+      regs = {
+        'I1' : [+1, 0, 0, 0, 0, 1]
+      },
+      memory = {
+        0 : [+1, 0, 0, 0, 2, 7],
+        1 : [-1, 1, 2, 3, 4, 5]
+      },
+      diff = {
+        'CA' : 1,
+        'I1': [+1, 0, 0, 0, 0, 3],
+        1+0 : [+1, 0, 0, 0, 2, 7],
+        1+1 : [+1, 0, 0, 0, 2, 7]
+      },
+      cycles = 5,
+      message = "move 2 from 0 to 1 (overlapping of regions)"
+    )
+    self.check1(
+      regs = {
+        'I1' : [+1, 0, 0, 0, 0, 0]
+      },
+      memory = {
+        0 : [+1, 0, 1, 0, 2, 7],
+        1 : [-1, 1, 2, 3, 4, 5],
+        2 : [+1, 5, 6, 7, 8, 9]
+      },
+      diff = {
+        'CA' : 1,
+        'I1': [+1, 0, 0, 0, 0, 2],
+        0+0 : [-1, 1, 2, 3, 4, 5],
+        0+1 : [+1, 5, 6, 7, 8, 9]
+      },
+      cycles = 5,
+      message = "move 2 from 1 to 0 (overlapping of regions)"
+    )
+
+    self.check1(
+      memory = {
+        0 : [+1, 0, 1, 0, 0, 7]
+      },
+      diff = {
+        'CA' : 1
+      },
+      cycles = 1,
+      message = "move 0"
+    )
+    self.check1(
+      memory = {
+        0 : [-1, 0, 1, 0, 0, 7]
+      },
+      diff = {
+        'CA' : 1
+      },
+      cycles = 1,
+      message = "move 0"
+    )
+
+    self.assertRaises(InvalidAddress, self.exec1,
+      regs = { 'I1' : [+1, 0, 0, 0, 0, 1] },
+      memory = { 0: [-1, 0, 1, 0, 5, 7] }
+    )
+    self.assertRaises(InvalidIndex, self.exec1,
+      regs = { 'I1' : [+1, 0, 0, 0, 0, 1] },
+      memory = { 0: [-1, 0, 1, 64, 5, 7] }
+    )
+    self.assertRaises(InvalidMove, self.exec1,
+      regs = { 'I1' : [-1, 0, 0, 0, 0, 1] },
+      memory = { 0: [+1, 0, 1, 0, 5, 7] }
+    )
+    self.assertRaises(InvalidMove, self.exec1,
+      regs = { 'I1' : [+1, 0, 0, 0, 62, 30] },
+      memory = { 0: [+1, 0, 1, 0, 10, 7] }
+    )
+
 
 suite = unittest.makeSuite(VM3OthersTestCase, 'test')
 
