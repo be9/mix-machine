@@ -2,6 +2,24 @@ import unittest
 from basetestcase import *
 
 class VM3OthersTestCase(VM3BaseTestCase):
+  def testCommonErrors(self):
+    self.assertRaises(InvalidCA, self.exec1,
+      startadr = 4000
+    )
+    self.assertRaises(InvalidCA, self.exec_hlt,
+      memory = {
+        3999 : [+1, 0, 0, 0, 0, 0] # NOP
+      },
+      startadr = 3999
+    )
+
+    for c, f in ((46, 6), (48, 4), (55, 4), (6, 6), (5, 3)):
+      self.assertRaises(UnknownInstruction, self.exec1,
+        memory = {
+          0 : [+1, 0, 0, 0, f, c]
+        }
+      )
+
   def testNOP(self):
     self.check1(
       memory = { 0 : [+1, 63, 50, 44, 63, 0]},
