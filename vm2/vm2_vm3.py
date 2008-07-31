@@ -5,14 +5,15 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm3'))
 import vm3_errors
 
 error_dict = {
-  InvalidMemAddrError     : vm3_errors.InvalidAddress,
-  InvalidIndError         : vm3_errors.InvalidIndex,
-  InvalidFieldSpecError   : vm3_errors.InvalidFieldSpec,
-  UnknownInstructionError : vm3_errors.UnknownInstruction,
-  InvalidCurAddrError     : vm3_errors.InvalidCA,
-  NegativeShiftError      : vm3_errors.NegativeShift,
-  InvalidMoveError        : vm3_errors.InvalidMove,
-  InvalidDeviceError      : vm3_errors.InvalidDevice
+  InvalidMemAddrError         : vm3_errors.InvalidAddress,
+  InvalidIndError             : vm3_errors.InvalidIndex,
+  InvalidFieldSpecError       : vm3_errors.InvalidFieldSpec,
+  UnknownInstructionError     : vm3_errors.UnknownInstruction,
+  InvalidCurAddrError         : vm3_errors.InvalidCA,
+  NegativeShiftError          : vm3_errors.NegativeShift,
+  InvalidMoveError            : vm3_errors.InvalidMove,
+  InvalidDeviceError          : vm3_errors.InvalidDevice,
+  UnsupportedDeviceModeError  : vm3_errors.UnsupportedDevice
 }
 
 class VM3:

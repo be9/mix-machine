@@ -24,3 +24,6 @@ class InvalidMove(VM3Error):
 
 class InvalidDevice(VM3Error):
   pass
+
+class UnsupportedDeviceMode(VM3Error):
+  pass

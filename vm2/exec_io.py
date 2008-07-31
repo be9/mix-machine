@@ -16,7 +16,7 @@ def ioc(vmachine):
   _get_device(vmachine).control()
 
 def _in(vmachine):
-  _get_device(vmachine).read()
+  _get_device(vmachine).read(WordParser.get_full_addr(vmachine, False, True))
 
 def out(vmachine):
-  _get_device(vmachine).write()
+  _get_device(vmachine).write(WordParser.get_full_addr(vmachine, False, True))

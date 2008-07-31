@@ -62,3 +62,6 @@ class InvalidMoveError(VMError):
 
 class InvalidDeviceError(VMError):
   """Device #%s is unsupported"""
+
+class UnsupportedDeviceModeError(VMError):
+  """Device doesn't support %s"""
