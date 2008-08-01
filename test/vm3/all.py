@@ -5,7 +5,7 @@ import basetestcase
 
 test_modules = {}
 # ADD NEW TESTS HERE
-module_names = ('load', 'store', 'math', 'addr_manip', 'cmp', 'jump', 'shift', 'others')
+module_names = ('load', 'store', 'math', 'addr_manip', 'cmp', 'jump', 'shift', 'others', 'io')
 for name in module_names:
   test_modules[name] = __import__("test_" + name)
 
