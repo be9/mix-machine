@@ -25,7 +25,7 @@ def _in_out(vmachine):
     raise IOMemRangeError( (words_num, addr, addr + words_num - 1) )
   return (dev, addr, words_num)
 
-def _in(vmachine):
+def in_(vmachine):
   dev, addr, words_num = _in_out(vmachine)
 
   if not vmachine.is_writeable_set(set(  range(addr, addr + words_num)  )):
@@ -40,7 +40,7 @@ def out(vmachine):
   dev, addr, words_num = _in_out(vmachine)
 
   if not vmachine.is_readable_set(set(  range(addr, addr + words_num)  )):
-    raise MemReadLockedError( (addr, addr + words_num - 1)
+    raise MemReadLockedError( (addr, addr + words_num - 1) )
 
   bytes = []
   for i in xrange(words_num):

@@ -20,7 +20,7 @@ error_dict = {
   InvalidMoveError            : vm3_errors.InvalidMove,
 
   InvalidDeviceError          : vm3_errors.InvalidDevice,
-  UnsupportedDeviceModeError  : vm3_errors.UnsupportedDevice,
+  UnsupportedDeviceModeError  : vm3_errors.UnsupportedDeviceMode,
   InvalidCharError            : vm3_errors.InvalidChar,
   InvaliCharCodeError         : vm3_errors.InvalidCharCode,
   IOMemRangeError             : vm3_errors.IOMemRange
