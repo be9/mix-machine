@@ -22,13 +22,16 @@ def execute(vmachine):
   if proc is not None:
     vmachine.jump_to = None
 
+    cycles = vmachine.cycles
     proc(vmachine)
-    
+    cycles = vmachine.cycles - cycles
+
     if vmachine.jump_to is None:
       vmachine.cur_addr += 1
     else:
       vmachine.cur_addr = vmachine.jump_to
 
+    return cycles
   else:
     raise UnknownInstructionError(tuple(word))
 

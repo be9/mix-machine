@@ -27,6 +27,8 @@ class Device:
     self.busy_time = busy_time # time for blocking device
     self.busy = False
     self.time_left = 0 # how many cycles device will be busy more
+    self.locked_mode = None # "w" or "rw"
+    self.locked_range = (None, None) # left, right limits
 
   @staticmethod
   def _ord(char):
@@ -60,11 +62,13 @@ class Device:
 
   def refresh(self, cycles_passed):
     if not self.busy:
-      return
+      return None
     self.time_left -= cycles_passed
     if self.time_left <= 0:
       self.busy = False
       self.time_left = 0
+      return (self.locked_mode, self.locked_range)
+    return None
 
 
 class FileDevice(Device):

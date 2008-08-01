@@ -123,4 +123,11 @@ class VMachine:
   def step(self):
     if not self.check_mem_addr(self.cur_addr):
       raise InvalidCurAddrError(self.cur_addr)
-    execute(self)
+    cycles = execute(self)
+
+    for dev in self.devices.values():
+      unlock = dev.refresh(cycles)
+
+      if unlock is not None:
+        mode = self.W_LOCKED if unlock[0] == 'w' else self.RW_LOCKED
+        self.locked_cells[mode] -= set(range(unlock[1][0], unlock[1][1] + 1))
