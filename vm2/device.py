@@ -78,7 +78,7 @@ class Device:
     if self.busy:
       raise "TODO waiting for device"
     self.busy = True
-    self.time_left += self.busy_time # add time for control
+    self.time_left += self.lock_time # add time for control
 
   def refresh(self, cycles_passed):
     """Called every VM step, if device is busy, refresh how many cycles it'll busy more"""
@@ -126,7 +126,7 @@ class FileDevice(Device):
     """Jump to newline in file"""
     Device.control(self)
 
-    if 'r' in mode:
+    if 'r' in self.mode:
       self.file_object.readline() # jump newline
-    else: # 'w' in mode:
+    else: # 'w' in self.mode:
       self.file_object.write("\n") # jump newline
