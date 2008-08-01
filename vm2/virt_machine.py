@@ -85,7 +85,7 @@ class VMachine:
     self.set_memory(memory, reset = True)
     self.init_stuff()
     self.devices = {}
-    self.locked_cells = (set(), set())
+    self.locked_cells = [set(), set()]
     self.cur_addr = start_address
     self.halted = False
     self.cycles = 0

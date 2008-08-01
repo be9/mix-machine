@@ -8,7 +8,7 @@ from errors import *
 def _get_device(vmachine):
   num = WordParser.get_field(vmachine)
   if num in vmachine.devices:
-    return vmachine[num]
+    return vmachine.devices[num]
   else:
     raise InvalidDeviceError(num)
 
