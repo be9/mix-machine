@@ -2,6 +2,7 @@
 
 # done all but JBUS and JRED
 
+from exec_io import _get_device
 from word_parser import *
 
 def _j(vmachine, condition, save_j = True, reset_of = False):
@@ -18,8 +19,9 @@ def _j(vmachine, condition, save_j = True, reset_of = False):
 
   vmachine.jump_to = WordParser.get_full_addr(vmachine, check_mix_addr = True)
 
-#def jbus(vmachine): _j(vmachine, lambda vm: True)
-#def jred(vmachine): _j(vmachine, lambda vm: True)
+
+def jbus(vmachine): _j(vmachine, lambda vm: _get_device(vmachine).busy == True)
+def jred(vmachine): _j(vmachine, lambda vm: _get_device(vmachine).busy == False)
 
 def jmp(vmachine):    _j(vmachine, lambda vm: True)
 def jsj(vmachine):    _j(vmachine, lambda vm: True, save_j = False)
