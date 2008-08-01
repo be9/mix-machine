@@ -65,7 +65,7 @@ class VMachine:
     # self.devices = ... TODO
 
   def set_device(self, number, device_instance):
-    if 0 <= number < Word.MAX_BYTE:
+    if 0 <= number < MAX_BYTE:
       self.devices[number] = device_instance
       return True
     else:

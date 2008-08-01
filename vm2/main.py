@@ -31,8 +31,9 @@ def main():
 
 
   vmachine = VMachine(memory, start_address)
-  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24 * 5, busy_time = 24*2)) # printer
-  vmachine.set_device(19, FileDevice(mode = "r", block_size = 14 * 5, busy_time = 14*2)) # input terminal
+  out_file = file("printer.out", "w")
+  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24 * 5, busy_time = 24*2, file_object = out_file)) # printer
+  #vmachine.set_device(19, FileDevice(mode = "r", block_size = 14 * 5, busy_time = 14*2)) # input terminal
 
   try:
     while not vmachine.halted:
@@ -45,6 +46,8 @@ def main():
     print ERR_VM_RUN[1]
     print_error(None, error)
     return ERR_VM_RUN[0]
+
+  out_file.close()
 
 # if we executing module
 if __name__ == '__main__':
