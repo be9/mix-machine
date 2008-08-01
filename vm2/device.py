@@ -43,20 +43,32 @@ class Device:
     except:
       raise InvaliCharCodeError(num)
 
-  def read(self):
+  def read(self, limits):
     if 'r' not in self.mode:
       raise UnsupportedDeviceModeError("inputing")
+    if self.busy:
+      raise "TODO waiting for device"
     self.busy = True
-    self.time_left += self.busy_time # add time for new read
+    self.time_left = self.busy_time # add time for new read
 
-  def write(self, bytes):
+    self.locked_mode = "rw"
+    self.locked_range = limits
+
+  def write(self, bytes, limits):
     assert(len(bytes) == self.block_size)
     if 'w' not in self.mode:
       raise UnsupportedDeviceModeError("outputing")
+    if self.busy:
+      raise "TODO waiting for device"
     self.busy = True
     self.time_left += self.busy_time # add time for new write
 
+    self.locked_mode = "w"
+    self.locked_range = limits
+
   def control(self):
+    if self.busy:
+      raise "TODO waiting for device"
     self.busy = True
     self.time_left += self.busy_time # add time for control
 
@@ -77,8 +89,8 @@ class FileDevice(Device):
     Device.__init__(self, mode, block_size, busy_time)
     self.file_object = file_object
 
-  def read(self):
-    Device.read(self)
+  def read(self, limits):
+    Device.read(self, limits)
 
     line = ""
     while len(line) < self.block_size:
@@ -92,8 +104,8 @@ class FileDevice(Device):
     bytes = map(Device._ord, line)
     return bytes
 
-  def write(self, bytes):
-    Device.write(self, bytes)
+  def write(self, bytes, limits):
+    Device.write(self, bytes, limits)
 
     line = "".join(map(Device._chr, bytes))
     self.file_object.write(line)
