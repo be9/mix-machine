@@ -6,6 +6,10 @@ from word import *
 class VMachine:
   MEMORY_SIZE = 4000
 
+  # constants for locking
+  W_LOCKED = 0 # this cells are locked for write but you can read them
+  RW_LOCKED = 1 # this cells are locked for read and write
+
   def __getitem__(self, index):
     """Can raise exception"""
     return self.memory[index]
@@ -67,12 +71,21 @@ class VMachine:
     else:
       return False
 
+  def is_readable(self, addr):
+    return addr not in self.locked_cells[self.RW_LOCKED]
+  def is_writeable(self, addr):
+    return addr not in ( self.locked_cells[self.W_LOCKED] | self.locked_cells[self.RW_LOCKED] )
+  def is_readable_set(self, _set):
+    return len(_set & self.locked_cells[self.RW_LOCKED]) == 0
+  def is_writeable_set(self, _set):
+    return len(_set & ( self.locked_cells[self.W_LOCKED] | self.locked_cells[self.RW_LOCKED] )) == 0
+
   def __init__(self, memory, start_address):
     self.errors = []
     self.set_memory(memory, reset = True)
     self.init_stuff()
     self.devices = {}
-    self.locked_cells = set()
+    self.locked_cells = (set(), set())
     self.cur_addr = start_address
     self.halted = False
     self.cycles = 0
