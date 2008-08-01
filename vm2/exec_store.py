@@ -10,7 +10,7 @@ def _st(vmachine, reg):
   src = Word() if reg == "Z" else vmachine.reg(reg)
 
   # dst - vmachine[addr]
-  addr = WordParser.get_full_addr(vmachine, False, True)
+  addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)
 
   vmachine[addr][max(1, left):right] = src[1:5]

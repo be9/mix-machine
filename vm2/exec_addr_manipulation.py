@@ -8,7 +8,7 @@ def _linear_manipulation(vmachine, reg, sign, inc_action):
   vmachine.cycles += 1
 
   """Inc-Action is 1 or 0"""
-  result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, True, False)
+  result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, check_overflow = True)
   if result == 0:
     if inc_action:
       # if inc/dec sign is from previous register (line in ADD)

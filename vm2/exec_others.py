@@ -40,7 +40,7 @@ def move(vmachine):
   num = WordParser.get_field(vmachine)
   if num == 0:
     return
-  src = WordParser.get_full_addr(vmachine, False, True)
+  src = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   dst = vmachine.r1[:]
   if dst <0 or src < 0:
     raise InvalidMoveError( (num, src, dst) )

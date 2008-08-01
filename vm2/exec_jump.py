@@ -16,7 +16,7 @@ def _j(vmachine, condition, save_j = True, reset_of = False):
   if save_j:
     vmachine.rJ[4:5] = vmachine.cur_addr + 1
 
-  vmachine.jump_to = WordParser.get_full_addr(vmachine, False, True)
+  vmachine.jump_to = WordParser.get_full_addr(vmachine, check_mix_addr = True)
 
 #def jbus(vmachine): _j(vmachine, lambda vm: True)
 #def jred(vmachine): _j(vmachine, lambda vm: True)

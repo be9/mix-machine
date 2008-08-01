@@ -8,7 +8,7 @@ def _ld(vmachine, reg, sign = 1):
   vmachine.cycles += 2
 
   # src - can be cell with address [-1, 0, 0] =(2dec)= 0
-  src = vmachine[WordParser.get_full_addr(vmachine, False, True)]
+  src = vmachine[WordParser.get_full_addr(vmachine, check_mix_addr = True)]
   # dst - rREG
   left, right = WordParser.get_field_spec(vmachine)
 

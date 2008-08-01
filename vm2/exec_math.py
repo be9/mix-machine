@@ -8,7 +8,7 @@ from word_parser import *
 def _add(vmachine, sign = 1):
   vmachine.cycles += 2
 
-  addr = WordParser.get_full_addr(vmachine, False, True)
+  addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)
 
   result = vmachine.rA[:] + sign * vmachine[addr][left:right]
@@ -30,7 +30,7 @@ def sub(vmachine): _add(vmachine, -1)
 def mul(vmachine):
   vmachine.cycles += 10
 
-  addr = WordParser.get_full_addr(vmachine, False, True)
+  addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)
 
   # multiply unsigned words
@@ -45,7 +45,7 @@ def mul(vmachine):
 def div(vmachine):
   vmachine.cycles += 12
 
-  addr = WordParser.get_full_addr(vmachine, False, True)
+  addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)
 
   u_divisor = vmachine[addr][max(1, left):right]
