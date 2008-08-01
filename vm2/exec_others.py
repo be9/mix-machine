@@ -52,6 +52,6 @@ def move(vmachine):
       vmachine.cycles += 2
   except IndexError:
     vmachine.r1[:] = dst # it's not written in Knuth book, but it's very logically,
-    raise InvalidMoveError( (num, src, dst) )
+    raise InvalidMoveError( (num, src, vmachine.r1[:]) )
   else:
     vmachine.r1[:] = dst
