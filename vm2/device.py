@@ -22,10 +22,10 @@ chr_table = [x for x in " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:
 
 class Device:
   """Abstract class of device"""
-  def __init__(self, mode, block_size, busy_time):
+  def __init__(self, mode, block_size, lock_time):
     self.mode = mode # [rw]
     self.block_size = block_size # number of bytes in one block
-    self.busy_time = busy_time # time for blocking device
+    self.lock_time = lock_time # time for blocking device
     self.busy = False
     self.time_left = 0 # how many cycles device will be busy more
 
@@ -55,7 +55,7 @@ class Device:
     if self.busy:
       raise "TODO waiting for device"
     self.busy = True
-    self.time_left = self.busy_time # add time for new read
+    self.time_left = self.lock_time # add time for new read
 
     self.locked_mode = "rw"
     self.locked_range = limits
@@ -68,7 +68,7 @@ class Device:
     if self.busy:
       raise "TODO waiting for device"
     self.busy = True
-    self.time_left += self.busy_time # add time for new write
+    self.time_left = self.lock_time # add time for new write
 
     self.locked_mode = "w"
     self.locked_range = limits

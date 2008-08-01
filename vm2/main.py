@@ -31,10 +31,10 @@ def main():
 
 
   vmachine = VMachine(memory, start_address)
-  out_file = file("printer.out", "w")
-  in_file = file("terminal.in", "r")
-  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24 * 5, busy_time = 24*2, file_object = out_file)) # printer
-  vmachine.set_device(19, FileDevice(mode = "r", block_size = 14 * 5, busy_time = 14*2, file_object = in_file)) # input terminal
+  out_file = open("printer.out", "w")
+  in_file = open("terminal.in", "r")
+  vmachine.set_device(18, FileDevice(mode = "w", block_size = 24 * 5, lock_time = 24*2, file_object = out_file)) # printer
+  vmachine.set_device(19, FileDevice(mode = "r", block_size = 14 * 5, lock_time = 14*2, file_object = in_file)) # input terminal
 
   try:
     while not vmachine.halted:
