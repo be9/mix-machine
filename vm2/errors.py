@@ -71,3 +71,6 @@ class InvalidCharError(VMError):
 
 class InvaliCharCodeError(VMError):
   """There is no char corresponding to this number (%s)"""
+
+class IOMemRangeError(VMError):
+  """Can't read/write %s words from %s to %s"""

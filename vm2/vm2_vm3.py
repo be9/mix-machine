@@ -8,14 +8,20 @@ error_dict = {
   InvalidMemAddrError         : vm3_errors.InvalidAddress,
   InvalidIndError             : vm3_errors.InvalidIndex,
   InvalidFieldSpecError       : vm3_errors.InvalidFieldSpec,
+
   UnknownInstructionError     : vm3_errors.UnknownInstruction,
   InvalidCurAddrError         : vm3_errors.InvalidCA,
+
   NegativeShiftError          : vm3_errors.NegativeShift,
+
   InvalidMoveError            : vm3_errors.InvalidMove,
+
   InvalidDeviceError          : vm3_errors.InvalidDevice,
   UnsupportedDeviceModeError  : vm3_errors.UnsupportedDevice,
   InvalidCharError            : vm3_errors.InvalidChar,
-  InvaliCharCodeError         : vm3_errors.InvalidCharCode
+  InvaliCharCodeError         : vm3_errors.InvalidCharCode,
+  IOMemRangeError             : vm3_errors.IOMemRange
+
 }
 
 class VM3:

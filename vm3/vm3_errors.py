@@ -33,3 +33,6 @@ class InvalidChar(VM3Error):
 
 class InvalidCharCode(VM3Error):
   pass
+
+class IOMemRange(VM3Error):
+  pass
