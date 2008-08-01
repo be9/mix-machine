@@ -11,7 +11,7 @@ def _st(vmachine, reg):
 
   # dst - vmachine[addr]
   addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
-  if not vmachine.is_readable(addr):
+  if not vmachine.is_writeable(addr):
     raise MemReadLockedError( (addr, addr) )
   left, right = WordParser.get_field_spec(vmachine)
 
