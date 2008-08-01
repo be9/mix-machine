@@ -26,24 +26,24 @@ class VM3BaseTestCase(unittest.TestCase):
   def set_vm_class(klass):
     VM3BaseTestCase.vm_class = klass
 
-  def check1(self, regs = {}, memory = {}, startadr = 0, diff = {}, cycles = 0, message = None):
-    self.assertEqual(self.exec1(regs, memory, startadr), diff, message)
+  def check1(self, regs = {}, memory = {}, devs = {}, startadr = 0, diff = {}, cycles = 0, message = None):
+    self.assertEqual(self.exec1(regs, memory, devs, startadr), diff, message)
     self.assertEqual(self.cycles, cycles, message)
 
-  def check_hlt(self, regs = {}, memory = {}, startadr = 0, diff = {}, cycles = 0, message = None):
-    self.assertEqual(self.exec_hlt(regs, memory, startadr), diff, message)
+  def check_hlt(self, regs = {}, memory = {}, devs = {}, startadr = 0, diff = {}, cycles = 0, message = None):
+    self.assertEqual(self.exec_hlt(regs, memory, devs, startadr), diff, message)
     self.assertEqual(self.cycles, cycles, message)
 
-  def exec1(self, regs = {}, memory = {}, startadr = 0):
-    return self.execute(regs, memory, startadr, exec_at = True)
+  def exec1(self, regs = {}, memory = {}, devs = {}, startadr = 0):
+    return self.execute(regs, memory, devs, startadr, exec_at = True)
 
-  def exec_hlt(self, regs = {}, memory = {}, startadr = 0):
-    return self.execute(regs, memory, startadr, exec_at = False)
+  def exec_hlt(self, regs = {}, memory = {}, devs = {}, startadr = 0):
+    return self.execute(regs, memory, devs, startadr, exec_at = False)
 
   def setUp(self):
     self.vm = VM3BaseTestCase.vm_class()
 
-  def init_vm(self, regs = {}, memory = {}):
+  def init_vm(self, regs, memory, devs):
     ctx = copy.copy(_initial_context)
     
     # fill memory
@@ -54,10 +54,10 @@ class VM3BaseTestCase(unittest.TestCase):
 
     self.ctx_before = copy.copy(ctx)
 
-    self.vm.load(ctx)
+    self.vm.load(ctx, devs)
 
-  def execute(self, regs = {}, memory = {}, startadr = 0, exec_at = True):
-    self.init_vm(regs, memory)
+  def execute(self, regs = {}, memory = {}, devs = {}, startadr = 0, exec_at = True):
+    self.init_vm(regs, memory, devs)
 
     if exec_at:
       self.cycles = self.vm.execute(at=startadr)

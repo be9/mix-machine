@@ -14,9 +14,17 @@
 #      'CA': 0,
 #      'CF': -1,
 #      'OF': 0,
-#      'HLT': 0
+#      'HLT': 0,
+#      'W_LOCKED' : set(),
+#      'RW_LOCKED' : set()
 #    }
 
+# devs = {
+#   num : (type, mode, block_size_bytes, lock_time, object)
+# }
+R_MODE = 'r'
+W_MODE = 'w'
+FILE_DEV = 0
 
 class VM3:
     """ The main interface of abstract VM """
@@ -27,7 +35,7 @@ class VM3:
         """ Runs 1 command at "at", or from "start" to "HLT" instruction and returns number of elapsed cycles """
         pass
 
-    def load(self, mega):
+    def load(self, mega, devs = {}):
         """ Loads initial state of VM form MEGA hash """
         pass
 

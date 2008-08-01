@@ -1,4 +1,5 @@
 from virt_machine import *
+from device import *
 from errors import *
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm3'))
@@ -24,8 +25,11 @@ error_dict = {
   InvalidCharError            : vm3_errors.InvalidChar,
   InvaliCharCodeError         : vm3_errors.InvalidCharCode,
   IOMemRangeError             : vm3_errors.IOMemRange
-
 }
+
+R_MODE = 'r'
+W_MODE = 'w'
+FILE_DEV = 0
 
 class VM3:
   def __init__(self):
@@ -48,7 +52,7 @@ class VM3:
     except VMError, e:
       raise error_dict[type(e)]
 
-  def load(self, mega):
+  def load(self, mega, devs = {}):
     memory_part = {}
 
     for addr, word in mega.iteritems():
@@ -69,6 +73,16 @@ class VM3:
     if mega.get("CF") is not None: self.vm.cf = mega["CF"]
     if mega.get("OF") is not None: self.vm.of = bool(mega["OF"])
     if mega.get("HLT") is not None: self.vm.halted = bool(mega["HLT"])
+    if mega.get("W_LOCKED")   is not None: self.vm.locked_cells[self.vm.W_LOCKED] =   set(mega["W_LOCKED"])
+    if mega.get("RW_LOCKED")  is not None: self.vm.locked_cells[self.vm.RW_LOCKED] =  set(mega["RW_LOCKED"])
+ 
+    self.vm.devices = {}
+    for num, dev_info in devs.items():
+      if dev_info[0] == FILE_DEV:
+        # add device for working with file
+        self.vm.set_device(num, FileDevice(dev_info[1], dev_info[2], dev_info[3], dev_info[4]))
+      #elif dev_info[0] == ANOTHER_DEV:
+        #self.vm.set_device(num, AnotherDevice(dev_info[1], dev_info[2], dev_info[3]))
 
     assert(len(self.vm.errors) == 0)
 
@@ -85,5 +99,7 @@ class VM3:
     mega["CF"] = self.vm.cf
     mega["OF"] = int(self.vm.of)
     mega["HLT"] = int(self.vm.halted)
+    mega["W_LOCKED"] =  self.vm.locked_cells[self.vm.W_LOCKED]
+    mega["RW_LOCKED"] = self.vm.locked_cells[self.vm.RW_LOCKED]
 
     return mega
