@@ -88,6 +88,12 @@ class FileDevice(Device):
     bytes = map(Device._ord, line)
     return bytes
 
+  def write(self, bytes):
+    Device.write(self, bytes)
+
+    line = "".join(map(Device._chr, bytes))
+    self.file_object.write(line)
+
   def control(self):
     Device.control(self)
 
@@ -95,9 +101,3 @@ class FileDevice(Device):
       self.file_object.readline() # jump newline
     else: # 'w' in mode:
       self.file_object.write("\n") # jump newline
-
-  def write(self, bytes):
-    Device.write(self, bytes)
-
-    line = "".join(map(Device._chr, bytes))
-    self.file_object.write(line)
