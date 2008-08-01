@@ -127,9 +127,12 @@ class VMachine:
       raise InvalidCurAddrError(self.cur_addr)
     cycles = execute(self)
 
+    # refresh all plugged devices
     for dev in self.devices.values():
+      # if device isn't busy returns None
       unlock = dev.refresh(cycles)
-
       if unlock is not None:
+        # else returned (mode, limits) - mode in 'rw', limits = (left, right) - properies of unlocked memory part
         mode = self.W_LOCKED if unlock[0] == 'w' else self.RW_LOCKED
+        # unlock memory
         self.locked_cells[mode] -= set(range(unlock[1][0], unlock[1][1] + 1))

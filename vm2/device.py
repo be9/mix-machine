@@ -21,29 +21,35 @@ chr_table = [x for x in " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:
 
 
 class Device:
+  """Abstract class of device"""
   def __init__(self, mode, block_size, busy_time):
     self.mode = mode # [rw]
     self.block_size = block_size # number of bytes in one block
     self.busy_time = busy_time # time for blocking device
     self.busy = False
     self.time_left = 0 # how many cycles device will be busy more
+
+    # next 2 variables for memory locking
     self.locked_mode = None # "w" or "rw"
     self.locked_range = (None, None) # left, right limits
 
   @staticmethod
   def _ord(char):
+    """Char -> Int"""
     try:
       return ord_table[char]
     except:
       raise InvalidCharError(char)
   @staticmethod
   def _chr(num):
+    """Int -> Char"""
     try:
       return chr_table[num]
     except:
       raise InvaliCharCodeError(num)
 
   def read(self, limits):
+    """Basics of reading for any device"""
     if 'r' not in self.mode:
       raise UnsupportedDeviceModeError("inputing")
     if self.busy:
@@ -55,6 +61,7 @@ class Device:
     self.locked_range = limits
 
   def write(self, bytes, limits):
+    """Basics of writing for any device"""
     assert(len(bytes) == self.block_size)
     if 'w' not in self.mode:
       raise UnsupportedDeviceModeError("outputing")
@@ -67,12 +74,14 @@ class Device:
     self.locked_range = limits
 
   def control(self):
+    """Control function, called by IOC instruction"""
     if self.busy:
       raise "TODO waiting for device"
     self.busy = True
     self.time_left += self.busy_time # add time for control
 
   def refresh(self, cycles_passed):
+    """Called every VM step, if device is busy, refresh how many cycles it'll busy more"""
     if not self.busy:
       return None
     self.time_left -= cycles_passed
@@ -84,12 +93,14 @@ class Device:
 
 
 class FileDevice(Device):
+  """Device that can read(write) from(to) files"""
   def __init__(self, mode, block_size, busy_time, file_object):
     assert( ('r' in mode) ^ ('w' in mode) )
     Device.__init__(self, mode, block_size, busy_time)
     self.file_object = file_object
 
   def read(self, limits):
+    """Read from file minimum from one line or <block_size> chars"""
     Device.read(self, limits)
 
     line = ""
@@ -105,12 +116,14 @@ class FileDevice(Device):
     return bytes
 
   def write(self, bytes, limits):
+    """Write <block_size> chars to file"""
     Device.write(self, bytes, limits)
 
     line = "".join(map(Device._chr, bytes))
     self.file_object.write(line)
 
   def control(self):
+    """Jump to newline in file"""
     Device.control(self)
 
     if 'r' in mode:
