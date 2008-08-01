@@ -42,6 +42,12 @@ def move(vmachine):
     return
   src = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   dst = vmachine.r1[:]
+
+  if not vmachine.is_readable_set(set(range(  src, src + num  ))):
+    raise MemReadLockedError( (src, src + num - 1) )
+  if not vmachine.is_writeable_set(set(range(  dst, dst + num  ))):
+    raise MemReadLockedError( (dst, dst + num - 1) )
+
   if dst <0 or src < 0:
     raise InvalidMoveError( (num, src, dst) )
   # now all addresses would be greater than dst or src, so they are >= 0

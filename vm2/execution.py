@@ -13,6 +13,9 @@ from exec_io import *                   #
 
 def execute(vmachine):
   # some common stuff
+  if not vmachine.is_readable(vmachine.cur_addr):
+    raise MemReadLockedError( (vmachine.cur_addr, vmachine.cur_addr) )
+
   word = vmachine.get_cur_word()
   f = word[4]
   c = word[5]
