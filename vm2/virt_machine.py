@@ -113,6 +113,8 @@ class VMachine:
       file.write("GREATER")
     file.write("\n")
     file.write("OF:  %s\n" % self.of)
+    file.write("W_LOCKED: %s\n" % list(self.locked_cells[self.W_LOCKED]))
+    file.write("RW_LOCKED: %s\n" % list(self.locked_cells[self.RW_LOCKED]))
 
   def debug_mem(self, file, begin, end):
     if begin > end:
