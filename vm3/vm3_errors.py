@@ -36,3 +36,9 @@ class InvalidCharCode(VM3Error):
 
 class IOMemRange(VM3Error):
   pass
+
+class ReadLocked(VM3Error):
+  pass
+
+class WriteLocked(VM3Error):
+  pass

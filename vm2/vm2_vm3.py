@@ -12,6 +12,9 @@ error_dict = {
   UnknownInstructionError     : vm3_errors.UnknownInstruction,
   InvalidCurAddrError         : vm3_errors.InvalidCA,
 
+  MemReadLockedError          : vm3_errors.ReadLocked,
+  MemWriteLockedError         : vm3_errors.WriteLocked,
+
   NegativeShiftError          : vm3_errors.NegativeShift,
 
   InvalidMoveError            : vm3_errors.InvalidMove,

@@ -74,3 +74,9 @@ class InvaliCharCodeError(VMError):
 
 class IOMemRangeError(VMError):
   """Can't read/write %s words from %s to %s"""
+
+class MemReadLockedError(VMError):
+  """This memory range is locked for reading (%s..%s)"""
+
+class MemWriteLockedError(VMError):
+  """This memory range is locked for writing (%s..%s)"""
