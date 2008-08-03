@@ -103,15 +103,11 @@ class FileDevice(Device):
     """Read from file minimum from one line or <block_size> chars"""
     Device.read(self, limits)
 
-    line = ""
-    while len(line) < self.block_size:
-      char = self.file_object.read(1)
-      if char not in "\r\n":
-        line += char
-      else:
-        self.file_object.readline() # jump newline
-        line += " " * (self.block_size - len(line))
-        break
+    line = self.file_object.readline().rstrip("\n\r")
+    if len(line) < self.block_size:
+      line += " " * (self.block_size - len(line))
+    else:
+      line = line[:self.block_size]
     bytes = map(Device._ord, line)
     return bytes
 
@@ -120,13 +116,13 @@ class FileDevice(Device):
     Device.write(self, bytes, limits)
 
     line = "".join(map(Device._chr, bytes))
-    self.file_object.write(line)
+    self.file_object.write(line+"\n")
 
   def control(self):
     """Jump to newline in file"""
     Device.control(self)
 
     if 'r' in self.mode:
-      self.file_object.readline() # jump newline
+      self.file_object.readline() # simply jump newline
     else: # 'w' in self.mode:
-      self.file_object.write("\n") # jump newline
+      self.file_object.write("<---------NEW-PAGE--------->\n") # jump newline

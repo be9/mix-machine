@@ -50,7 +50,7 @@ class VM3IOTestCase(VM3BaseTestCase):
     )
     out_file.close()
     out_file = open("18.dev", "r") 
-    self.assertEqual(out_file.read(), " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:'"+" "*(120-56-1)+"~")
+    self.assertEqual(out_file.readline().rstrip("\r\n"), " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:'"+" "*(120-56-1)+"~")
     out_file.close()
 
 
@@ -79,7 +79,7 @@ class VM3IOTestCase(VM3BaseTestCase):
     )
     out_file.close()
     out_file = open("18.dev", "r") 
-    self.assertEqual(out_file.read(), " " * 119 + "~")
+    self.assertEqual(out_file.readline().rstrip("\r\n"), " " * 119 + "~")
     out_file.close()
 
     out_file = open("18.dev", "w")
@@ -114,7 +114,7 @@ class VM3IOTestCase(VM3BaseTestCase):
     )
     out_file.close()
     out_file = open("18.dev", "r") 
-    self.assertEqual(out_file.read().splitlines(), [" " * 119 + "~", " " * 119 + "~"] )
+    self.assertEqual(out_file.read().splitlines(), [" " * 119 + "~", "<---------NEW-PAGE--------->"," " * 119 + "~"] )
     out_file.close()
 
 
