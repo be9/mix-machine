@@ -19,6 +19,8 @@ _initial_context = {
   'CF': 0,
   'OF': 0,
   'HLT': 0,
+  'W_LOCKED' : set(),
+  'RW_LOCKED' : set(),
 }
 
 class VM3BaseTestCase(unittest.TestCase):
