@@ -9,7 +9,7 @@ class WordParser:
     ind = word[3]
     if ind > 6:
       raise InvalidIndError(ind)
-    addr += vmachine.__dict__["r"+str(ind)][:]
+    addr += vmachine.reg(str(ind))[:]
     if abs(addr) >= MAX_BYTE**2:
       addr = Word.norm_2bytes(addr)
       if check_overflow:
@@ -26,3 +26,11 @@ class WordParser:
     if not (0 <= l <= r <= 5):
       raise InvalidFieldSpecError("%i:%i=%i" % (l, r, word[4]))
     return (l, r)
+
+  @staticmethod
+  def get_sign(vmachine):
+    return vmachine.get_cur_word()[0]
+
+  @staticmethod
+  def get_field(vmachine):
+    return vmachine.get_cur_word()[4]

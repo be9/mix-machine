@@ -10,12 +10,14 @@ LEFT  = 0
 RIGHT = 1
 
 def _s(vmachine, src, dir, cycle = False):
+  vmachine.cycles += 2
+
   assert(dir in (LEFT, RIGHT))
   length = len(src)
   shift = WordParser.get_full_addr(vmachine)
   if shift < 0:
     raise NegativeShiftError(shift)
-  shift = shift % length if cycle else min(shift, length - 1)
+  shift = shift % length if cycle else min(shift, length)
 
   dst = [0] * length
   if dir == LEFT:
@@ -26,6 +28,7 @@ def _s(vmachine, src, dir, cycle = False):
     dst[shift : length] = src[0 : length-shift]
     if cycle:
       dst[0 : shift] = src[length-shift : length]
+
   return dst
 
 

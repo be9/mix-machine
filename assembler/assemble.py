@@ -26,6 +26,7 @@ class Assembler:
     if only != 1:
       self.ca, self.npass = 0, 2
       self.symtable.literal_address = self.end_address
+      self.occupied_cells = []
       self._do_pass(lines)
 
   def _do_pass(self, lines):
@@ -96,8 +97,12 @@ class Assembler:
     return parse_argument(line, self.symtable, self.ca, self.npass)
 
   def _write_word(self, word):
-    self.memory[self.ca] = word
-    self.ca += 1
+    if self.ca in self.occupied_cells:
+      raise RepeatedCellError(self.ca)
+    else:
+      self.occupied_cells.append(self.ca)
+      self.memory[self.ca] = word
+      self.ca += 1
 
   def _add_error(self, line, error):
     # do not allow two errors of the same type in one line

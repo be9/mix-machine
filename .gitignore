@@ -1,0 +1,7 @@
+*.pyc
+*.ma
+*.mix
+*~
+*.bak
+.*
+*.prof

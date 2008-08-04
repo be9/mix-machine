@@ -21,6 +21,7 @@ class VMError(Exception):
   def __cmp__(self, another):
     return cmp(self.__str__(), another.__str__())
 
+
 class InvalidStartAddressError(VMError):
   """Invalid start address in input file (%s)"""
 
@@ -33,11 +34,13 @@ class TooShortInputLineError(VMError):
 class RepeatedAddressError(VMError):
   """This address repeated in input file (%s)"""
 
+class InvalidMixWordError(VMError):
+  """Invalid mix-word (%s  %s %s %s %s %s)"""
+
+
 class InvalidMemAddrError(VMError):
   """Invalid memory address (%s)"""
 
-class InvalidMixWordError(VMError):
-  """Invalid mix-word (%s  %s %s %s %s %s)"""
 
 class UnknownInstructionError(VMError):
   """Invalid mix-instruction at this word (%+2i %02i %02i %02i %02i %02i)"""
@@ -53,3 +56,27 @@ class NegativeShiftError(VMError):
 
 class InvalidCurAddrError(VMError):
   """Mix-machine's current address is out of memory range (%s)"""
+
+class InvalidMoveError(VMError):
+  """Can't move %s words from %s to %s"""
+
+class InvalidDeviceError(VMError):
+  """Device #%s is unsupported"""
+
+class UnsupportedDeviceModeError(VMError):
+  """Device doesn't support %s"""
+
+class InvalidCharError(VMError):
+  """This char is invalid in mix-machine (%s)"""
+
+class InvaliCharCodeError(VMError):
+  """There is no char corresponding to this number (%s)"""
+
+class IOMemRangeError(VMError):
+  """Can't read/write %s words from %s to %s"""
+
+class MemReadLockedError(VMError):
+  """This memory range is locked for reading (%s..%s)"""
+
+class MemWriteLockedError(VMError):
+  """This memory range is locked for writing (%s..%s)"""

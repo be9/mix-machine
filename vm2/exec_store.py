@@ -5,12 +5,19 @@
 from word_parser import *
 
 def _st(vmachine, reg):
+  vmachine.cycles += 2
+
   src = Word() if reg == "Z" else vmachine.reg(reg)
-  
+
   # dst - vmachine[addr]
-  addr = WordParser.get_full_addr(vmachine, False, True)
+  addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
+  if not vmachine.is_writeable(addr):
+    raise MemReadLockedError( (addr, addr) )
   left, right = WordParser.get_field_spec(vmachine)
-  vmachine[addr][left:right] = src[:]
+
+  vmachine[addr][max(1, left):right] = src[1:5]
+  vmachine[addr][0] = src[0] if left == 0 else vmachine[addr][0]
+
 
 def sta(vmachine):  _st(vmachine, "A")
 def st1(vmachine):  _st(vmachine, "1")

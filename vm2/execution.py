@@ -1,17 +1,21 @@
 
 from errors import *
 
-from exec_addr_manipulation import *    # ALL DONE
-from exec_cmp import *                  # ALL DONE
-from exec_load import *                 # ALL DONE
-from exec_others import *               # NOP, HLT, NUM, CHAR
-from exec_store import *                # ALL DONE
-from exec_math import *                 # ALL DONE
-from exec_shift import *                # ALL DONE
-from exec_jump import *                 # done all but JBUS and JRED
+from exec_addr_manipulation import *    # ALL DONE - DONE SIGN WATCHING
+from exec_cmp import *                  # ALL DONE - DONE SIGN WATCHING
+from exec_load import *                 # ALL DONE - DONE SIGN WATCHING
+from exec_others import *               # NOP, HLT, NUM, CHAR, MOVE - DONE SIGN WATCHING
+from exec_store import *                # ALL DONE - DONE SIGN WATCHING
+from exec_math import *                 # ALL DONE - DONE SIGN WATCHING
+from exec_shift import *                # ALL DONE - DONE SIGN WATCHING
+from exec_jump import *                 # done all but JBUS and JRED - DONE SIGN WATCHING
+from exec_io import *                   #
 
 def execute(vmachine):
   # some common stuff
+  if not vmachine.is_readable(vmachine.cur_addr):
+    raise MemReadLockedError( (vmachine.cur_addr, vmachine.cur_addr) )
+
   word = vmachine.get_cur_word()
   f = word[4]
   c = word[5]
@@ -21,21 +25,24 @@ def execute(vmachine):
   if proc is not None:
     vmachine.jump_to = None
 
+    cycles = vmachine.cycles
     proc(vmachine)
-    
+    cycles = vmachine.cycles - cycles
+
     if vmachine.jump_to is None:
       vmachine.cur_addr += 1
     else:
       vmachine.cur_addr = vmachine.jump_to
 
+    return cycles
   else:
     raise UnknownInstructionError(tuple(word))
 
 
 # boolean - is field-part fixed
 codes = {
-  ( 0   ) :  nop,
-  ( 1   ) :  add,
+  ( 0   ) : nop,
+  ( 1   ) : add,
   ( 2   ) : sub,
   ( 3   ) : mul,
   ( 4   ) : div,
@@ -48,6 +55,7 @@ codes = {
   ( 6, 3) : srax,
   ( 6, 4) : slc,
   ( 6, 5) : src,
+  ( 7   ) : move,
   ( 8   ) : lda,
   ( 9   ) : ld1,
   (10   ) : ld2,
@@ -74,6 +82,11 @@ codes = {
   (31   ) : stx,
   (32   ) : stj,
   (33   ) : stz,
+  (34   ) : jbus,
+  (35   ) : ioc,
+  (36   ) : in_,
+  (37   ) : out,
+  (38   ) : jred,
   (39, 0) : jmp,
   (39, 1) : jsj,
   (39, 2) : jov,

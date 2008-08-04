@@ -5,12 +5,23 @@
 from word_parser import *
 
 def _linear_manipulation(vmachine, reg, sign, inc_action):
+  vmachine.cycles += 1
+
   """Inc-Action is 1 or 0"""
-  result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, True, False)
-  if abs(result) >= MAX_BYTE**2:
-    result = Word.norm_2bytes(result)
-    vmachine.of = True
-  vmachine.set_reg(reg, Word(result))
+  result = inc_action * vmachine.reg(reg)[:] + sign * WordParser.get_full_addr(vmachine, check_overflow = True)
+  if result == 0:
+    if inc_action:
+      # if inc/dec sign is from previous register (line in ADD)
+      w_result = Word( [vmachine.reg(reg)[0], 0, 0, 0, 0, 0] )
+    else:
+      # if ent/enn sign is from M (line in LD*)
+      w_result = Word( [sign * WordParser.get_sign(vmachine), 0, 0, 0, 0, 0] )
+  else:
+    if abs(result) >= MAX_BYTE**2:
+      result = Word.norm_2bytes(result)
+      vmachine.of = True
+    w_result = Word(result)
+  vmachine.set_reg(reg, w_result)
 
 #----------------ENT/ENN--------------------
 def _ent(vmachine, reg, sign = 1):
