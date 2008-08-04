@@ -19,6 +19,8 @@ ord_table = {
 }
 chr_table = [x for x in " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:'"]
 
+class DeviceBusyException(Exception):
+  pass
 
 class Device:
   """Abstract class of device"""
@@ -51,9 +53,10 @@ class Device:
   def read(self, limits):
     """Basics of reading for any device"""
     if 'r' not in self.mode:
-      raise UnsupportedDeviceModeError("inputing")
+      raise UnsupportedDeviceModeError("inputting")
     if self.busy:
-      raise "TODO waiting for device"
+      raise DeviceBusyException
+    
     self.busy = True
     self.time_left = self.lock_time # add time for new read
 
@@ -64,9 +67,10 @@ class Device:
     """Basics of writing for any device"""
     assert(len(bytes) == self.block_size)
     if 'w' not in self.mode:
-      raise UnsupportedDeviceModeError("outputing")
+      raise UnsupportedDeviceModeError("outputting")
     if self.busy:
-      raise "TODO waiting for device"
+      raise DeviceBusyException
+   
     self.busy = True
     self.time_left = self.lock_time # add time for new write
 
@@ -76,7 +80,8 @@ class Device:
   def control(self):
     """Control function, called by IOC instruction"""
     if self.busy:
-      raise "TODO waiting for device"
+      raise DeviceBusyException
+    
     self.busy = True
     self.time_left = self.lock_time # add time for control
 

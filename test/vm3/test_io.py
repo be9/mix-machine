@@ -410,6 +410,31 @@ class VM3IOTestCase(VM3BaseTestCase):
         19 : (0, 'r', 14*5, 14*2, in_file)
       }
     )
+  def testDoubleIN(self):
+    self.check_hlt(
+      # fill zeros memory from 128 to 140
+      memory = dict(
+        {
+          0   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+          1   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+          2   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+          3   : [+1, 0, 3, 0, 19, 34], # jbus *
+          4   : [+1, 0, 0, 0, 2, 5] # hlt
+        }.items() +
+        [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(128, 142)]
+      ) ,
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, open("19.dev", "r"))
+      },
+      diff = {
+        'CA' : 5,
+        128 : [+1, 0, 1, 2, 3, 4],
+        'J'  : [+1, 0, 0, 0, 0, 4],
+        'HLT': 1
+      },
+      cycles = 95
+    )
+
 
 suite = unittest.makeSuite(VM3IOTestCase, 'test')
 
