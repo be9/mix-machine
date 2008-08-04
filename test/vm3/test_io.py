@@ -268,7 +268,7 @@ class VM3IOTestCase(VM3BaseTestCase):
 
 
     in_file = open("19.dev", "r")
-    self.check1(
+    self.check_hlt(
       regs = {
         'W_LOCKED' : set([2000, 2001, 2002]),
         'RW_LOCKED' : set([3000, 3001, 3002])
@@ -276,7 +276,13 @@ class VM3IOTestCase(VM3BaseTestCase):
       # fill zeros memory from 128 to 140
       memory = dict(
         {
-          0   : [+1, 2, 0, 0, 19, 36] # in 128(19)
+          0   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+          1   : [+1, 0, 1, 0, 19, 34], # jbus *
+          2   : [+1, 2, 0, 0, 19, 35], # ioc (19)
+          3   : [+1, 0, 3, 0, 19, 34], # jbus *
+          4   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+          5   : [+1, 0, 5, 0, 19, 34], # jbus *
+          6   : [+1, 0, 0, 0, 2, 5] # hlt
         }.items() +
         [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(128, 142)]
       ) ,
@@ -284,24 +290,126 @@ class VM3IOTestCase(VM3BaseTestCase):
         19 : (0, 'r', 14*5, 14*2, in_file)
       },
       diff = {
-        'CA' : 1,
-        'RW_LOCKED' : set([3000, 3001, 3002] + range(128, 142)),
+        'CA' : 7,
         128 : [+1, 0, 1, 2, 3, 4],
-        129 : [+1, 5, 6, 7, 8, 9],
-        130 : [+1,10,11,12,13,14],
-        131 : [+1,15,16,17,18,19],
-        132 : [+1,20,21,22,23,24],
-        133 : [+1,25,26,27,28,29],
-        134 : [+1,30,31,32,33,34],
-        135 : [+1,35,36,37,38,39],
-        136 : [+1,40,41,42,43,44],
-        137 : [+1,45,46,47,48,49],
-        138 : [+1,50,51,52,53,54],
-        139 : [+1,55, 0, 0, 0, 0]
+        'J'  : [+1, 0, 0, 0, 0, 6],
+        'HLT': 1
       },
-      cycles = 1
+      cycles = 97
     )
 
+    in_file = open("19.dev", "r")
+    self.assertRaises(WriteLocked, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
+        'RW_LOCKED' : set([3000, 3001, 3002, 138])
+      },
+      memory = {
+        0   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5] # hlt
+      },
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, in_file)
+      }
+    )
+
+    in_file = open("19.dev", "r")
+    self.assertRaises(WriteLocked, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002, 138]),
+        'RW_LOCKED' : set([3000, 3001, 3002])
+      },
+      memory = {
+        0   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5] # hlt
+      },
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, in_file)
+      }
+    )
+
+    in_file = open("19.dev", "r")
+    self.assertRaises(UnsupportedDeviceMode, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
+        'RW_LOCKED' : set([3000, 3001, 3002])
+      },
+      memory = {
+        0   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5] # hlt
+      },
+      devs = {
+        19 : (0, 'w', 14*5, 14*2, in_file)
+      }
+    )
+
+    in_file = open("19.dev", "r")
+    self.assertRaises(InvalidDevice, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
+        'RW_LOCKED' : set([3000, 3001, 3002])
+      },
+      memory = {
+        0   : [+1, 2, 0, 0, 17, 36], # in 128(17)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5] # hlt
+      },
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, in_file)
+      }
+    )
+
+    in_file_bad_chars = open("19_bad.dev", "r")
+    self.assertRaises(InvalidChar, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
+        'RW_LOCKED' : set([3000, 3001, 3002])
+      },
+      memory = {
+        0   : [+1, 2, 0, 0, 19, 36], # in 128(19)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5], # hlt
+        128 : [+1, 0, 0, 56, 0, 0]
+      },
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, in_file_bad_chars)
+      }
+    )
+
+    in_file = open("19.dev", "r")
+    self.assertRaises(InvalidAddress, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
+        'RW_LOCKED' : set([3000, 3001, 3002])
+      },
+      memory = {
+        0   : [-1, 2, 0, 0, 19, 36], # in 128(19)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5] # hlt
+      },
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, in_file)
+      }
+    )
+
+    in_file = open("19.dev", "r")
+    self.assertRaises(IOMemRange, self.exec_hlt,
+      regs = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
+        'RW_LOCKED' : set([3000, 3001, 3002])
+      },
+      memory = {
+        0   : [+1, 62, 30, 0, 19, 36], # in 3998(19)
+        1   : [+1, 0, 1, 0, 19, 34], # jbus *
+        2   : [+1, 0, 0, 0, 2, 5] # hlt
+      },
+      devs = {
+        19 : (0, 'r', 14*5, 14*2, in_file)
+      }
+    )
 
 suite = unittest.makeSuite(VM3IOTestCase, 'test')
 
