@@ -57,10 +57,10 @@ class Assembler:
       self.ca += 1
     else:
       # second pass
-      word_value = self._parse_arg(line)
+      value, sign = self._parse_arg(line)
       
       c_code = operations.get_codes(line.operation)[0]
-      self._write_word( word_value[0] | c_code, word_value[1] )
+      self._write_word( value[0] | c_code, sign[1] )
 
   def _do_equ(self, line):
     if self.npass == 1:
