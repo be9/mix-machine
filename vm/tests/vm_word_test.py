@@ -27,7 +27,7 @@ class WordTestCase(unittest.TestCase):
 			self.assertEqual(Word(init).val, res)
 		
 		inits_bad = [	# bytes initializer
-				([], WordError), ([1], WordError),	# invalid bytes len
+				([], WordError),([1], WordError),	# invalid bytes len
 				([0, 1,1,1,1,1], WordError),	([2, 1,1,1,1,1], WordError),		# invalid sign byte
 				([1, -1,1,1,1,1], WordError), ([1, MAX_BYTE+10,1,1,1,1], WordError),	# byte value out of range
 				([1, 1,1,1,1,-1], WordError), ([1, 1,1,1,1,MAX_BYTE+10], WordError),
