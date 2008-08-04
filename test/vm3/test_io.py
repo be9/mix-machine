@@ -410,7 +410,9 @@ class VM3IOTestCase(VM3BaseTestCase):
         19 : (0, 'r', 14*5, 14*2, in_file)
       }
     )
-  def testDoubleIN(self):
+
+
+  def testDoubles(self):
     self.check_hlt(
       # fill zeros memory from 128 to 140
       memory = dict(
@@ -435,6 +437,40 @@ class VM3IOTestCase(VM3BaseTestCase):
       cycles = 95
     )
 
+    out_file = open("18.dev", "w")
+    self.check_hlt(
+      # fill zeros memory from 128 to 150
+      memory = dict(
+        {
+          0   : [+1, 2, 0, 0, 18, 37], # out 128(18)
+          1   : [+1, 2, 0, 0, 18, 37], # out 128(18)
+          2   : [+1, 2, 40, 0, 19, 36], # in 168(19)
+          3   : [+1, 2, 0, 0, 18, 35], # ioc 128(18)
+          4   : [+1, 2, 40, 0, 19, 35], # ioc 168(19)
+          5   : [+1, 2, 40, 0, 19, 36], # in 168(19)
+          6   : [+1, 0, 6, 0, 19, 34], # jbus *
+          7   : [+1, 0, 0, 0, 2, 5], # hlt
+          151 : [+1, 0, 0, 0, 0, 10]
+        }.items() +
+        [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(128, 151)] +
+        [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(168, 182)]
+      ) ,
+      devs = {
+        18 : (0, 'w', 24*5, 24*2, out_file),
+        19 : (0, 'r', 14*5, 14*2, open("19.dev", "r"))
+      },
+      diff = {
+        'J' : [+1, 0, 0, 0, 0, 7],
+        'CA' : 8,
+        'HLT' : 1,
+        168 : [+1, 0, 1, 2, 3, 4]
+      },
+      cycles = 165
+    )
+    out_file.close()
+    out_file = open("18.dev", "r") 
+    self.assertEqual(out_file.read().splitlines(), [" " * 119 + "~", " " * 119 + "~", "<---------NEW-PAGE--------->"] )
+    out_file.close()
 
 suite = unittest.makeSuite(VM3IOTestCase, 'test')
 
