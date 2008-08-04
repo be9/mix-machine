@@ -78,7 +78,10 @@ class Device:
     if self.busy:
       raise "TODO waiting for device"
     self.busy = True
-    self.time_left += self.lock_time # add time for control
+    self.time_left = self.lock_time # add time for control
+
+    self.locked_mode = ""
+    self.locked_range = None
 
   def refresh(self, cycles_passed):
     """Called every VM step, if device is busy, refresh how many cycles it'll busy more"""
