@@ -129,7 +129,17 @@ class ArgumentParser:
 
   def parse(self):
     """Main parse function"""
-    return self.try_argument()
+    res = self.try_argument()
+    if res == 0:
+      try:
+        if self.line.argument[0] == '-':
+          return (0, -1)
+      except:
+        pass
+      return (0, +1)
+    else:
+      sign = +1 if res > 0 else -1
+      return (abs(res), sign)
 
 # moving in tokens
   def get(self):
