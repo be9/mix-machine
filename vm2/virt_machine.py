@@ -133,6 +133,11 @@ class VMachine:
       unlock = dev.refresh(cycles)
       if unlock is not None:
         # else returned (mode, limits) - mode in 'rw', limits = (left, right) - properies of unlocked memory part
-        mode = self.W_LOCKED if unlock[0] == 'w' else self.RW_LOCKED
+        if unlock[0] == 'w':
+          mode = self.W_LOCKED
+        elif unlock[0] == 'rw':
+          mode = self.RW_LOCKED
+        else:
+          return # ioc busy
         # unlock memory
         self.locked_cells[mode] -= set(range(unlock[1][0], unlock[1][1] + 1))
