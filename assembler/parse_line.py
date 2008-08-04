@@ -9,6 +9,7 @@ from symbol_table import *
 class Line:
   def __init__(self, label, operation, argument, line_number = 0):
     self.label, self.operation, self.argument, self.line_number = label, operation, argument, line_number
+    self.asm_address = None
 
   def __str__(self):
     return "%3i: (%10s) %4s %s" % (self.line_number, self.label, self.operation, self.argument)
