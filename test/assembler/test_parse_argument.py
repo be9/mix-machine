@@ -51,20 +51,28 @@ class ParseArgumentTestCase(unittest.TestCase):
         return None
 
   def test_instructions(self):
+    self.assertEqual(parse_argument(Line(None, 'NOP', '-0'), self.MockSymbolTable(), 0),
+      (0, -1))
+    self.assertEqual(parse_argument(Line(None, 'NOP', '-0*7'), self.MockSymbolTable(), 0),
+      (0, -1))
+    self.assertEqual(parse_argument(Line(None, 'NOP', '-3+3'), self.MockSymbolTable(), 0),
+      (0, -1))
+    self.assertEqual(parse_argument(Line(None, 'NOP', '3-3'), self.MockSymbolTable(), 0),
+      (0, 1))
     self.assertEqual(parse_argument(Line(None, 'NOP', '-1*65,6(2:3)'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([-1, 1, 1, 6, 19, 0]))
+      (abs(Memory.mix2dec([-1, 1, 1, 6, 19, 0])), -1))
     self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM,5(1:1)'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([-1, 1, 59, 5, 9, 0]))
+      (abs(Memory.mix2dec([-1, 1, 59, 5, 9, 0])), -1))
     self.assertEqual(parse_argument(Line(None, 'NOP', 'SYM,*/2(1:1)'), self.MockSymbolTable(), 10),
-      Memory.mix2dec([-1, 1, 59, 5, 9, 0]))
+      (abs(Memory.mix2dec([-1, 1, 59, 5, 9, 0])), -1))
     self.assertEqual(parse_argument(Line(None, 'STJ', 'SYM,*/2'), self.MockSymbolTable(), 10),
-      Memory.mix2dec([-1, 1, 59, 5, 2, 0]))
+      (abs(Memory.mix2dec([-1, 1, 59, 5, 2, 0])), -1))
     self.assertEqual(parse_argument(Line(None, 'STJ', None), self.MockSymbolTable(), 10),
-      Memory.mix2dec([+1, 0, 0, 0, 2, 0]))
+      (Memory.mix2dec([+1, 0, 0, 0, 2, 0]), 1))
     self.assertEqual(parse_argument(Line(None, 'STJ', '(2:3)'), self.MockSymbolTable(), 10),
-      Memory.mix2dec([+1, 0, 0, 0, 19, 0]))
+      (Memory.mix2dec([+1, 0, 0, 0, 19, 0]), 1))
     self.assertEqual(parse_argument(Line(None, 'STJ', ',*(2:3)'), self.MockSymbolTable(), 5),
-      Memory.mix2dec([+1, 0, 0, 5, 19, 0]))
+      (Memory.mix2dec([+1, 0, 0, 5, 19, 0]), 1))
 
     self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'LDA', '+'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedSExpError, parse_argument, Line(None, 'LDA', '+*-,2(5)'), self.MockSymbolTable(), 0)
@@ -85,15 +93,15 @@ class ParseArgumentTestCase(unittest.TestCase):
   def test_directives(self):
     # test directives except "ALF"
     self.assertEqual(parse_argument(Line('LABEL', 'CON', '-**2+5/3(+2*8-1/5-1),64(4:5),2B(5:5)'), self.MockSymbolTable(), 1000),
-      Memory.mix2dec([-1, 10, 25, 0, 1, 20]))
+      (abs(Memory.mix2dec([-1, 10, 25, 0, 1, 20])), -1))
     self.assertEqual(parse_argument(Line('LABEL', 'CON', '1,-1000(0:2)'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([-1, 15, 40, 0, 0, 1]))
+      (abs(Memory.mix2dec([-1, 15, 40, 0, 0, 1])), -1))
     self.assertEqual(parse_argument(Line('LABEL', 'CON', '***(***),-1000(0:2),1'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([+1, 0, 0, 0, 0, 1]))
+      (Memory.mix2dec([+1, 0, 0, 0, 0, 1]), 1))
     self.assertEqual(parse_argument(Line('LABEL', 'CON', '0'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([+1, 0, 0, 0, 0, 0]))
+      (Memory.mix2dec([+1, 0, 0, 0, 0, 0]), 1))
     self.assertEqual(parse_argument(Line('LABEL', 'CON', '2//3'), self.MockSymbolTable(), 0),
-      Memory.mix2dec([+1, 42, 42, 42, 42, 42]))
+      (Memory.mix2dec([+1, 42, 42, 42, 42, 42]), 1))
 
     self.assertRaises(ExpectedSExpError, parse_argument, Line('LABEL', 'CON', '+'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedSExpError, parse_argument, Line('LABEL', 'CON', '+SYM*'), self.MockSymbolTable(), 0)
@@ -109,17 +117,17 @@ class ParseArgumentTestCase(unittest.TestCase):
 
   def test_alf(self):
     self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO WORLD'), self.MockSymbolTable(), 0),
-      135582544)
+      (135582544, 1))
     self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLO WORLD"'), self.MockSymbolTable(), 0),
-      135582544)
+      (135582544, 1))
     self.assertEqual(parse_argument(Line(None, 'ALF', '"HELL"'), self.MockSymbolTable(), 0),
-      135582528)
+      (135582528, 1))
     self.assertEqual(parse_argument(Line(None, 'ALF', 'HELL'), self.MockSymbolTable(), 0),
-      135582528)
+      (135582528, 1))
     self.assertEqual(parse_argument(Line(None, 'ALF', '"HELLO"'), self.MockSymbolTable(), 0),
-      135582544)
+      (135582544, 1))
     self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO%%%'), self.MockSymbolTable(), 0),
-      135582544)
+      (135582544, 1))
 
     self.assertRaises(UnquotedStringError, parse_argument, Line(None, 'ALF', '"FAIL'), self.MockSymbolTable(), 0)
     for s in "^ rh%% hell!".split():

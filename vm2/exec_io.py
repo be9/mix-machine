@@ -3,7 +3,7 @@
 # ALL DONE
 
 from word_parser import *
-from errors import *
+from vm2_errors import *
 
 def _get_device(vmachine):
   """Return device or raise exception"""
@@ -15,7 +15,13 @@ def _get_device(vmachine):
 
 def ioc(vmachine):
   vmachine.cycles += 1
-  _get_device(vmachine).control()
+  
+  dev = _get_device(vmachine)
+  
+  if dev.busy:
+    vmachine.jump_to = vmachine.cur_addr
+  else:
+    dev.control()
 
 def _in_out(vmachine):
   """Common stuff for IN and OUT"""
@@ -29,6 +35,10 @@ def _in_out(vmachine):
 
 def in_(vmachine):
   dev, addr, words_num = _in_out(vmachine)
+
+  if dev.busy:
+    vmachine.jump_to = vmachine.cur_addr
+    return
 
   # check if region is writeable
   if not vmachine.is_writeable_set(set(  range(addr, addr + words_num)  )):
@@ -44,6 +54,10 @@ def in_(vmachine):
 
 def out(vmachine):
   dev, addr, words_num = _in_out(vmachine)
+
+  if dev.busy:
+    vmachine.jump_to = vmachine.cur_addr
+    return
 
   # check if region is readable
   if not vmachine.is_readable_set(set(  range(addr, addr + words_num)  )):

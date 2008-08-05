@@ -1,4 +1,4 @@
-from errors import *
+from vm2_errors import *
 from execution import *
 from word_parser import *
 from word import *

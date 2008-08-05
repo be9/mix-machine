@@ -19,6 +19,10 @@ class Memory:
     if self.is_valid_address(index):
       self.memory[index][:] = word[:]
 
+  def set_sign(self, index, sign):
+    if self.is_valid_address(index):
+      self.memory[index][0] = sign
+
   def __cmp__(self, memory_dict):
     """Need for testing"""
     

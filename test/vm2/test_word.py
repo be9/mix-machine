@@ -1,8 +1,5 @@
-import unittest, sys, os
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
+from helper import *
 from word import *
-from errors import *
 
 class WordTestCase(unittest.TestCase):
   def testCheckWord(self):

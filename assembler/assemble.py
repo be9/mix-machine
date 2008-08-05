@@ -57,24 +57,25 @@ class Assembler:
       self.ca += 1
     else:
       # second pass
-      word_value = self._parse_arg(line)
+      value, sign = self._parse_arg(line)
       
       c_code = operations.get_codes(line.operation)[0]
-      self._write_word((abs(word_value) | c_code) * Memory.sign(word_value))
+      self._write_word( value | c_code, sign )
 
   def _do_equ(self, line):
     if self.npass == 1:
-      self.symtable.set_label(line.label, self._parse_arg(line), line.line_number)
+      self.symtable.set_label(line.label, self._parse_arg(line)[0], line.line_number)
 
   def _do_orig(self, line):
-    self.ca = self._parse_arg(line)
+    self.ca = self._parse_arg(line)[0]
     self._check_address(line)
     
   def _do_con(self, line):
     self._check_address(line)
     
     if self.npass == 2:
-      self._write_word(self._parse_arg(line))
+      value, sign = self._parse_arg(line)
+      self._write_word(value, sign)
     else:
       self.ca += 1
 
@@ -85,7 +86,7 @@ class Assembler:
       self.end_address = self.ca
 
     if self.npass == 2:
-      self.start_address = self._parse_arg(line)
+      self.start_address = self._parse_arg(line)[0]
 
       for value in self.symtable.literals:
         if not self.memory.is_valid_address(self.ca):
@@ -96,12 +97,17 @@ class Assembler:
   def _parse_arg(self, line):
     return parse_argument(line, self.symtable, self.ca, self.npass)
 
-  def _write_word(self, word):
+  def _write_word(self, value, sign = None):
+    if sign is not None:
+      real_sign = sign
+    else:
+      real_sign = +1 if value >= 0 else -1
     if self.ca in self.occupied_cells:
       raise RepeatedCellError(self.ca)
     else:
       self.occupied_cells.append(self.ca)
-      self.memory[self.ca] = word
+      self.memory[self.ca] = value
+      self.memory.set_sign(self.ca, real_sign)
       self.ca += 1
 
   def _add_error(self, line, error):
