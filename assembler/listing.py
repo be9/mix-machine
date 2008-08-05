@@ -6,21 +6,23 @@ class ListingLine:
     self.word = word
     self.line = line
 
-  #def _addr2str(self):
-    #if self.addr is not None:
-      #return str(self.addr)
-    #else:
-      #return ""
+  @staticmethod
+  def _addr2str(addr):
+    if addr is not None:
+      return str(addr)
+    else:
+      return ""
 
-  #def _word2str(self):
-    #if self.word is not None:
-      #sign = "+" if self.word[0] == 1 else "-"
-      #return "%s %02i %02i %02i %02i %02i" % tuple([sign] + self.word[1:])
-    #else:
-      #return ""
+  @staticmethod
+  def _word2str(word):
+    if word is not None:
+      sign = "+" if word[0] == 1 else "-"
+      return "%s %02i %02i %02i %02i %02i" % tuple([sign] + word[1:])
+    else:
+      return ""
 
-  #def __str__(self):
-    #return "%4s | %16s | %s" % (self._addr2str(), self._word2str(), self.line)
+  def __str__(self):
+    return "%4s | %16s | %s" % (self._addr2str(self.addr), self._word2str(self.word), self.line)
 
   def __cmp__(self, other):
     if self.addr != other.addr or self.word != other.word or self.line != other.line:
@@ -29,6 +31,9 @@ class ListingLine:
       return 0
 
 class Listing:
+  def __str__(self):
+    return reduce(lambda x,y: x + str(y) + '\n', self.lines, "")
+
   def __init__(self, src_lines, asm_lines, memory):
     # None added: so first line will have index 1
     self.lines = map(lambda string: ListingLine(line = string.rstrip('\r\n')), src_lines)

@@ -14,6 +14,7 @@ from errors import *
 from parse_line import *
 from assemble import *
 from memory import Memory
+from listing import *
 
 DEFAULT_OUT_NAME = "out.ma"
 
@@ -51,8 +52,9 @@ def main():
                            strerror)
     return ERR_INVALID_OUTPUT_FILE[0]
 
+  src_lines = file_in.readlines()
 
-  lines, errors = parse_lines(file_in.readlines())
+  lines, errors = parse_lines(src_lines)
   file_in.close()
   if len(errors) > 0: # we have errors
     print "Syntax errors:"
@@ -82,7 +84,11 @@ def main():
 
   write_asm_file(file_out, start_address, memory_table.memory)
   file_out.close()
-	
+
+  # create listing
+  listing = Listing(src_lines, lines, memory_table.memory)
+  print listing
+        
 # if we executing module
 if __name__ == '__main__':
   main()

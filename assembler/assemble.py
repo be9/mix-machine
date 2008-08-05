@@ -15,22 +15,23 @@ class Assembler:
     self.end_address = None
 
   def run(self, lines, only = None):
+    self.lines = lines
     self.start_address = None
     self.errors = []
     self.error_set = set()
 
     if only != 2:
       self.ca, self.npass = 0, 1
-      self._do_pass(lines)
+      self._do_pass()
 
     if only != 1:
       self.ca, self.npass = 0, 2
       self.symtable.literal_address = self.end_address
       self.occupied_cells = []
-      self._do_pass(lines)
+      self._do_pass()
 
-  def _do_pass(self, lines):
-    for line in lines:
+  def _do_pass(self):
+    for line in self.lines:
       try:
         if self.npass == 1 and line.operation != "EQU": 
           self._add_label(line)
@@ -60,6 +61,7 @@ class Assembler:
       value, sign = self._parse_arg(line)
       
       c_code = operations.get_codes(line.operation)[0]
+      line.asm_address = self.ca
       self._write_word( value | c_code, sign )
 
   def _do_equ(self, line):
@@ -75,6 +77,7 @@ class Assembler:
     
     if self.npass == 2:
       value, sign = self._parse_arg(line)
+      line.asm_address = self.ca
       self._write_word(value, sign)
     else:
       self.ca += 1
@@ -92,6 +95,8 @@ class Assembler:
         if not self.memory.is_valid_address(self.ca):
           raise NoFreeSpaceForLiteralsError
 
+        #raise "TODO"
+        #line.asm_address = self.ca
         self._write_word(value)
 
   def _parse_arg(self, line):
