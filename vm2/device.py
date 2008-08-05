@@ -1,4 +1,4 @@
-from errors import *
+from vm2_errors import *
 
 # tables are copied from mdk manual (10, 20, 21 = delta, sigma, pi)
 ord_table = {

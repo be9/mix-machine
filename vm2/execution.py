@@ -1,5 +1,5 @@
 
-from errors import *
+from vm2_errors import *
 
 from exec_addr_manipulation import *    # ALL DONE - DONE SIGN WATCHING
 from exec_cmp import *                  # ALL DONE - DONE SIGN WATCHING

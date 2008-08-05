@@ -1,8 +1,5 @@
-import unittest, sys, os
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
+from helper import *
 from read_memory import *
-from errors import *
 
 class ReadMemoryTestCase(unittest.TestCase):
   def checkRaises(self, func, tests):

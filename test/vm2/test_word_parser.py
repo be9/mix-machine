@@ -1,10 +1,7 @@
-import unittest, sys, os
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
+from helper import *
 from word_parser import *
 from word import *
 from virt_machine import *
-from errors import *
 
 class WordParserTestCase(unittest.TestCase):
   class MockVMachine:

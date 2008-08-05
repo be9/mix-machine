@@ -1,6 +1,6 @@
 from virt_machine import *
 from device import *
-from errors import *
+from vm2_errors import *
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm3'))
 import vm3_errors
