@@ -1,0 +1,43 @@
+from parse_line import Line
+
+class ListingLine:
+  def __init__(self, addr = None, word = None, line = None):
+    self.addr = addr
+    self.word = word
+    self.line = line
+
+  #def _addr2str(self):
+    #if self.addr is not None:
+      #return str(self.addr)
+    #else:
+      #return ""
+
+  #def _word2str(self):
+    #if self.word is not None:
+      #sign = "+" if self.word[0] == 1 else "-"
+      #return "%s %02i %02i %02i %02i %02i" % tuple([sign] + self.word[1:])
+    #else:
+      #return ""
+
+  #def __str__(self):
+    #return "%4s | %16s | %s" % (self._addr2str(), self._word2str(), self.line)
+
+  def __cmp__(self, other):
+    if self.addr != other.addr or self.word != other.word or self.line != other.line:
+      return 1
+    else:
+      return 0
+
+class Listing:
+  def __init__(self, src_lines, asm_lines, memory):
+    # None added: so first line will have index 1
+    self.lines = map(lambda string: ListingLine(line = string.rstrip('\r\n')), src_lines)
+    self.asm_lines = asm_lines
+    self.memory = memory
+    self.create_listing()
+
+  def create_listing(self):
+    for asm_line in self.asm_lines:
+      if asm_line.asm_address is not None:
+        self.lines[asm_line.line_number-1].addr = asm_line.asm_address
+        self.lines[asm_line.line_number-1].word = self.memory[asm_line.asm_address]
