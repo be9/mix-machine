@@ -7,10 +7,9 @@ from vm2_errors import *
 
 def _get_device(vmachine):
   """Return device or raise exception"""
-  num = WordParser.get_field(vmachine)
-  if num in vmachine.devices:
-    return vmachine.devices[num]
-  else:
+  try:
+    return vmachine.devices[WordParser.get_field(vmachine)]
+  except KeyError:
     raise InvalidDeviceError(num)
 
 def ioc(vmachine):

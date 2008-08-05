@@ -13,11 +13,13 @@ def _st(vmachine, reg):
   addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   if not vmachine.is_writeable(addr):
     raise MemReadLockedError( (addr, addr) )
+ 
   left, right = WordParser.get_field_spec(vmachine)
 
   vmachine[addr][max(1, left):right] = src[1:5]
-  vmachine[addr][0] = src[0] if left == 0 else vmachine[addr][0]
 
+  if left == 0:
+    vmachine[addr][0] = src[0]
 
 def sta(vmachine):  _st(vmachine, "A")
 def st1(vmachine):  _st(vmachine, "1")
