@@ -60,7 +60,7 @@ class Assembler:
       value, sign = self._parse_arg(line)
       
       c_code = operations.get_codes(line.operation)[0]
-      self._write_word( value[0] | c_code, sign[1] )
+      self._write_word( value | c_code, sign )
 
   def _do_equ(self, line):
     if self.npass == 1:
