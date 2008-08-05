@@ -20,26 +20,19 @@ def suite(args):
 
   return unittest.TestSuite(suites)
 
-
 if __name__ == "__main__":
   from optparse import OptionParser
 
   parser = OptionParser()
   parser.add_option("-p", "--profile", dest="profile", help="enable profiling", default=False,
       action="store_true")
-  parser.add_option("-v", "--vm N", dest="vm", help="select VM to use (1 or 2)",
-      default="2")
   parser.set_usage("all.py [OPTIONS] [NAMES]")
 
   (options, args) = parser.parse_args()
 
-  if options.vm == "1":
-    print ">> Using VM 1"
-  else:
-    print ">> Using VM 2"
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
-    import vm2_vm3
-    basetestcase.VM3BaseTestCase.set_vm_class(vm2_vm3.VM3)
+  sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
+  import vm2_vm3
+  basetestcase.VM3BaseTestCase.set_vm_class(vm2_vm3.VM3)
 
   if options.profile:
     print ">> Profiling enabled"
