@@ -31,13 +31,27 @@
       </widget>
       <widget class="QWidget" name="tab_dbg" >
        <attribute name="title" >
-        <string>Run/debug</string>
+        <string>Run</string>
        </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_disasm" >
-       <attribute name="title" >
-        <string>Disassembler</string>
-       </attribute>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QTabWidget" name="tabWidget_2" >
+          <property name="currentIndex" >
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab" >
+           <attribute name="title" >
+            <string>Listing</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="tab_2" >
+           <attribute name="title" >
+            <string>Disassembler</string>
+           </attribute>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -49,7 +63,7 @@
      <x>0</x>
      <y>0</y>
      <width>720</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File" >
@@ -64,7 +78,14 @@
     <addaction name="separator" />
     <addaction name="action_Quit" />
    </widget>
+   <widget class="QMenu" name="menuRun" >
+    <property name="title" >
+     <string>&amp;Run</string>
+    </property>
+    <addaction name="action_Assemble" />
+   </widget>
    <addaction name="menu_File" />
+   <addaction name="menuRun" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="action_New" >
@@ -126,6 +147,11 @@
    </property>
    <property name="shortcut" >
     <string>F12</string>
+   </property>
+  </action>
+  <action name="action_Assemble" >
+   <property name="text" >
+    <string>&amp;Assemble</string>
    </property>
   </action>
  </widget>
