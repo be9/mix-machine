@@ -47,6 +47,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)
 
+  def setNewSource(self):
+    self.setRunTabsEnabled(False)
+    self.tabWidget.setCurrentIndex(0)
+
   def slot_File_New(self):
     if not self.checkUnsaved(): 
       return
@@ -56,6 +60,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setWindowModified(False)
 
     self.setCurrentFile("")
+
+    self.setNewSource()
 
     self.statusBar().showMessage(self.tr("Empty source file has been created."), 2000);
 
@@ -151,13 +157,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.statusBar().showMessage(self.tr("Error loading file."), 2000)
 
     else:
+      self.setNewSource()
+
       self.setCurrentFile(filename)
 
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunTabsEnabled(False)
-    type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
-    if type == gui_asm.NO_ERRORS:
+    ret_type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
+    if ret_type == gui_asm.NO_ERRORS:
       self.asm_data = content
 
       self.setRunTabsEnabled(True)
@@ -167,14 +175,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       return
 
     # we have errors!
-    if type == gui_asm.SYNTAX_ERRORS:
+    if ret_type == gui_asm.SYNTAX_ERRORS:
       err_mesg = self.tr("There are syntax errors")
     else:
       err_mesg = self.tr("There are assemble errors")
 
     # content - errors
     self.errors_list.clear()
-    self.errors_list.addItems([ self.tr("%i: %s" % err) for err in content ])
+    self.errors_list.addItems([ self.tr(str("%i: %s" % err)) for err in content ])
     self.errors_list.setVisible(True)
 
     self.statusBar().showMessage(err_mesg, 2000)
