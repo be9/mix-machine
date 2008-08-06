@@ -28,7 +28,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.action_Quit, SIGNAL("triggered()"), qApp, SLOT("closeAllWindows()"))
     self.connect(self.txt_source, SIGNAL("textChanged()"), lambda: self.setWindowModified(True))
 
-  def on_action_New_triggered(self):
+    self.connect(self.action_Open, SIGNAL("triggered()"), self.slot_File_Open)
+    self.connect(self.action_New, SIGNAL("triggered()"), self.slot_File_New)
+    self.connect(self.action_Save, SIGNAL("triggered()"), self.slot_File_Save)
+    self.connect(self.action_Save_as, SIGNAL("triggered()"), self.slot_File_SaveAs)
+
+  def slot_File_New(self):
     if not self.checkUnsaved(): 
       return
 
@@ -67,13 +72,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.setWindowTitle(self.trUtf8("%1[*] \xE2\x80\x94 %2").arg(shown_name, PROGRAM_NAME))
 
-  def on_action_Save_triggered(self):
+  def slot_File_Save(self):
     if self.cur_file == "":
-      self.on_action_Save_as_triggered()
+      self.slot_File_SaveAs()
     else:
       self.saveToFile(self.cur_file)
 
-  def on_action_Save_as_triggered(self):
+  def slot_File_SaveAs(self):
     fn = QFileDialog.getSaveFileName(self, self.tr("Choose file to save to..."), \
         self.cur_file, self.file_filters)
 
@@ -88,7 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     else:
       ce.ignore()
 
-  def on_action_Open_triggered(self):
+  def slot_File_Open(self):
     if not self.checkUnsaved():
       return
 
