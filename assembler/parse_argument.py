@@ -217,7 +217,8 @@ class ArgumentParser:
         self.next()
     else:
       # less than six mix-chars not in inverted
-      s = self.get()
+      s = self.line.argument.rstrip('\n\r')
+      self.ct = len(self.tokens)-1
       if s is None:
         s = ""
 

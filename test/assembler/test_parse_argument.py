@@ -36,6 +36,10 @@ class ParseArgumentTestCase(unittest.TestCase):
       Line(None, "ALF", '"A B C D E F"'),
       ['"', 'A B C D E F', '"']
     )
+    self.check_split(
+      Line(None, "ALF", 'A B C D E F'),
+      ['A B C D E F']
+    )
 
   class MockSymbolTable:
     def find(self, arg, no):
@@ -128,6 +132,8 @@ class ParseArgumentTestCase(unittest.TestCase):
       (135582544, 1))
     self.assertEqual(parse_argument(Line(None, 'ALF', 'HELLO%%%'), self.MockSymbolTable(), 0),
       (135582544, 1))
+    self.assertEqual(parse_argument(Line(None, 'ALF', '    *'), self.MockSymbolTable(), 0),
+      (46, 1))
 
     self.assertRaises(UnquotedStringError, parse_argument, Line(None, 'ALF', '"FAIL'), self.MockSymbolTable(), 0)
     for s in "^ rh%% hell!".split():
