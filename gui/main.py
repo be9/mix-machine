@@ -40,7 +40,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
 
+    self.setRunTabsEnabled(False)
     self.errors_list.setVisible(False)
+
+  def setRunTabsEnabled(self, enable):
+    self.tabWidget.setTabEnabled(1, enable)
+    self.tabWidget.setTabEnabled(2, enable)
 
   def slot_File_New(self):
     if not self.checkUnsaved(): 
@@ -150,9 +155,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
+    self.setRunTabsEnabled(False)
     type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
     if type == gui_asm.NO_ERRORS:
       self.asm_data = content
+
+      self.setRunTabsEnabled(True)
       self.listing_view.setPlainText(str(self.asm_data.listing))
       self.tabWidget.setCurrentIndex(1)
       self.statusBar().showMessage(self.tr("Source assembled succesfully"), 2000)
@@ -164,7 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     else:
       err_mesg = self.tr("There are assemble errors")
 
-    # stuff[1] - errors
+    # content - errors
     self.errors_list.clear()
     self.errors_list.addItems([ self.tr("%i: %s" % err) for err in content ])
     self.errors_list.setVisible(True)
@@ -172,7 +180,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.statusBar().showMessage(err_mesg, 2000)
 
   def slot_clickOnError(self, item):
-    print "bang!"
+    line = unicode(item.text())
+    line_num = int( line[0:line.find(':')] ) # cut all before ':'
+
+    # find absolute position
+    text = unicode(self.txt_source.toPlainText())
+    pos = 0
+    for _ in xrange(line_num - 1):
+      pos = text.find('\n', pos) + 1
+
+    cursor = self.txt_source.textCursor()
+    cursor.setPosition(pos)
+    cursor.select(QTextCursor.LineUnderCursor)
+    self.txt_source.setTextCursor(cursor)
 
 app = QApplication(sys.argv)
 
