@@ -86,8 +86,8 @@ LABEL1 \tStA LABEL1 sample of self modified code
         ListingLine(None, None,                     " and this is my"),
         ListingLine(None, None,                     " long"),
         ListingLine(None, None,                     " long poem"),
-        ListingLine(1001, [-1, 0, 0, 0, 0, 0],      "=-0="),
-        ListingLine(1002, [+1, 0, 0, 0, 2, 0],      "=128=")
+        ListingLine(1001, [-1, 0, 0, 0, 0, 0],      "\tCON\t-0"),
+        ListingLine(1002, [+1, 0, 0, 0, 2, 0],      "\tCON\t128")
       ]
     )
 
@@ -134,7 +134,7 @@ LABEL1 \tStA LABEL1 sample of self modified code
       ListingLine(None, None,                     " and this is my"),
       ListingLine(None, None,                     " long"),
       ListingLine(None, None,                     " long poem"),
-      ListingLine(1001, [-1, 0, 0, 0, 0, 0],      "=-0=")
+      ListingLine(1001, [-1, 0, 0, 0, 0, 0],      "\tCON\t-0")
     ]
     self.check(src_lines, lines, asm.memory.memory, asm.symtable.literals, asm.end_address, result)
     

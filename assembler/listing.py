@@ -50,5 +50,5 @@ class Listing:
         self.lines[asm_line.line_number-1].word = self.memory[asm_line.asm_address]
     for literal in self.literals:
       sign = "-" if literal[1] == -1 else ""
-      self.lines.append(ListingLine(self.literals_address,  self.memory[self.literals_address], "=%s%i=" % (sign, literal[0])))
+      self.lines.append(ListingLine(self.literals_address,  self.memory[self.literals_address], "\tCON\t%s%i" % (sign, literal[0])))
       self.literals_address += 1
