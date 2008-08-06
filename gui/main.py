@@ -147,23 +147,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
-    stuff = gui_asm.asm(unicode(self.txt_source.toPlainText()))
-    if stuff[0] == gui_asm.NO_ERRORS:
-      self.asm_data = stuff[1]
+    type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
+    if type == gui_asm.NO_ERRORS:
+      self.asm_data = content
       self.listing_view.setPlainText(str(self.asm_data.listing))
       self.tabWidget.setCurrentIndex(1)
       self.statusBar().showMessage(self.tr("Source assembled succesfully"), 2000)
       return
 
     # we have errors!
-    if stuff[0] == gui_asm.SYNTAX_ERRORS:
+    if type == gui_asm.SYNTAX_ERRORS:
       err_mesg = self.tr("There are syntax errors")
     else:
       err_mesg = self.tr("There are assemble errors")
 
     # stuff[1] - errors
     self.errors_list.clear()
-    self.errors_list.addItems(map( lambda err_tuple : self.tr("%i: %s" % err_tuple), stuff[1] ))
+    self.errors_list.addItems(map( lambda err_tuple : self.tr("%i: %s" % err_tuple), content ))
     self.errors_list.setVisible(True)
 
     self.statusBar().showMessage(err_mesg, 2000)
