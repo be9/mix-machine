@@ -37,6 +37,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
 
+    self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
+        self.slot_clickOnError)
+
     self.errors_list.setVisible(False)
 
   def slot_File_New(self):
@@ -163,10 +166,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # stuff[1] - errors
     self.errors_list.clear()
-    self.errors_list.addItems(map( lambda err_tuple : self.tr("%i: %s" % err_tuple), content ))
+    self.errors_list.addItems([ self.tr("%i: %s" % err) for err in content ])
     self.errors_list.setVisible(True)
 
     self.statusBar().showMessage(err_mesg, 2000)
+
+  def slot_clickOnError(self, item):
+    print "bang!"
 
 app = QApplication(sys.argv)
 
