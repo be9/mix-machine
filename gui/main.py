@@ -182,7 +182,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # content - errors
     self.errors_list.clear()
-    self.errors_list.addItems([ self.tr(str("%i: %s" % err)) for err in content ])
+    self.errors_list.addItems([ "%i: %s" % err for err in content ])
     self.errors_list.setVisible(True)
 
     self.statusBar().showMessage(err_mesg, 2000)
