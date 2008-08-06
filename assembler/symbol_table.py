@@ -34,9 +34,9 @@ class SymbolTable:
       
       self.labels[label] = address
 
-  def add_literal(self, value):
+  def add_literal(self, value_and_sign):
     """This is called on the 2nd pass from parse_argument. Returns an address for the value"""
-    self.literals.append(value) 
+    self.literals.append(value_and_sign) 
     self.literal_address += 1
     return self.literal_address - 1
 

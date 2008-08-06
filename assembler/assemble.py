@@ -91,13 +91,13 @@ class Assembler:
     if self.npass == 2:
       self.start_address = self._parse_arg(line)[0]
 
-      for value in self.symtable.literals:
+      for value, sign in self.symtable.literals:
         if not self.memory.is_valid_address(self.ca):
           raise NoFreeSpaceForLiteralsError
 
         #raise "TODO"
         #line.asm_address = self.ca
-        self._write_word(value)
+        self._write_word(value, sign)
 
   def _parse_arg(self, line):
     return parse_argument(line, self.symtable, self.ca, self.npass)

@@ -134,9 +134,10 @@ class ArgumentParser:
       try:
         if self.line.argument[0] == '-':
           return (0, -1)
+        else:
+          return (0, +1)
       except:
-        pass
-      return (0, +1)
+        return (0, +1)
     else:
       sign = +1 if res > 0 else -1
       return (abs(res), sign)
@@ -374,7 +375,17 @@ class ArgumentParser:
         if self.npass == 1:
           return 0
 
-        return self.symbol_table.add_literal(res)
+        if res == 0:
+          try:
+            if self.line.argument[1] == '-': # (self.line.argument[0] = "=")!!
+              return_tuple = (0, -1)
+            else:
+              return_tuple = (0, +1)
+          except:
+            return_tuple = (0, +1)
+        else:
+          return_tuple = (abs(res), 1 if res >= 0 else -1)
+        return self.symbol_table.add_literal(return_tuple)
 
   def try_addr_part(self):
     """This function DO SELF.NEXT()"""

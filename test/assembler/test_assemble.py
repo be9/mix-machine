@@ -64,7 +64,7 @@ class AssembleTestCase(unittest.TestCase):
       lines = [
         Line(None,          "ORIG", "30",                 1),
         Line("7H",          "ENTA", "15",                 2),
-        Line(None,          "LD2", "=357=",               3),
+        Line(None,          "LD2", "=-2+2=",               3),
         Line("TEMP",        "EQU",  "-2",                 4),
         Line(None,          "HLT",  "=1(2:2)=",    5),
         Line(None,          "CON",  "17314053",           7),
@@ -81,12 +81,12 @@ class AssembleTestCase(unittest.TestCase):
         31: [+1,  0, 34,  0,  5, 10],
         32: [+1,  0, 35,  0,  2,  5],
         33: [+1,  1,  2,  3,  4,  5],
-        34: [+1,  0,  0,  0,  5, 37],
+        34: [-1,  0,  0,  0,  0, 0],
         35: [+1,  0,  1,  0,  0,  0]
       },
       start_address = 30,
       errors = [],
-      literals = [ 357, 262144 ],
+      literals = [ (0, -1), (262144, 1) ],
       end_address = 34
     )
 
@@ -540,7 +540,7 @@ class AssembleTestCase(unittest.TestCase):
         "9H" : [(10, 5), (100, 9)]
       },
 
-      literals = [ 357, 357 ],
+      literals = [ (357, 1), (357, 1) ],
       
       errors = [],
 
@@ -637,7 +637,7 @@ class AssembleTestCase(unittest.TestCase):
         "9H" : [(1000, 5), (3998, 9)]
       },
       
-      literals = [ 2 ],
+      literals = [ (2, 1) ],
       
       errors = [
         (6, RepeatedLabelError("123456789L")),
