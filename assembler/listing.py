@@ -34,11 +34,13 @@ class Listing:
   def __str__(self):
     return reduce(lambda x,y: x + str(y) + '\n', self.lines, "")
 
-  def __init__(self, src_lines, asm_lines, memory):
+  def __init__(self, src_lines, asm_lines, memory, literals, literals_address):
     # None added: so first line will have index 1
     self.lines = map(lambda string: ListingLine(line = string.rstrip('\r\n')), src_lines)
     self.asm_lines = asm_lines
     self.memory = memory
+    self.literals = literals
+    self.literals_address = literals_address
     self.create_listing()
 
   def create_listing(self):
@@ -46,3 +48,7 @@ class Listing:
       if asm_line.asm_address is not None:
         self.lines[asm_line.line_number-1].addr = asm_line.asm_address
         self.lines[asm_line.line_number-1].word = self.memory[asm_line.asm_address]
+    for literal in self.literals:
+      sign = "-" if literal[1] == -1 else ""
+      self.lines.append(ListingLine(self.literals_address,  self.memory[self.literals_address], "=%s%i=" % (sign, literal[0])))
+      self.literals_address += 1

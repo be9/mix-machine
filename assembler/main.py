@@ -86,7 +86,7 @@ def main():
   file_out.close()
 
   # create listing
-  listing = Listing(src_lines, lines, memory_table.memory)
+  listing = Listing(src_lines, lines, memory_table.memory, asm.symtable.literals, asm.end_address)
   print listing
         
 # if we executing module
