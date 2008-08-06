@@ -23,9 +23,19 @@
        <attribute name="title" >
         <string>Source</string>
        </attribute>
-       <layout class="QHBoxLayout" >
+       <layout class="QVBoxLayout" >
         <item>
          <widget class="QTextEdit" name="txt_source" />
+        </item>
+        <item>
+         <widget class="QListWidget" name="errors_list" >
+          <property name="maximumSize" >
+           <size>
+            <width>16777215</width>
+            <height>100</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -43,6 +53,11 @@
            <attribute name="title" >
             <string>Listing</string>
            </attribute>
+           <layout class="QVBoxLayout" >
+            <item>
+             <widget class="QTextEdit" name="listing_view" />
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_2" >
            <attribute name="title" >

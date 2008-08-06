@@ -11,6 +11,8 @@ from PyQt4.QtGui import *
 
 from main_ui import Ui_MainWindow
 
+import gui_asm
+
 PROGRAM_NAME = "Mix Machine"
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -32,6 +34,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.action_New, SIGNAL("triggered()"), self.slot_File_New)
     self.connect(self.action_Save, SIGNAL("triggered()"), self.slot_File_Save)
     self.connect(self.action_Save_as, SIGNAL("triggered()"), self.slot_File_SaveAs)
+
+    self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
+
+    self.errors_list.setVisible(False)
 
   def slot_File_New(self):
     if not self.checkUnsaved(): 
@@ -117,7 +123,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.statusBar().showMessage(self.tr("File has been saved."), 2000)
 
     except IOError, (errno, errtext):
-      QMessageBox.critical(None, "Error", errtext)
+      QMessageBox.critical(None, self.tr("Error"), errtext)
       self.statusBar().showMessage(self.tr("Error saving file."), 2000)
 
     else:
@@ -133,11 +139,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.setWindowModified(False)
 
     except IOError, (errno, errtext):
-      QMessageBox.critical(None, "Error", errtext)
+      QMessageBox.critical(None, self.tr("Error"), errtext)
       self.statusBar().showMessage(self.tr("Error loading file."), 2000)
 
     else:
       self.setCurrentFile(filename)
+
+  def slot_Assemble(self):
+    self.errors_list.setVisible(False)
+    stuff = gui_asm.asm(unicode(self.txt_source.toPlainText()))
+    if stuff[0] == gui_asm.NO_ERRORS:
+      self.asm_data = stuff[1]
+      self.listing_view.setPlainText(str(self.asm_data.listing))
+      self.tabWidget.setCurrentIndex(1)
+      self.statusBar().showMessage(self.tr("Source assembled succesfully"), 2000)
+      return
+
+    # we have errors!
+    if stuff[0] == gui_asm.SYNTAX_ERRORS:
+      err_mesg = self.tr("There are syntax errors")
+    else:
+      err_mesg = self.tr("There are assemble errors")
+
+    # stuff[1] - errors
+    self.errors_list.clear()
+    self.errors_list.addItems(map( lambda err_tuple : self.tr("%i: %s" % err_tuple), stuff[1] ))
+    self.errors_list.setVisible(True)
+
+    self.statusBar().showMessage(err_mesg, 2000)
 
 app = QApplication(sys.argv)
 
