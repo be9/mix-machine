@@ -26,12 +26,6 @@
        <layout class="QVBoxLayout" >
         <item>
          <widget class="QTextEdit" name="txt_source" >
-          <property name="font" >
-           <font>
-            <family>Monospace</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
          </widget>
         </item>
         <item>
@@ -41,11 +35,6 @@
             <width>16777215</width>
             <height>100</height>
            </size>
-          </property>
-          <property name="font" >
-           <font>
-            <pointsize>9</pointsize>
-           </font>
           </property>
          </widget>
         </item>
@@ -58,11 +47,6 @@
        <layout class="QHBoxLayout" >
         <item>
          <widget class="QTableView" name="listing_view" >
-          <property name="font" >
-           <font>
-            <family>Monospace</family>
-           </font>
-          </property>
          </widget>
         </item>
        </layout>
@@ -103,8 +87,15 @@
     </property>
     <addaction name="action_Assemble" />
    </widget>
+   <widget class="QMenu" name="menuOptions" >
+    <property name="title" >
+     <string>&amp;Options</string>
+    </property>
+    <addaction name="action_Change_font" />
+   </widget>
    <addaction name="menu_File" />
    <addaction name="menuRun" />
+   <addaction name="menuOptions" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="action_New" >
@@ -174,6 +165,11 @@
    </property>
    <property name="shortcut" >
     <string>F6</string>
+   </property>
+  </action>
+  <action name="action_Change_font" >
+   <property name="text" >
+    <string>Change &amp;font</string>
    </property>
   </action>
  </widget>

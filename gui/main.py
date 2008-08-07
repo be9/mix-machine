@@ -38,6 +38,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
 
+    self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
+
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
 
@@ -63,6 +65,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def setRunTabsEnabled(self, enable):
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)
+
+  def slot_Change_font(self):
+    new_font, ok = QFontDialog.getFont(self.txt_source.font())
+    if ok:
+      self.txt_source.setFont(new_font)
+      self.listing_view.setFont(new_font)
+      self.errors_list.setFont(new_font)
+      self.resetListingHeaderSizes()
 
   def setNewSource(self):
     self.setRunTabsEnabled(False)
