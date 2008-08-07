@@ -46,5 +46,5 @@ class ListingModel(QAbstractTableModel):
         return QVariant(("Mix word", "Source line")[section])
       else:
         return QVariant(self.listing.lines[section].addr2str())
-    else:
-      return QVariant()
+    
+    return QVariant()
