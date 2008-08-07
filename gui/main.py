@@ -44,6 +44,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setRunTabsEnabled(False)
     self.errors_list.setVisible(False)
 
+    h_header = self.listing_view.horizontalHeader()
+    h_header.setResizeMode(QHeaderView.ResizeToContents) # for all columns
+    h_header.setStretchLastSection(True) # for last column - stretch
+
   def setRunTabsEnabled(self, enable):
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)

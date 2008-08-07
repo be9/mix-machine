@@ -21,7 +21,12 @@ class ListingModel(QAbstractTableModel):
       return QVariant()
 
     if role == Qt.TextAlignmentRole:
-      return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
+      if index.column() == 0:
+        # mix word
+        return QVariant(Qt.AlignCenter | Qt.AlignVCenter)
+      else:
+        # source line
+        return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
     elif role == Qt.DisplayRole:
       listing_line = self.listing.lines[index.row()]
       column = index.column()
