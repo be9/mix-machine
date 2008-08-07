@@ -21,7 +21,7 @@ class ListingModel(QAbstractTableModel):
     if role == Qt.TextAlignmentRole:
       if index.column() in (0,1):
         # address, mix word
-        return QVariant(Qt.AlignCenter | Qt.AlignVCenter)
+        return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
       else:
         # source line
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
@@ -43,10 +43,10 @@ class ListingModel(QAbstractTableModel):
       if orientation == Qt.Vertical:
         return QVariant(Qt.AlignRight | Qt.AlignVCenter)
       else:
-        return QVariant(Qt.AlignCenter | Qt.AlignVCenter)
+        return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
     elif role == Qt.DisplayRole:
       if orientation == Qt.Horizontal:
-        return QVariant(("Addr", "Mix word", "Source line")[section])
+        return QVariant(self.tr(("Addr", "Mix word", "Source line")[section]))
       else:
         return QVariant(str(section + 1))
     else:

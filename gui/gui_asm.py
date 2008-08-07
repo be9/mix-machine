@@ -12,8 +12,8 @@ SYNTAX_ERRORS =     1
 ASSEMBLER_ERRORS =  2
 
 class AsmData:
-  def __init__(self, mem_dict, start_addr, listing):
-    self.mem_dict = mem_dict
+  def __init__(self, mem_list, start_addr, listing):
+    self.mem_list = mem_list
     self.start_addr = start_addr
     self.listing = listing
 
@@ -27,13 +27,13 @@ def asm(text):
   asm = Assembler()
   asm.run(lines)
 
-  memory_table = asm.memory
+  memory_list = asm.memory.memory
   start_address = asm.start_address
   errors = asm.errors
 
   if len(errors) > 0: # we have errors
     return (ASSEMBLER_ERRORS, errors)
 
-  listing = Listing(src_lines, lines, memory_table.memory, asm.symtable.literals, asm.end_address)
+  listing = Listing(src_lines, lines, memory_list, asm.symtable.literals, asm.end_address)
 
-  return (NO_ERRORS, AsmData(memory_table, start_address, listing))
+  return (NO_ERRORS, AsmData(memory_list, start_address, listing))
