@@ -14,7 +14,7 @@ class ListingModel(QAbstractTableModel):
     return len(self.listing.lines)
 
   def columnCount(self, parent):
-    return 3 # address, word, source-lines
+    return 2 # word, source-lines
 
   def data(self, index, role = Qt.DisplayRole):
     if not index.isValid():
@@ -31,8 +31,6 @@ class ListingModel(QAbstractTableModel):
       column = index.column()
 
       if column == 0:
-        return QVariant(listing_line.addr2str())
-      elif column == 1:
         return QVariant(listing_line.word2str())
       else:
         return QVariant(listing_line.line)
@@ -40,10 +38,13 @@ class ListingModel(QAbstractTableModel):
       return QVariant()
 
   def headerData(self, section, orientation, role = Qt.DisplayRole):
-    if role != Qt.DisplayRole:
-      return QVariant()
-
-    if orientation == Qt.Horizontal:
-      return QVariant(("Address", "Mix word", "Source line")[section])
+    if role == Qt.TextAlignmentRole:
+      if orientation == Qt.Vertical:
+        return QVariant(Qt.AlignRight | Qt.AlignVCenter)
+    elif role == Qt.DisplayRole:
+      if orientation == Qt.Horizontal:
+        return QVariant(("Mix word", "Source line")[section])
+      else:
+        return QVariant(self.listing.lines[section].addr2str())
     else:
       return QVariant()
