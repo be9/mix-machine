@@ -47,9 +47,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.errors_list.setVisible(False)
 
     # init listing view
-    listing_model = gui_listing.ListingModel(self)
-    listing_model.setListing(None)
-    self.listing_view.setModel(listing_model) # add model to set size of header
+    self.listing_view.setModel(gui_listing.ListingModel(parent = self)) # add model to set size of header
     self.resetListingHeaderSizes()
 
   def resetListingHeaderSizes(self):
@@ -195,9 +193,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     if ret_type == gui_asm.NO_ERRORS:
       self.asm_data = content
 
-      listing_model = gui_listing.ListingModel(self)
-      listing_model.setListing(self.asm_data.listing)
-      self.listing_view.setModel(listing_model)
+      self.listing_view.setModel(\
+          gui_listing.ListingModel(listing = self.asm_data.listing, parent = self))
+
       self.setRunTabsEnabled(True)
       self.tabWidget.setCurrentIndex(1)
       self.statusBar().showMessage(self.tr("Source assembled succesfully"), 2000)

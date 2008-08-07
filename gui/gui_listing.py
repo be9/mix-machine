@@ -1,10 +1,8 @@
 from PyQt4.QtCore import *
 
 class ListingModel(QAbstractTableModel):
-  def __init__(self, parent = None):
+  def __init__(self, listing = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
-
-  def setListing(self, listing):
     self.listing = listing
 
   def rowCount(self, parent):
