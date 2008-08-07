@@ -57,14 +57,7 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <item>
-         <widget class="QTextEdit" name="listing_view" >
-          <property name="font" >
-           <font>
-            <family>Monospace</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-         </widget>
+         <widget class="QTableView" name="listing_view" />
         </item>
        </layout>
       </widget>
@@ -83,7 +76,7 @@
      <x>0</x>
      <y>0</y>
      <width>720</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File" >

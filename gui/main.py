@@ -12,6 +12,7 @@ from PyQt4.QtGui import *
 from main_ui import Ui_MainWindow
 
 import gui_asm
+import gui_listing
 
 PROGRAM_NAME = "Mix Machine"
 
@@ -168,8 +169,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     if ret_type == gui_asm.NO_ERRORS:
       self.asm_data = content
 
+      listing_model = gui_listing.ListingModel()
+      listing_model.setListing(self.asm_data.listing)
+      self.listing_view.setModel(listing_model)
       self.setRunTabsEnabled(True)
-      self.listing_view.setPlainText(str(self.asm_data.listing))
       self.tabWidget.setCurrentIndex(1)
       self.statusBar().showMessage(self.tr("Source assembled succesfully"), 2000)
       return
