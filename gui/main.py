@@ -44,9 +44,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setRunTabsEnabled(False)
     self.errors_list.setVisible(False)
 
+    # init listing view
+    listing_model = gui_listing.ListingModel(self)
+    listing_model.setListing(None)
+    self.listing_view.setModel(listing_model) # add model to set size of header
+    self.resetListingHeaderSizes()
+
+  def resetListingHeaderSizes(self):
+    """Call after listing font changes"""
     h_header = self.listing_view.horizontalHeader()
-    h_header.setResizeMode(QHeaderView.ResizeToContents) # for all columns
-    h_header.setStretchLastSection(True) # for last column - stretch
+    h_header.setStretchLastSection(True) # for column with source line
+    addr = "0000"
+    word = "+ 0000 00 00 00"
+    font_metrics = QFontMetrics(self.listing_view.font())
+    h_header.resizeSection(h_header.logicalIndex(0), font_metrics.width(addr) + 20)
+    h_header.resizeSection(h_header.logicalIndex(1), font_metrics.width(word) + 20)
 
   def setRunTabsEnabled(self, enable):
     self.tabWidget.setTabEnabled(1, enable)

@@ -11,7 +11,10 @@ class ListingModel(QAbstractTableModel):
     self.listing = listing
 
   def rowCount(self, parent):
-    return len(self.listing.lines)
+    if self.listing is not None:
+      return len(self.listing.lines)
+    else:
+      return 0
 
   def columnCount(self, parent):
     return 3 # addr, word, source-lines
