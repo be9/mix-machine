@@ -62,10 +62,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     h_header.resizeSection(h_header.logicalIndex(0), font_metrics.width(addr) + 20)
     h_header.resizeSection(h_header.logicalIndex(1), font_metrics.width(word) + 20)
 
-  def setRunTabsEnabled(self, enable):
-    self.tabWidget.setTabEnabled(1, enable)
-    self.tabWidget.setTabEnabled(2, enable)
-
   def slot_Change_font(self):
     new_font, ok = QFontDialog.getFont(self.txt_source.font())
     if ok:
@@ -74,12 +70,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.errors_list.setFont(new_font)
       self.resetListingHeaderSizes()
 
-      listing_model = gui_listing.ListingModel(self)
-      try:
-        listing_model.setListing(self.asm_data.listing)
-      except:
-        listing_model.setListing(None)
-      self.listing_view.setModel(listing_model)
+  def setRunTabsEnabled(self, enable):
+    self.tabWidget.setTabEnabled(1, enable)
+    self.tabWidget.setTabEnabled(2, enable)
 
   def setNewSource(self):
     self.setRunTabsEnabled(False)

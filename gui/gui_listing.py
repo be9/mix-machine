@@ -1,8 +1,5 @@
 from PyQt4.QtCore import *
 
-#import sys, os
-#sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'assembler'))
-
 class ListingModel(QAbstractTableModel):
   def __init__(self, parent = None):
     QAbstractTableModel.__init__(self, parent)
