@@ -27,7 +27,7 @@ class ListingModel(QAbstractTableModel):
       column = index.column()
 
       if column == 0:
-        return QVariant(listing_line.word2str())
+        return QVariant(listing_line.word2str_addr_bytes())
       else:
         return QVariant(listing_line.line)
     else:

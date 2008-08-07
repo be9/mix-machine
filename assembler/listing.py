@@ -18,6 +18,12 @@ class ListingLine:
       return "%s %02i %02i %02i %02i %02i" % tuple([sign] + self.word[1:])
     else:
       return ""
+  def word2str_addr_bytes(self):
+    if self.word is not None:
+      sign = "+" if self.word[0] == 1 else "-"
+      return "%s %04i %02i %02i %02i" % tuple([sign] + [self.word[1]*64 + self.word[2]] + self.word[3:])
+    else:
+      return ""
 
   def __str__(self):
     return "%4s | %16s | %s" % (self.addr2str(), self.word2str(), self.line)
