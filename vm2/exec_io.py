@@ -10,7 +10,7 @@ def _get_device(vmachine):
   try:
     return vmachine.devices[WordParser.get_field(vmachine)]
   except KeyError:
-    raise InvalidDeviceError(num)
+    raise InvalidDeviceError(WordParser.get_field(vmachine))
 
 def ioc(vmachine):
   vmachine.cycles += 1
