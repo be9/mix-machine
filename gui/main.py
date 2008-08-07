@@ -74,6 +74,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.errors_list.setFont(new_font)
       self.resetListingHeaderSizes()
 
+      listing_model = gui_listing.ListingModel(self)
+      try:
+        listing_model.setListing(self.asm_data.listing)
+      except:
+        listing_model.setListing(None)
+      self.listing_view.setModel(listing_model)
+
   def setNewSource(self):
     self.setRunTabsEnabled(False)
     self.tabWidget.setCurrentIndex(0)
