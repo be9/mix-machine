@@ -169,7 +169,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     if ret_type == gui_asm.NO_ERRORS:
       self.asm_data = content
 
-      listing_model = gui_listing.ListingModel()
+      listing_model = gui_listing.ListingModel(self)
       listing_model.setListing(self.asm_data.listing)
       self.listing_view.setModel(listing_model)
       self.setRunTabsEnabled(True)
