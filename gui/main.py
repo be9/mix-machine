@@ -12,6 +12,7 @@ from PyQt4.QtGui import *
 from main_ui import Ui_MainWindow
 
 import gui_asm
+import gui_vm
 import gui_listing
 
 PROGRAM_NAME = "Mix Machine"
@@ -50,6 +51,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_view.setModel(gui_listing.ListingModel(parent = self)) # add model to set size of header
     self.resetListingHeaderSizes()
 
+    self.mem_view.setModel(gui_vm.MemoryModel(parent = self))
+    self.mem_view.horizontalHeader().setStretchLastSection(True)
+
   def resetListingHeaderSizes(self):
     """Call after listing font changes"""
     h_header = self.listing_view.horizontalHeader()
@@ -66,6 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.txt_source.setFont(new_font)
       self.listing_view.setFont(new_font)
       self.errors_list.setFont(new_font)
+      self.mem_view.setFont(new_font)
       self.resetListingHeaderSizes()
 
   def setRunTabsEnabled(self, enable):
@@ -196,9 +201,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.listing_view.setModel(\
           gui_listing.ListingModel(listing = self.asm_data.listing, parent = self))
 
+      self.vm_data = gui_vm.VMData(self.asm_data)
+      self.mem_view.setModel(\
+          gui_vm.MemoryModel(vm_data = self.vm_data, parent = self))
+
       self.setRunTabsEnabled(True)
       self.tabWidget.setCurrentIndex(1)
-      self.statusBar().showMessage(self.tr("Source assembled succesfully"), 2000)
+      self.statusBar().showMessage(self.tr("Source assembled and virtual machine initialized"), 2000)
       return
 
     # we have errors!

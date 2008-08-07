@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_src" >
        <attribute name="title" >
@@ -25,8 +25,7 @@
        </attribute>
        <layout class="QVBoxLayout" >
         <item>
-         <widget class="QTextEdit" name="txt_source" >
-         </widget>
+         <widget class="QTextEdit" name="txt_source" />
         </item>
         <item>
          <widget class="QListWidget" name="errors_list" >
@@ -46,7 +45,30 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <item>
-         <widget class="QTableView" name="listing_view" >
+         <widget class="QSplitter" name="splitter" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QTableView" name="listing_view" />
+          <widget class="QDockWidget" name="dockWidget" >
+           <widget class="QWidget" name="dockWidgetContents" >
+            <layout class="QVBoxLayout" >
+             <item>
+              <widget class="QLabel" name="label" >
+               <property name="text" >
+                <string>Memory</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableView" name="mem_view" />
+             </item>
+            </layout>
+           </widget>
+          </widget>
          </widget>
         </item>
        </layout>
