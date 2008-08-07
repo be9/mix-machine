@@ -57,7 +57,13 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <item>
-         <widget class="QTableView" name="listing_view" />
+         <widget class="QTableView" name="listing_view" >
+          <property name="font" >
+           <font>
+            <family>Monospace</family>
+           </font>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
