@@ -34,7 +34,7 @@ class MemoryModel(QAbstractTableModel):
     elif role == Qt.DisplayRole:
       word = self.memory[index.row()]
       sign = "+" if word[0] == 1 else "-"
-      return QVariant("%s %2i %2i %2i %2i %2i" % tuple([sign] + word[1:]))
+      return QVariant("%s %02i %02i %02i %02i %02i" % tuple([sign] + word[1:]))
 
     else:
       return QVariant()
