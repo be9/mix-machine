@@ -52,7 +52,7 @@ class VMachine:
 
   def set_memory(self, memory, reset):
     if isinstance(memory, list):
-      self.memory = memory[:]
+      self.memory = [ Word(x) for x in memory]
       return
     if reset:
       self.memory = [ Word() for _ in xrange(self.MEMORY_SIZE)]

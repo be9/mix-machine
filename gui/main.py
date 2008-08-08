@@ -196,12 +196,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setRunTabsEnabled(False)
     ret_type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
     if ret_type == gui_asm.NO_ERRORS:
-      self.asm_data = content
+      self.asm_data = content # mem, start_addr, listing
+      self.vm_data = gui_vm.VMData(self.asm_data) # vm, listing
 
       self.listing_view.setModel(\
-          gui_listing.ListingModel(listing = self.asm_data.listing, parent = self))
+          gui_listing.ListingModel(vm_data = self.vm_data, parent = self))
 
-      self.vm_data = gui_vm.VMData(self.asm_data)
       self.mem_view.setModel(\
           gui_vm.MemoryModel(vm_data = self.vm_data, parent = self))
 

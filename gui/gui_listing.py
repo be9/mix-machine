@@ -1,12 +1,41 @@
 from PyQt4.QtCore import *
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+from virt_machine import *
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'assembler'))
+from listing import *
+
+class ListingUpdatable_withWords(Listing):
+  def __init__(self, vm_data):
+    Listing.init_copy(self, vm_data.listing)
+    for line in self.lines:
+      if line.addr != None:
+        line.word = Word(line.word)
+    self.vm_data = vm_data
+
+  def updateRow(self, num):
+    """True - if row changed while running, else False"""
+    addr = self.lines[num].addr
+    if addr is None:
+      return False
+    if self.lines[num].word != self.vm_data.mem(addr):
+      self.lines[num].word = Word(self.vm_data.mem(addr))
+    return self.vm_data.is_addr_changed(addr)
+
 class ListingModel(QAbstractTableModel):
-  def __init__(self, listing = None, parent = None):
+  def __init__(self, vm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
-    self.listing = listing
+    if vm_data is not None:
+      self.vm_data = vm_data
+      self.listing = ListingUpdatable_withWords(vm_data)
+      self.inited = True
+    else:
+      self.inited = False
 
   def rowCount(self, parent):
-    if self.listing is not None:
+    if self.inited:
       return len(self.listing.lines)
     else:
       return 0
@@ -25,14 +54,28 @@ class ListingModel(QAbstractTableModel):
       else:
         # source line
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
+
+    elif role == Qt.ForegroundRole:
+      if self.listing.updateRow(index.row()):
+        return QVariant(Qt.red)
+      else:
+        return QVariant()
+
     elif role == Qt.DisplayRole:
       listing_line = self.listing.lines[index.row()]
       column = index.column()
 
       if column == 0:
-        return QVariant(listing_line.addr2str())
+        if listing_line.addr is not None:
+          return QVariant(listing_line.addr2str())
+        else:
+          return QVariant(u"")
       elif column == 1:
-        return QVariant(listing_line.word2str_addr_bytes())
+        if listing_line.addr is not None:
+          self.listing.updateRow(index.row())
+          return QVariant(listing_line.word.addr_str()) # print first two bytes as one address
+        else:
+          return QVariant(u"")
       else:
         return QVariant(listing_line.line)
     else:

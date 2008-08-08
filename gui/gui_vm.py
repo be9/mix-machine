@@ -4,6 +4,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 
 from virt_machine import *
+from word import *
 
 class MemoryModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
@@ -32,9 +33,7 @@ class MemoryModel(QAbstractTableModel):
       return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
 
     elif role == Qt.DisplayRole:
-      word = self.memory[index.row()]
-      sign = "+" if word[0] == 1 else "-"
-      return QVariant("%s %02i %02i %02i %02i %02i" % tuple([sign] + word[1:]))
+      return QVariant(str(  self.memory[index.row()]  ))
 
     else:
       return QVariant()
@@ -55,3 +54,11 @@ class MemoryModel(QAbstractTableModel):
 class VMData:
   def __init__(self, asm_data):
     self.vm = VMachine(asm_data.mem_list, asm_data.start_addr)
+    self.listing = asm_data.listing
+    self.starting_mem = [Word(x) for x in asm_data.mem_list]
+
+  def is_addr_changed(self, addr):
+    return self.mem(addr) != self.starting_mem[addr]
+
+  def mem(self, addr):
+    return self.vm.memory[addr]
