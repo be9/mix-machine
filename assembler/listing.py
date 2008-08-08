@@ -13,20 +13,18 @@ class ListingLine:
       return ""
 
   def word2str(self):
-    if self.word is not None:
-      sign = "+" if self.word[0] == 1 else "-"
-      return "%s %02i %02i %02i %02i %02i" % tuple([sign] + self.word[1:])
-    else:
-      return ""
+    sign = "+" if self.word[0] == 1 else "-"
+    return "%s %02i %02i %02i %02i %02i" % tuple([sign] + self.word[1:])
+
   def word2str_addr_bytes(self):
-    if self.word is not None:
-      sign = "+" if self.word[0] == 1 else "-"
-      return "%s %04i %02i %02i %02i" % tuple([sign] + [self.word[1]*64 + self.word[2]] + self.word[3:])
-    else:
-      return ""
+    sign = "+" if self.word[0] == 1 else "-"
+    return "%s %04i %02i %02i %02i" % tuple([sign] + [self.word[1]*64 + self.word[2]] + self.word[3:])
 
   def __str__(self):
-    return "%4s | %16s | %s" % (self.addr2str(), self.word2str(), self.line)
+    if self.addr is not None:
+      return "%4s | %16s | %s" % (self.addr2str(), self.word2str(), self.line)
+    else:
+      return " "*4 + " | " + " "*16 + " | %s" % (self.addr2str(), self.word2str(), self.line)
 
   def __cmp__(self, other):
     if self.addr != other.addr or self.word != other.word or self.line != other.line:
@@ -46,6 +44,9 @@ class Listing:
     self.literals = literals
     self.literals_address = literals_address
     self.create_listing()
+
+  def init_copy(self, listing):
+    self.lines = listing.lines
 
   def create_listing(self):
     for asm_line in self.asm_lines:

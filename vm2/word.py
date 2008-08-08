@@ -60,8 +60,11 @@ class Word:
       return 0
     return 0 if all(self[i] == cmp_word[i] for i in xrange(0, 6)) else 1
 
-  def __str__(word):
-    return reduce(lambda x, y: "%s %02i" % (x, y), word.word_list[1:6], "+" if word[0] == 1 else "-")
+  def __str__(self):
+    return reduce(lambda x, y: "%s %02i" % (x, y), self.word_list[1:6], "+" if self[0] == 1 else "-")
+
+  def addr_str(self):
+    return "%s %04i %02i %02i %02i" % tuple(["+" if self[0] == 1 else "-", self[1]*MAX_BYTE + self[2]] + self.word_list[3:])
 
   def __init__(self, obj = None):
     if obj is None:
