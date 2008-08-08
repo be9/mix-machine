@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_src" >
        <attribute name="title" >
@@ -108,6 +108,8 @@
      <string>&amp;Run</string>
     </property>
     <addaction name="action_Assemble" />
+    <addaction name="separator" />
+    <addaction name="action_Step" />
    </widget>
    <widget class="QMenu" name="menuOptions" >
     <property name="title" >
@@ -192,6 +194,14 @@
   <action name="action_Change_font" >
    <property name="text" >
     <string>Change &amp;font</string>
+   </property>
+  </action>
+  <action name="action_Step" >
+   <property name="text" >
+    <string>&amp;Step</string>
+   </property>
+   <property name="shortcut" >
+    <string>F7</string>
    </property>
   </action>
  </widget>

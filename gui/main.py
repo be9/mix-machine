@@ -38,13 +38,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.action_Save_as, SIGNAL("triggered()"), self.slot_File_SaveAs)
 
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
+    self.connect(self.action_Step, SIGNAL("triggered()"), self.slot_Step)
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
 
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
 
-    self.setRunTabsEnabled(False)
+    self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
 
     # init listing view
@@ -73,12 +74,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.mem_view.setFont(new_font)
       self.resetListingHeaderSizes()
 
-  def setRunTabsEnabled(self, enable):
+  def setRunWidgetsEnabled(self, enable):
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)
+    self.action_Step.setEnabled(enable)
 
   def setNewSource(self):
-    self.setRunTabsEnabled(False)
+    self.setRunWidgetsEnabled(False)
     self.tabWidget.setCurrentIndex(0)
 
   def slot_File_New(self):
@@ -193,7 +195,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
-    self.setRunTabsEnabled(False)
+    self.setRunWidgetsEnabled(False)
     ret_type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
     if ret_type == gui_asm.NO_ERRORS:
       self.asm_data = content # mem, start_addr, listing
@@ -205,7 +207,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.mem_view.setModel(\
           gui_vm.MemoryModel(vm_data = self.vm_data, parent = self))
 
-      self.setRunTabsEnabled(True)
+      self.setRunWidgetsEnabled(True)
       self.tabWidget.setCurrentIndex(1)
       self.statusBar().showMessage(self.tr("Source assembled and virtual machine initialized"), 2000)
       return
@@ -237,6 +239,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     cursor.setPosition(pos)
     cursor.select(QTextCursor.LineUnderCursor)
     self.txt_source.setTextCursor(cursor)
+
+  def slot_Step(self):
+    try:
+      self.vm_data.step()
+    except Exception, err:
+      if type(err) == VMError:
+        QMessageBox.critical(None, self.tr("Runtime error"), str(err))
+      else:
+        QMessageBox.critical(None, self.tr("Internal error"), str(err[1]))
 
 app = QApplication(sys.argv)
 

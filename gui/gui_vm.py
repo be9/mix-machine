@@ -5,6 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 
 from virt_machine import *
 from word import *
+from vm2_errors import *
 
 class MemoryModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
@@ -62,3 +63,9 @@ class VMData:
 
   def mem(self, addr):
     return self.vm.memory[addr]
+
+  def ca(self):
+    return self.vm.cur_addr
+
+  def step(self):
+    self.vm.step()

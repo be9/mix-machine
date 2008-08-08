@@ -1,4 +1,5 @@
 from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
@@ -56,10 +57,16 @@ class ListingModel(QAbstractTableModel):
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
 
     elif role == Qt.ForegroundRole:
-      if self.listing.updateRow(index.row()):
-        return QVariant(Qt.red)
+      if self.listing.updateRow(index.row()) and index.column() == 1:
+        return QVariant(QColor(Qt.red))
       else:
         return QVariant()
+
+    elif role == Qt.BackgroundRole:
+      if self.listing.lines[index.row()].addr == self.vm_data.ca():
+        return QVariant(QColor(Qt.yellow))
+      else:
+        return QVariant(QColor(Qt.white))
 
     elif role == Qt.DisplayRole:
       listing_line = self.listing.lines[index.row()]
