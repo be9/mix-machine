@@ -69,3 +69,7 @@ class VMData:
 
   def step(self):
     self.vm.step()
+
+  def run(self):
+    while not self.vm.halted:
+      self.vm.step()

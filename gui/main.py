@@ -39,6 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
     self.connect(self.action_Step, SIGNAL("triggered()"), self.slot_Step)
+    self.connect(self.action_Run, SIGNAL("triggered()"), self.slot_Run)
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
 
@@ -244,10 +245,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     try:
       self.vm_data.step()
     except Exception, err:
-      if type(err) == VMError:
-        QMessageBox.critical(None, self.tr("Runtime error"), str(err))
-      else:
-        QMessageBox.critical(None, self.tr("Internal error"), str(err[1]))
+      QMessageBox.critical(self, self.tr("Runtime error"), str(err))
+
+  def slot_Run(self):
+    try:
+      self.vm_data.run()
+      QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
+    except Exception, err:
+      QMessageBox.critical(self, self.tr("Runtime error"), str(err))
 
 app = QApplication(sys.argv)
 
