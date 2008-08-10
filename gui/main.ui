@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>666</height>
+    <width>971</width>
+    <height>661</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_src" >
        <attribute name="title" >
@@ -43,36 +43,491 @@
        <attribute name="title" >
         <string>Listing</string>
        </attribute>
-       <widget class="QTableView" name="listing_view" >
-        <property name="geometry" >
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>326</width>
-          <height>549</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QDockWidget" name="dockWidget" >
-        <property name="geometry" >
-         <rect>
-          <x>342</x>
-          <y>10</y>
-          <width>348</width>
-          <height>549</height>
-         </rect>
-        </property>
-        <property name="windowTitle" >
-         <string>Memory</string>
-        </property>
-        <widget class="QWidget" name="dockWidgetContents" >
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QTableView" name="mem_view" />
-          </item>
-         </layout>
-        </widget>
-       </widget>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QSplitter" name="splitter" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QTableView" name="listing_view" />
+          <widget class="QDockWidget" name="dock_processor" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="windowTitle" >
+            <string>Processor</string>
+           </property>
+           <widget class="QWidget" name="dockWidgetContents_2" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" colspan="2" >
+              <widget class="QGroupBox" name="groupBox" >
+               <property name="title" >
+                <string>Registers</string>
+               </property>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <widget class="QLabel" name="label" >
+                  <property name="text" >
+                   <string>rA</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_a</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1" >
+                 <widget class="QLineEdit" name="edit_a" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QLabel" name="label_2" >
+                  <property name="text" >
+                   <string>rX</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_x</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <widget class="QLineEdit" name="edit_x" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" >
+                 <widget class="QLabel" name="label_3" >
+                  <property name="text" >
+                   <string>rI1</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_i1</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" >
+                 <widget class="QLineEdit" name="edit_i1" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0" >
+                 <widget class="QLabel" name="label_4" >
+                  <property name="text" >
+                   <string>rI2</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_i2</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1" >
+                 <widget class="QLineEdit" name="edit_i2" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0" >
+                 <widget class="QLabel" name="label_7" >
+                  <property name="text" >
+                   <string>rI3</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_i3</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1" >
+                 <widget class="QLineEdit" name="edit_i3" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0" >
+                 <widget class="QLabel" name="label_6" >
+                  <property name="text" >
+                   <string>rI4</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_i4</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1" >
+                 <widget class="QLineEdit" name="edit_i4" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0" >
+                 <widget class="QLabel" name="label_5" >
+                  <property name="text" >
+                   <string>rI5</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_i5</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1" >
+                 <widget class="QLineEdit" name="edit_i5" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0" >
+                 <widget class="QLabel" name="label_8" >
+                  <property name="text" >
+                   <string>rI6</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_i6</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1" >
+                 <widget class="QLineEdit" name="edit_i6" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0" >
+                 <widget class="QLabel" name="label_9" >
+                  <property name="text" >
+                   <string>rJ</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>edit_j</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="1" >
+                 <widget class="QLineEdit" name="edit_j" >
+                  <property name="text" >
+                   <string>+ 00 00 00 00 00</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="readOnly" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="label_13" >
+               <property name="toolTip" >
+                <string>Current Address</string>
+               </property>
+               <property name="text" >
+                <string>CA</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>edit_ca</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QSpinBox" name="edit_ca" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximum" >
+                <number>3999</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QLabel" name="label_10" >
+               <property name="toolTip" >
+                <string>Comparison Flag</string>
+               </property>
+               <property name="text" >
+                <string>CF</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>edit_cf</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QComboBox" name="edit_cf" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="currentIndex" >
+                <number>1</number>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>Less</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Equal</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Greater</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="0" >
+              <widget class="QLabel" name="label_12" >
+               <property name="toolTip" >
+                <string>Overflow Flag</string>
+               </property>
+               <property name="text" >
+                <string>OF</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>edit_of</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="QComboBox" name="edit_of" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="currentIndex" >
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>False</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>True</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="4" column="0" >
+              <widget class="QLabel" name="label_11" >
+               <property name="toolTip" >
+                <string>Is machine halted</string>
+               </property>
+               <property name="text" >
+                <string>HLT</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>edit_hlt</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1" >
+              <widget class="QComboBox" name="edit_hlt" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="currentIndex" >
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>False</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>True</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="5" column="0" >
+              <widget class="QLabel" name="label_14" >
+               <property name="toolTip" >
+                <string>Is machine halted</string>
+               </property>
+               <property name="text" >
+                <string>Cycles</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>lcd_cycles</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1" >
+              <widget class="QLCDNumber" name="lcd_cycles" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Maximum" hsizetype="Minimum" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="focusPolicy" >
+                <enum>Qt::TabFocus</enum>
+               </property>
+               <property name="smallDecimalPoint" >
+                <bool>false</bool>
+               </property>
+               <property name="numDigits" >
+                <number>5</number>
+               </property>
+               <property name="segmentStyle" >
+                <enum>QLCDNumber::Flat</enum>
+               </property>
+               <property name="value" stdset="0" >
+                <double>0.000000000000000</double>
+               </property>
+               <property name="intValue" stdset="0" >
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QDockWidget" name="dock_mem" >
+           <property name="floating" >
+            <bool>false</bool>
+           </property>
+           <property name="windowTitle" >
+            <string>Memory</string>
+           </property>
+           <widget class="QWidget" name="dockWidgetContents" >
+            <layout class="QVBoxLayout" >
+             <item>
+              <widget class="QTableView" name="mem_view" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab" >
        <attribute name="title" >
@@ -88,7 +543,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>720</width>
+     <width>971</width>
      <height>30</height>
     </rect>
    </property>

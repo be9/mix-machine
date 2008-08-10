@@ -55,20 +55,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # init listing view
     self.listing_view.setModel(gui_listing.ListingModel(parent = self)) # add model to set size of header
-    self.resetListingHeaderSizes()
+    self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
+    self.resetSizes()
 
     self.mem_view.setModel(gui_vm.MemoryModel(parent = self))
     self.mem_view.horizontalHeader().setStretchLastSection(True)
 
-  def resetListingHeaderSizes(self):
-    """Call after listing font changes"""
+  def resetSizes(self):
+    """Call after font changes"""
+    font_metrics = QFontMetrics(self.listing_view.font())
+    addr = font_metrics.width("0000")
+    word = font_metrics.width("+ 00 00 00 00 00")
+
     h_header = self.listing_view.horizontalHeader()
     h_header.setStretchLastSection(True) # for column with source line
-    addr = "0000"
-    word = "+ 0000 00 00 00"
-    font_metrics = QFontMetrics(self.listing_view.font())
-    h_header.resizeSection(h_header.logicalIndex(0), font_metrics.width(addr) + 20)
-    h_header.resizeSection(h_header.logicalIndex(1), font_metrics.width(word) + 20)
+    h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
+    h_header.resizeSection(h_header.logicalIndex(1), word + 20)
+
+    self.edit_a.setMinimumSize(word + 20, 0)
 
   def slot_Change_font(self):
     new_font, ok = QFontDialog.getFont(self.txt_source.font())
@@ -77,7 +81,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.listing_view.setFont(new_font)
       self.errors_list.setFont(new_font)
       self.mem_view.setFont(new_font)
-      self.resetListingHeaderSizes()
+      self.resetSizes()
 
   def setRunWidgetsEnabled(self, enable):
     self.tabWidget.setTabEnabled(1, enable)
