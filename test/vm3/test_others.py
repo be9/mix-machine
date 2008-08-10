@@ -30,7 +30,7 @@ class VM3OthersTestCase(VM3BaseTestCase):
   def testHLT(self):
     self.check1(
       memory = { 0 : [+1, 63, 63, 63, 2, 5]},
-      diff = {'CA' : 1, 'HLT' : 1},
+      diff = {'HLT' : 1},
       cycles = 10
     )
 
@@ -39,7 +39,7 @@ class VM3OthersTestCase(VM3BaseTestCase):
         0 : [+1, 0, 0, 0, 0, 0], # nop
         1 : [+1, 0, 0, 0, 2, 5],
       },
-      diff = {'CA' : 2, 'HLT' : 1},
+      diff = {'CA' : 1, 'HLT' : 1},
       cycles = 11
     )
 
