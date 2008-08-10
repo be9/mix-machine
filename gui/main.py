@@ -11,6 +11,8 @@ from PyQt4.QtGui import *
 
 from main_ui import Ui_MainWindow
 
+from cell_edit import CellEdit
+
 import gui_asm
 import gui_vm
 import gui_listing
@@ -45,6 +47,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
+
+    self.connect(self.mem_view, SIGNAL("doubleClicked(QModelIndex)"), self.slot_mem_view_edit)
 
     self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
@@ -243,7 +247,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def slot_Step(self):
     try:
+      if self.vm_data.halted():
+        QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted\n\nCan't do step"))
+        return
       self.vm_data.step()
+      if self.vm_data.halted():
+        QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
     except Exception, err:
       QMessageBox.critical(self, self.tr("Runtime error"), str(err))
 
@@ -253,6 +262,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
     except Exception, err:
       QMessageBox.critical(self, self.tr("Runtime error"), str(err))
+
+  def slot_mem_view_edit(self, index):
+    cell_edit = CellEdit(index.row(), self.vm_data.mem(index.row()), self)
+    if cell_edit.exec_():
+      self.vm_data.setMem(index.row(), cell_edit.word)
 
 app = QApplication(sys.argv)
 

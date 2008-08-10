@@ -64,8 +64,14 @@ class VMData:
   def mem(self, addr):
     return self.vm.memory[addr]
 
+  def setMem(self, addr, word):
+    self.vm.memory[addr] = word
+
   def ca(self):
     return self.vm.cur_addr
+
+  def halted(self):
+    return self.vm.halted
 
   def step(self):
     self.vm.step()
