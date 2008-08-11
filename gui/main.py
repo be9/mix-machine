@@ -25,7 +25,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.mem_dock = MemoryDockWidget(self)
     # dock areas really would be Left and Right :)
-    self.addDockWidget(Qt.LeftDockWidgetArea, self.mem_dock)
+    self.addDockWidget(Qt.RightDockWidgetArea, self.mem_dock)
 
     self.setAttribute(Qt.WA_DeleteOnClose)
     self.setupUi(self)
@@ -52,6 +52,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
 
+    self.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.slot_cur_tab_changed)
+
     self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
 
@@ -59,6 +61,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_view.setModel(gui_listing.ListingModel(parent = self)) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
     self.resetSizes()
+
+  def slot_cur_tab_changed(self, index):
+    if index == 0: # source editing tab
+      self.mem_dock.hide()
+    else: # listing or disassembler
+      self.mem_dock.show()
 
   def resetSizes(self):
     """Call after font changes"""
@@ -83,10 +91,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.resetSizes()
 
   def setRunWidgetsEnabled(self, enable):
-    self.mem_dock.setVisible(enable)
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)
     self.action_Step.setEnabled(enable)
+    self.action_Run.setEnabled(enable)
 
   def setNewSource(self):
     self.setRunWidgetsEnabled(False)
