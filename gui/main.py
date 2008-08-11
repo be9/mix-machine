@@ -11,7 +11,7 @@ from PyQt4.QtGui import *
 
 from main_ui import Ui_MainWindow
 
-from cell_edit import CellEdit
+from dock_mem import MemoryDockWidget
 
 import gui_asm
 import gui_vm
@@ -22,6 +22,10 @@ PROGRAM_NAME = "Mix Machine"
 class MainWindow(QMainWindow, Ui_MainWindow):
   def __init__(self, parent=None):
     QMainWindow.__init__(self, parent)
+
+    self.mem_dock = MemoryDockWidget(self)
+    # dock areas really would be Left and Right :)
+    self.addDockWidget(Qt.LeftDockWidgetArea, self.mem_dock)
 
     self.setAttribute(Qt.WA_DeleteOnClose)
     self.setupUi(self)
@@ -48,8 +52,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
 
-    self.connect(self.mem_view, SIGNAL("doubleClicked(QModelIndex)"), self.slot_mem_view_edit)
-
     self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
 
@@ -57,9 +59,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_view.setModel(gui_listing.ListingModel(parent = self)) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
     self.resetSizes()
-
-    self.mem_view.setModel(gui_vm.MemoryModel(parent = self))
-    self.mem_view.horizontalHeader().setStretchLastSection(True)
 
   def resetSizes(self):
     """Call after font changes"""
@@ -80,10 +79,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.txt_source.setFont(new_font)
       self.listing_view.setFont(new_font)
       self.errors_list.setFont(new_font)
-      self.mem_view.setFont(new_font)
+      self.mem_dock.mem_view.setFont(new_font)
       self.resetSizes()
 
   def setRunWidgetsEnabled(self, enable):
+    self.mem_dock.setVisible(enable)
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)
     self.action_Step.setEnabled(enable)
@@ -210,11 +210,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.asm_data = content # mem, start_addr, listing
       self.vm_data = gui_vm.VMData(self.asm_data) # vm, listing
 
+      self.mem_dock.initModel(self.vm_data)
+
       self.listing_view.setModel(\
           gui_listing.ListingModel(vm_data = self.vm_data, parent = self))
 
-      self.mem_view.setModel(\
-          gui_vm.MemoryModel(vm_data = self.vm_data, parent = self))
 
       self.setRunWidgetsEnabled(True)
       self.tabWidget.setCurrentIndex(1)
@@ -266,11 +266,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
     except Exception, err:
       QMessageBox.critical(self, self.tr("Runtime error"), str(err))
-
-  def slot_mem_view_edit(self, index):
-    cell_edit = CellEdit(index.row(), self.vm_data.mem(index.row()), self)
-    if cell_edit.exec_():
-      self.vm_data.setMem(index.row(), cell_edit.word)
 
 app = QApplication(sys.argv)
 

@@ -14,12 +14,15 @@ STR   = 2
 
 
 class CellEdit(QDialog, Ui_Dialog):
-  def __init__(self, cell_number, cell_word, parent = None):
+  def __init__(self, cell_word, cell_number = None, parent = None):
     QDialog.__init__(self, parent)
 
     self.setupUi(self)
 
-    self.setWindowTitle(self.tr("Cell: %1").arg(unicode(cell_number))) # Title: "Cell: <num>"
+    if cell_number is not None:
+      self.setWindowTitle(self.tr("Cell: %1").arg(unicode(cell_number))) # Title: "Cell: <num>"
+    else:
+      self.setWindowTitle(self.tr("Word editing")) # Title: "Word editing"
 
     self.connect(self.type_word, SIGNAL("toggled(bool)"), self.slot_type_word_changed)
     self.connect(self.type_int, SIGNAL("toggled(bool)"), self.slot_type_int_changed)

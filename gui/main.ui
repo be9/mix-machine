@@ -503,28 +503,6 @@
             </layout>
            </widget>
           </widget>
-          <widget class="QDockWidget" name="dock_mem" >
-           <property name="floating" >
-            <bool>false</bool>
-           </property>
-           <property name="windowTitle" >
-            <string>Memory</string>
-           </property>
-           <widget class="QWidget" name="dockWidgetContents" >
-            <layout class="QVBoxLayout" >
-             <item>
-              <widget class="QTableView" name="mem_view" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
          </widget>
         </item>
        </layout>
