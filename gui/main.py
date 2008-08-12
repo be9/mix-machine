@@ -59,6 +59,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.slot_cur_tab_changed)
 
+    self.connect(self.cpu_dock, SIGNAL("caChanged()"), lambda: self.listing_model.memAndAddrChanged())
+
     self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
 
