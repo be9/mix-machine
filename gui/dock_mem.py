@@ -24,7 +24,7 @@ class MemoryDockWidget(QDockWidget):
     self.mem_view.setModel(self.model)
 
   def slot_mem_view_edit(self, index):
-    cell_edit = WordEdit(self.vm_data.mem(index.row()), index.row(), self)
+    cell_edit = WordEdit(self.vm_data.mem(index.row()), self)
     if cell_edit.exec_():
       self.vm_data.setMem(index.row(), cell_edit.word)
 
