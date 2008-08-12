@@ -48,6 +48,9 @@ class ListingModel(QAbstractTableModel):
     if not index.isValid():
       return QVariant()
 
+    changed_cell = self.listing.updateRow(index.row()) and index.column() == 1
+    ca_row = self.listing.lines[index.row()].addr == self.vm_data.ca()
+
     if role == Qt.TextAlignmentRole:
       if index.column() in (0,1):
         # address, mix word
@@ -56,17 +59,15 @@ class ListingModel(QAbstractTableModel):
         # source line
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
 
-    elif role == Qt.ForegroundRole:
-      if self.listing.updateRow(index.row()) and index.column() == 1:
-        return QVariant(QColor(Qt.red))
-      else:
-        return QVariant()
-
     elif role == Qt.BackgroundRole:
-      if self.listing.lines[index.row()].addr == self.vm_data.ca():
+      if changed_cell and ca_row:
+        return QVariant(QColor(200, 200, 0))
+      elif changed_cell:
+        return QVariant(QColor(200, 200, 200))
+      elif ca_row:
         return QVariant(QColor(Qt.yellow))
       else:
-        return QVariant(QColor(Qt.white))
+        return QVariant()
 
     elif role == Qt.DisplayRole:
       listing_line = self.listing.lines[index.row()]
@@ -101,3 +102,9 @@ class ListingModel(QAbstractTableModel):
         return QVariant(str(section + 1))
     else:
       return QVariant()
+
+  def memAndAddrChanged(self):
+    # change all
+    indexTopLeft = self.index(0, 0)
+    indexBottomRight = self.index(self.rowCount(None) - 1, 2)
+    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), indexTopLeft, indexBottomRight)

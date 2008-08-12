@@ -19,10 +19,15 @@ class MemoryDockWidget(QDockWidget):
 
   def initModel(self, vm_data):
     self.vm_data = vm_data
-    self.mem_view.setModel(\
-        gui_vm.MemoryModel(vm_data = self.vm_data, parent = self))
+    self.model = gui_vm.MemoryModel(vm_data = self.vm_data, parent = self)
+    self.mem_view.setModel(self.model)
 
   def slot_mem_view_edit(self, index):
     cell_edit = CellEdit(self.vm_data.mem(index.row()), index.row(), self)
     if cell_edit.exec_():
       self.vm_data.setMem(index.row(), cell_edit.word)
+
+  def memChanged(self):
+    indexTopLeft = self.model.index(0, 0)
+    indexBottomRight = self.model.index(self.model.rowCount(None) - 1, 0)
+    self.model.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), indexTopLeft, indexBottomRight)

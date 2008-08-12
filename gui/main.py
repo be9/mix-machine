@@ -58,7 +58,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.errors_list.setVisible(False)
 
     # init listing view
-    self.listing_view.setModel(gui_listing.ListingModel(parent = self)) # add model to set size of header
+    self.listing_model = gui_listing.ListingModel(parent = self)
+    self.listing_view.setModel(self.listing_model) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
     self.resetSizes()
 
@@ -220,8 +221,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.mem_dock.initModel(self.vm_data)
 
-      self.listing_view.setModel(\
-          gui_listing.ListingModel(vm_data = self.vm_data, parent = self))
+      self.listing_model = gui_listing.ListingModel(vm_data = self.vm_data, parent = self)
+      self.listing_view.setModel(self.listing_model)
 
 
       self.setRunWidgetsEnabled(True)
@@ -257,23 +258,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     cursor.select(QTextCursor.LineUnderCursor)
     self.txt_source.setTextCursor(cursor)
 
-  def slot_Step(self):
+  def doStepOrRun(self, action):
+    if self.vm_data.halted():
+      QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted"))
+      return
     try:
-      if self.vm_data.halted():
-        QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted\n\nCan't do step"))
-        return
-      self.vm_data.step()
+      action()
+    except Exception, err:
+      QMessageBox.critical(self, self.tr("Runtime error"), str(err))
+    else:
+      self.mem_dock.memChanged()
+      self.listing_model.memAndAddrChanged()
       if self.vm_data.halted():
         QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
-    except Exception, err:
-      QMessageBox.critical(self, self.tr("Runtime error"), str(err))
+
+  def slot_Step(self):
+    self.doStepOrRun(self.vm_data.step)
 
   def slot_Run(self):
-    try:
-      self.vm_data.run()
-      QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
-    except Exception, err:
-      QMessageBox.critical(self, self.tr("Runtime error"), str(err))
+    self.doStepOrRun(self.vm_data.run)
 
 app = QApplication(sys.argv)
 
