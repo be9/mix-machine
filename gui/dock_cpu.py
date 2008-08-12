@@ -54,7 +54,6 @@ class CPUDockWidget(QDockWidget):
       self.vm_data.vm.of = bool(value)
 
     elif what == "hlt":
-      print what
       self.vm_data.vm.halted = bool(value)
 
   def initConnections(self):
@@ -79,27 +78,18 @@ class CPUDockWidget(QDockWidget):
 
     self.widget = QWidget()
 
-    # create box for registers
-    self.registers = QGroupBox(self)
-    self.registers.setObjectName("registers")
-    self.reg_layout = QGridLayout()
-
     # create and lay all registers
     current_row_in_grid = 0
     for reg in registers:
-      label   = self.__dict__["label_" + reg]   = QLabel("r" + reg.upper(), self.registers)
-      edit    = self.__dict__["edit_" + reg]    = MixWordWidget(self.registers)
+      label   = self.__dict__["label_" + reg]   = QLabel("r" + reg.upper(), self)
+      edit    = self.__dict__["edit_" + reg]    = MixWordWidget(self)
 
       label.setObjectName("label_" + reg)
       edit.setObjectName("edit_" + reg)
 
       label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-
-      self.reg_layout.addWidget(label,  current_row_in_grid, 0)
-      self.reg_layout.addWidget(edit,   current_row_in_grid, 1)
+      edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
       current_row_in_grid += 1
-
-    self.registers.setLayout(self.reg_layout)
 
     # create all flags:
     # first create all labels
@@ -141,17 +131,16 @@ class CPUDockWidget(QDockWidget):
 
     self.edit_cycles = QLCDNumber(self)
     self.edit_cycles.setObjectName("edit_cycles")
+    self.edit_cycles.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
     self.edit_cycles.setSegmentStyle(QLCDNumber.Flat)
 
     # add box with registers to main_layout
     self.main_layout = QGridLayout()
-    self.main_layout.addWidget(self.registers, 0, 0, 1, 4)
 
     # add all flags to main_layout
-    current_row_in_grid = 1
-    for flag in flags:
-      self.main_layout.addWidget(self.__dict__["label_" + flag],  current_row_in_grid, 0, 1, 1)
-      self.main_layout.addWidget(self.__dict__["edit_" + flag],   current_row_in_grid, 1, 1, 3)
+    for s in registers + flags:
+      self.main_layout.addWidget(self.__dict__["label_" + s],  current_row_in_grid, 0, 1, 1)
+      self.main_layout.addWidget(self.__dict__["edit_" + s],   current_row_in_grid, 1, 1, 3)
       current_row_in_grid += 1
 
     self.widget.setLayout(self.main_layout)
