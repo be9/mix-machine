@@ -1,7 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-from cell_edit import CellEdit
+from word_edit import WordEdit
 
 import gui_vm
 
@@ -24,7 +24,7 @@ class MemoryDockWidget(QDockWidget):
     self.mem_view.setModel(self.model)
 
   def slot_mem_view_edit(self, index):
-    cell_edit = CellEdit(self.vm_data.mem(index.row()), index.row(), self)
+    cell_edit = WordEdit(self.vm_data.mem(index.row()), index.row(), self)
     if cell_edit.exec_():
       self.vm_data.setMem(index.row(), cell_edit.word)
 
