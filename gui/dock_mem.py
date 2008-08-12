@@ -7,7 +7,8 @@ import gui_vm
 
 class MemoryDockWidget(QDockWidget):
   def __init__(self, parent = None):
-    QDockWidget.__init__(self, "Memory", parent)
+    QDockWidget.__init__(self, parent)
+    self.setWindowTitle(self.tr("Memory"))
 
     self.mem_view = QTableView(self)
     self.mem_view.setModel(gui_vm.MemoryModel(parent = self))
