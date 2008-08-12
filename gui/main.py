@@ -12,6 +12,7 @@ from PyQt4.QtGui import *
 from main_ui import Ui_MainWindow
 
 from dock_mem import MemoryDockWidget
+from dock_cpu import CPUDockWidget
 
 import gui_asm
 import gui_vm
@@ -26,6 +27,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.mem_dock = MemoryDockWidget(self)
     # dock areas really would be Left and Right :)
     self.addDockWidget(Qt.RightDockWidgetArea, self.mem_dock)
+
+    self.cpu_dock = CPUDockWidget(self)
+    # dock areas really would be Left and Right :)
+    self.addDockWidget(Qt.LeftDockWidgetArea, self.cpu_dock)
 
     self.setAttribute(Qt.WA_DeleteOnClose)
     self.setupUi(self)
@@ -63,11 +68,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
     self.resetSizes()
 
+    self.slot_cur_tab_changed(0)
+
   def slot_cur_tab_changed(self, index):
     if index == 0: # source editing tab
       self.mem_dock.hide()
+      self.cpu_dock.hide()
     else: # listing or disassembler
       self.mem_dock.show()
+      self.cpu_dock.show()
 
   def resetSizes(self):
     """Call after font changes"""
@@ -80,15 +89,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
     h_header.resizeSection(h_header.logicalIndex(1), word + 20)
 
-    self.edit_a.setMinimumSize(word + 20, 0)
-
   def slot_Change_font(self):
     new_font, ok = QFontDialog.getFont(self.txt_source.font())
     if ok:
       self.txt_source.setFont(new_font)
       self.listing_view.setFont(new_font)
-      self.errors_list.setFont(new_font)
-      self.mem_dock.mem_view.setFont(new_font)
       self.resetSizes()
 
   def setRunWidgetsEnabled(self, enable):
@@ -221,6 +226,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.mem_dock.initModel(self.vm_data)
 
+      self.cpu_dock.setVMData(self.vm_data)
+      self.cpu_dock.loadFromVM()
+
       self.listing_model = gui_listing.ListingModel(vm_data = self.vm_data, parent = self)
       self.listing_view.setModel(self.listing_model)
 
@@ -269,6 +277,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     else:
       self.mem_dock.memChanged()
       self.listing_model.memAndAddrChanged()
+      self.cpu_dock.loadFromVM()
       if self.vm_data.halted():
         QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
 
