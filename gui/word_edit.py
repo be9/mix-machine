@@ -14,7 +14,7 @@ STR   = 2
 
 
 class WordEdit(QDialog, Ui_Dialog):
-  def __init__(self, cell_word, cell_number = None, parent = None):
+  def __init__(self, word, parent = None):
     QDialog.__init__(self, parent)
 
     self.setupUi(self)
@@ -42,7 +42,7 @@ class WordEdit(QDialog, Ui_Dialog):
     self.type_int.setToolTip(self.toolTips[INT])
     self.type_str.setToolTip(self.toolTips[STR])
     
-    self.word = Word(cell_word) # main dialog data
+    self.word = Word(word) # main dialog data
     self.type_changed(WORD, True) # init dialog for WORD type
 
   def slot_type_word_changed(self, checked):
@@ -125,7 +125,7 @@ class WordEdit(QDialog, Ui_Dialog):
 if __name__ == "__main__":
   app = QApplication(sys.argv)
 
-  mw = WordEdit(357, [-1, 5, 4, 3, 2, 1])
+  mw = WordEdit([-1, 5, 4, 3, 2, 1])
   print mw.exec_(), mw.word
 
   sys.exit()
