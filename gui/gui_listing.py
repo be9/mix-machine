@@ -48,7 +48,7 @@ class ListingModel(QAbstractTableModel):
     if not index.isValid():
       return QVariant()
 
-    changed_cell = self.listing.updateRow(index.row()) and index.column() == 1
+    changed_row = self.listing.updateRow(index.row())
     ca_row = self.listing.lines[index.row()].addr == self.vm_data.ca()
 
     if role == Qt.TextAlignmentRole:
@@ -60,12 +60,12 @@ class ListingModel(QAbstractTableModel):
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
 
     elif role == Qt.BackgroundRole:
-      if changed_cell and ca_row:
+      if changed_row and ca_row:
         return QVariant(QColor(200, 200, 0))
-      elif changed_cell:
+      elif changed_row:
         return QVariant(QColor(200, 200, 200))
       elif ca_row:
-        return QVariant(QColor(Qt.yellow))
+        return QVariant(QColor(255, 255, 0))
       else:
         return QVariant()
 

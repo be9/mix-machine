@@ -68,6 +68,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_model = gui_listing.ListingModel(parent = self)
     self.listing_view.setModel(self.listing_model) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
+    self.listing_view.setSelectionBehavior(QAbstractItemView.SelectRows)
     self.resetSizes()
 
     self.slot_cur_tab_changed(0)
