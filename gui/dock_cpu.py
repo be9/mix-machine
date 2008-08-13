@@ -2,7 +2,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 from word_edit import WordEdit
-from mix_word_widget import MixWordWidget
+from mix_word_widget import *
 
 import gui_vm
 
@@ -82,7 +82,13 @@ class CPUDockWidget(QDockWidget):
     current_row_in_grid = 0
     for reg in registers:
       label   = self.__dict__["label_" + reg]   = QLabel("r" + reg.upper(), self)
-      edit    = self.__dict__["edit_" + reg]    = MixWordWidget(self)
+      if reg in "ax":
+        type = BASIC
+      elif reg == "j":
+        type = REGJ
+      else:
+        type = INDEX
+      edit    = self.__dict__["edit_" + reg]    = MixWordWidget(self, type)
 
       label.setObjectName("label_" + reg)
       edit.setObjectName("edit_" + reg)

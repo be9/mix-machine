@@ -12,9 +12,12 @@ WORD  = 0
 INT   = 1
 STR   = 2
 
+BASIC = 0
+INDEX = 1
+REGJ  = 2
 
 class WordEdit(QDialog, Ui_Dialog):
-  def __init__(self, word, parent = None):
+  def __init__(self, word, type = BASIC, parent = None):
     QDialog.__init__(self, parent)
 
     self.setupUi(self)
@@ -27,21 +30,51 @@ class WordEdit(QDialog, Ui_Dialog):
 
     self.connect(self, SIGNAL("finished(int)"), self.slot_finished)
 
-    self.rxs = (
-      QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,4}$"),
-      QRegExp("^[+-]?[0-9]{1,10}$"),
-      QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,5}$") # ? - for invalid chars
+    rxsAll = (
+      ( # BASIC
+        QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,4}$"),
+        QRegExp("^[+-]?[0-9]{1,10}$"),
+        QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,5}$") # ? - for invalid chars
+      ),
+      ( # INDEX
+        QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,1}$"),
+        QRegExp("^[+-]?[0-9]{1,4}$"),
+        QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,2}$") # ? - for invalid chars
+      ),
+      ( # REGJ
+        QRegExp("^[0-6]?[0-9]( [0-6]?[0-9]){0,1}$"),
+        QRegExp("^[0-9]{1,4}$"),
+        QRegExp("^[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,2}$") # ? - for invalid chars
+      )
     )
 
-    self.toolTips = (
-      "+ xx xx xx xx xx",
-      "+dddddddddd",
-      "+ccccc"
+    toolTipsAll = (
+      (
+        "+ xx xx xx xx xx",
+        "+dddddddddd",
+        "+ccccc"
+      ),
+      (
+        "+ xx xx",
+        "+dddd",
+        "+cc"
+      ),
+      (
+        "xx xx",
+        "dddd",
+        "cc"
+      )
     )
+
+    self.content_type = type # basic mem cell, index register or rJ
+
+    self.toolTips = toolTipsAll[self.content_type][:]
+    self.rxs = rxsAll[self.content_type][:]
+
     self.type_word.setToolTip(self.toolTips[WORD])
     self.type_int.setToolTip(self.toolTips[INT])
     self.type_str.setToolTip(self.toolTips[STR])
-    
+
     self.word = Word(word) # main dialog data
     self.type_changed(WORD, True) # init dialog for WORD type
 
@@ -67,16 +100,21 @@ class WordEdit(QDialog, Ui_Dialog):
       self.save_value()
 
   def load_value(self):
-    line = "+" if self.word[0] == 1 else "-"
+    if self.content_type != REGJ:
+      line = "+" if self.word[0] == 1 else "-"
+    else:
+      line = "" # rJ hasn't sign
     if self.type == WORD:
-      for byte in xrange(1, 6):
+      for byte in xrange(1 if self.content_type == BASIC else 4, 6):
         line += " %02i" % self.word[byte]
+      if self.content_type == REGJ:
+        line = line[1:] # remove first space
 
     elif self.type == INT:
-      line += str(self.word[1:5])
+      line += str(self.word[4:5])
 
     elif self.type == STR:
-      for byte in xrange(1, 6):
+      for byte in xrange(1 if self.content_type == BASIC else 4, 6):
         try:
           line += Device._chr(self.word[byte])
         except:
@@ -111,7 +149,12 @@ class WordEdit(QDialog, Ui_Dialog):
         self.word[byte] = min(63, int(nums[byte - 1]))
 
     elif self.type == INT:
-      self.word[1:5] = int(line)
+      i = int(line)
+      if self.content_type == BASIC and i >= 1073741824: # = 64 ** 5
+        i = 1073741824 - 1
+      elif self.content_type != BASIC and i >= 4096: # = 64 ** 2
+        i = 4096 - 1
+      self.word[1 if self.content_type == BASIC else 4 :5] = i
 
     elif self.type == STR:
       # if len(line) < 5 spaces added to the end
