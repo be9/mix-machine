@@ -99,28 +99,71 @@ class WordEdit(QDialog, Ui_Dialog):
     else:
       self.save_value()
 
-  def load_value(self):
+  def str2word(self, line, type):
+    line = line.upper()
+    word = Word()
+    if len(line) == 0:
+      return word
+    if line[0] in "+-":
+      word[0] = 1 if line[0] == '+' else -1
+      line = line[1:]
+    else:
+      word[0] = 1
+    # now line - unsigned part of string
+
+    if type == WORD:
+      # take number from the end of line and put tham to the edn of word,
+      # if there are not enough nums - zeros putted
+      nums = line.split()
+      nums = [0] * (5 - len(nums)) + nums # set len(nums) to 5
+      len_nums = len(nums)
+      for byte in xrange(5, 0, -1):
+        word[byte] = min(63, int(nums[byte - 1]))
+
+    elif type == INT:
+      i = int(line)
+      if self.content_type == BASIC and i >= 1073741824: # = 64 ** 5
+        i = 1073741824 - 1
+      elif self.content_type != BASIC and i >= 4096: # = 64 ** 2
+        i = 4096 - 1
+      word[1 if self.content_type == BASIC else 4 :5] = i
+
+    elif type == STR:
+      # if len(line) < 5
+      if self.content_type == BASIC:
+        # 1) spaces added to the end if it's basic mem cell
+        line = line + " " * (5 - len(line)) # set len(line) to 5
+      else:
+        # 2) rI or rJ: 3 spaces added to the start and some spaces added to the end
+        line = "   " + line + " " * (2 - len(line)) # set len(line) to 5
+      for byte in xrange(1, 6):
+        if line[byte - 1] != '?':
+          word[byte] = Device._ord(line[byte - 1])
+        else:
+          word[byte] = 63
+    return word
+
+  def word2str(self, type):
     if self.content_type != REGJ:
       line = "+" if self.word[0] == 1 else "-"
     else:
       line = "" # rJ hasn't sign
-    if self.type == WORD:
+    if type == WORD:
       for byte in xrange(1 if self.content_type == BASIC else 4, 6):
         line += " %02i" % self.word[byte]
       if self.content_type == REGJ:
         line = line[1:] # remove first space
 
-    elif self.type == INT:
+    elif type == INT:
       line += str(self.word[4:5])
 
-    elif self.type == STR:
+    elif type == STR:
       for byte in xrange(1 if self.content_type == BASIC else 4, 6):
         try:
           line += Device._chr(self.word[byte])
         except:
           line += "?"
-
-    self.input_line.setText(line)
+    return line
 
   def save_value(self):
     line = str(self.input_line.text())
@@ -129,41 +172,11 @@ class WordEdit(QDialog, Ui_Dialog):
       format_str = self.toolTips[self.type]
       msg = self.tr("Input had invalid format.\n\nValid format for %1 is '%2'.").arg(type_str, format_str)
       return QMessageBox.critical(self, self.tr("Input error"), msg)
-    if len(line) == 0:
-      self.word = Word()
-      return
-    if line[0] in "+-":
-      self.word[0] = 1 if line[0] == '+' else -1
-      line = line[1:]
-    else:
-      self.word[0] = 1
-    # now line - unsigned part of string
+    self.word = self.str2word(line, self.type)
 
-    if self.type == WORD:
-      # take number from the end of line and put tham to the edn of word,
-      # if there are not enough nums - zeros putted
-      nums = line.split()
-      nums = [0] * (5 - len(nums)) + nums # set len(nums) to 5
-      len_nums = len(nums)
-      for byte in xrange(5, 0, -1):
-        self.word[byte] = min(63, int(nums[byte - 1]))
+  def load_value(self):
+    self.input_line.setText(self.word2str(self.type))
 
-    elif self.type == INT:
-      i = int(line)
-      if self.content_type == BASIC and i >= 1073741824: # = 64 ** 5
-        i = 1073741824 - 1
-      elif self.content_type != BASIC and i >= 4096: # = 64 ** 2
-        i = 4096 - 1
-      self.word[1 if self.content_type == BASIC else 4 :5] = i
-
-    elif self.type == STR:
-      # if len(line) < 5 spaces added to the end
-      line = line + " " * (5 - len(line)) # set len(line) to 5
-      for byte in xrange(1, 6):
-        if line[byte - 1] != '?':
-          self.word[byte] = Device._ord(line[byte - 1])
-        else:
-          self.word[byte] = 63
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
