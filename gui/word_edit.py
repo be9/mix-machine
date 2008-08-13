@@ -8,10 +8,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 from word import *
 from device import *
 
+# types
 WORD  = 0
 INT   = 1
 STR   = 2
 
+# content types
 BASIC = 0
 INDEX = 1
 REGJ  = 2

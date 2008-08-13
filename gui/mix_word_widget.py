@@ -1,7 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-from word_edit import WordEdit
+from word_edit import *
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
@@ -22,15 +22,16 @@ class MixWordWidget(QLineEdit):
 
   def setWord(self, word = None):
     self.word = Word(word)
-    if self.type == BASIC:
-      self.setText(str(word)) # "+ XX XX XX XX XX"
-    elif self.type == INDEX:
+
+    if self.type == INDEX:
       self.word[1:3] = 0
-      text = str(word)
-      self.setText(text[:1] + text[10:]) # "+ XX XX"
     elif self.type == REGJ:
       self.word[0:3] = 0
-      self.setText(str(word)[10:]) # "XX XX"
+
+    self.setText(word2str(self.word, WORD, self.type))
+    # toolTip = 'integer: -532; text: "ABCDE"'
+    # integer - without "+", text without sign at all
+    self.setToolTip('integer: ' + word2str(self.word, INT, self.type).lstrip("+") + '; text: "' + word2str(self.word, STR, self.type).lstrip("+-") + '"')
 
   def mouseDoubleClickEvent(self, event): # overload doubleclick event
     word_edit = WordEdit(self.word, self.type, self)
