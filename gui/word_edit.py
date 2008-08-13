@@ -16,6 +16,71 @@ BASIC = 0
 INDEX = 1
 REGJ  = 2
 
+
+def word2str(word, type, content_type):
+  if content_type != REGJ:
+    line = "+" if word[0] == 1 else "-"
+  else:
+    line = "" # rJ hasn't sign
+  if type == WORD:
+    for byte in xrange(1 if content_type == BASIC else 4, 6):
+      line += " %02i" % word[byte]
+    if content_type == REGJ:
+      line = line[1:] # remove first space
+
+  elif type == INT:
+    line += str(word[1 if content_type == BASIC else 4:5])
+
+  elif type == STR:
+    for byte in xrange(1 if content_type == BASIC else 4, 6):
+      try:
+        line += Device._chr(word[byte])
+      except:
+        line += "?"
+  return line
+
+def str2word(line, type, content_type, allow_mesgBox = False):
+  line = line.upper()
+  word = Word()
+  if len(line) == 0:
+    return word
+  if line[0] in "+-":
+    word[0] = 1 if line[0] == '+' else -1
+    line = line[1:]
+  else:
+    word[0] = 1
+  # now line - unsigned part of string
+
+  if type == WORD:
+    # take number from the end of line and put tham to the edn of word,
+    # if there are not enough nums - zeros putted
+    nums = line.split()
+    nums = [0] * (5 - len(nums)) + nums # set len(nums) to 5
+    len_nums = len(nums)
+    for byte in xrange(5, 0, -1):
+      word[byte] = min(63, int(nums[byte - 1]))
+
+  elif type == INT:
+    i = int(line)
+    if content_type == BASIC and i >= 1073741824: # = 64 ** 5
+      i = 1073741824 - 1
+    elif content_type != BASIC and i >= 4096: # = 64 ** 2
+      i = 4096 - 1
+    word[1 if content_type == BASIC else 4 :5] = i
+
+  elif type == STR:
+    # if len(line) < 5
+    if content_type == BASIC:
+      # 1) spaces added to the end if it's basic mem cell
+      line = line + " " * (5 - len(line)) # set len(line) to 5
+    else:
+      # 2) rI or rJ: 3 spaces added to the start and some spaces added to the end
+      line = "   " + line + " " * (2 - len(line)) # set len(line) to 5
+    for byte in xrange(1, 6):
+      assert( line[byte - 1] != '?')
+      word[byte] = Device._ord(line[byte - 1])
+  return word
+
 class WordEdit(QDialog, Ui_Dialog):
   def __init__(self, word, type = BASIC, parent = None):
     QDialog.__init__(self, parent)
@@ -33,17 +98,17 @@ class WordEdit(QDialog, Ui_Dialog):
     rxsAll = (
       ( # BASIC
         QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,4}$"),
-        QRegExp("^[+-]?[0-9]{1,10}$"),
+        QRegExp("^[+-]?[0-9]+$"),
         QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,5}$") # ? - for invalid chars
       ),
       ( # INDEX
         QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,1}$"),
-        QRegExp("^[+-]?[0-9]{1,4}$"),
+        QRegExp("^[+-]?[0-9]+$"),
         QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,2}$") # ? - for invalid chars
       ),
       ( # REGJ
         QRegExp("^[0-6]?[0-9]( [0-6]?[0-9]){0,1}$"),
-        QRegExp("^[0-9]{1,4}$"),
+        QRegExp("^[0-9]+$"),
         QRegExp("^[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,2}$") # ? - for invalid chars
       )
     )
@@ -99,83 +164,28 @@ class WordEdit(QDialog, Ui_Dialog):
     else:
       self.save_value()
 
-  def str2word(self, line, type):
-    line = line.upper()
-    word = Word()
-    if len(line) == 0:
-      return word
-    if line[0] in "+-":
-      word[0] = 1 if line[0] == '+' else -1
-      line = line[1:]
-    else:
-      word[0] = 1
-    # now line - unsigned part of string
-
-    if type == WORD:
-      # take number from the end of line and put tham to the edn of word,
-      # if there are not enough nums - zeros putted
-      nums = line.split()
-      nums = [0] * (5 - len(nums)) + nums # set len(nums) to 5
-      len_nums = len(nums)
-      for byte in xrange(5, 0, -1):
-        word[byte] = min(63, int(nums[byte - 1]))
-
-    elif type == INT:
-      i = int(line)
-      if self.content_type == BASIC and i >= 1073741824: # = 64 ** 5
-        i = 1073741824 - 1
-      elif self.content_type != BASIC and i >= 4096: # = 64 ** 2
-        i = 4096 - 1
-      word[1 if self.content_type == BASIC else 4 :5] = i
-
-    elif type == STR:
-      # if len(line) < 5
-      if self.content_type == BASIC:
-        # 1) spaces added to the end if it's basic mem cell
-        line = line + " " * (5 - len(line)) # set len(line) to 5
-      else:
-        # 2) rI or rJ: 3 spaces added to the start and some spaces added to the end
-        line = "   " + line + " " * (2 - len(line)) # set len(line) to 5
-      for byte in xrange(1, 6):
-        if line[byte - 1] != '?':
-          word[byte] = Device._ord(line[byte - 1])
-        else:
-          word[byte] = 63
-    return word
-
-  def word2str(self, type):
-    if self.content_type != REGJ:
-      line = "+" if self.word[0] == 1 else "-"
-    else:
-      line = "" # rJ hasn't sign
-    if type == WORD:
-      for byte in xrange(1 if self.content_type == BASIC else 4, 6):
-        line += " %02i" % self.word[byte]
-      if self.content_type == REGJ:
-        line = line[1:] # remove first space
-
-    elif type == INT:
-      line += str(self.word[4:5])
-
-    elif type == STR:
-      for byte in xrange(1 if self.content_type == BASIC else 4, 6):
-        try:
-          line += Device._chr(self.word[byte])
-        except:
-          line += "?"
-    return line
-
   def save_value(self):
-    line = str(self.input_line.text())
+    line = str(self.input_line.text()).rstrip()
     if not self.rxs[self.type].exactMatch(line):
       type_str = ("mix word", "integer", "text")[self.type]
       format_str = self.toolTips[self.type]
       msg = self.tr("Input had invalid format.\n\nValid format for %1 is '%2'.").arg(type_str, format_str)
       return QMessageBox.critical(self, self.tr("Input error"), msg)
-    self.word = self.str2word(line, self.type)
+
+    if self.type == STR and line.find('?') != -1:
+      # we have typied in STR field '?'..
+      # it's bad, self.word shouldn't be changed!
+      QMessageBox.information(self, self.tr("Information"), self.tr("Text consists '?', so mix word not changed"))
+    else:
+      if self.type == INT:
+        # check if integer is too big ( 1073741824 = 64 ** 5, 4096 = 64 ** 2)
+        if  (self.content_type == BASIC and int(line) >= 1073741824) or\
+            (self.content_type != BASIC and int(line) >= 4096):
+          QMessageBox.information(self, self.tr("Information"), self.tr("Integer was reduced because it was too big"))
+      self.word = str2word(line, self.type, self.content_type, allow_mesgBox = True)
 
   def load_value(self):
-    self.input_line.setText(self.word2str(self.type))
+    self.input_line.setText(word2str(self.word, self.type, self.content_type))
 
 
 if __name__ == "__main__":
