@@ -1,5 +1,7 @@
 from PyQt4.QtCore import *
 
+from word_edit import word2str, word2toolTip
+
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 
@@ -34,7 +36,9 @@ class MemoryModel(QAbstractTableModel):
       return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
 
     elif role == Qt.DisplayRole:
-      return QVariant(str(  self.memory[index.row()]  ))
+      return QVariant(  word2str(     self.memory[index.row()]  ))
+    elif role == Qt.ToolTipRole:
+      return QVariant(  word2toolTip( self.memory[index.row()]  ))
 
     else:
       return QVariant()

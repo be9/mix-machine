@@ -28,10 +28,8 @@ class MixWordWidget(QLineEdit):
     elif self.type == REGJ:
       self.word[0:3] = 0
 
-    self.setText(word2str(self.word, WORD, self.type))
-    # toolTip = 'integer: -532; text: "ABCDE"'
-    # integer - without "+", text without sign at all
-    self.setToolTip('integer: ' + word2str(self.word, INT, self.type).lstrip("+") + '; text: "' + word2str(self.word, STR, self.type).lstrip("+-") + '"')
+    self.setText(     word2str(self.word, WORD, self.type)  )
+    self.setToolTip(  word2toolTip(self.word, self.type)    )
 
   def mouseDoubleClickEvent(self, event): # overload doubleclick event
     word_edit = WordEdit(self.word, self.type, self)

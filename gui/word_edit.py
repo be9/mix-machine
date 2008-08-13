@@ -18,8 +18,18 @@ BASIC = 0
 INDEX = 1
 REGJ  = 2
 
+def word2toolTip(word, content_type = BASIC):
+  # toolTip = 'integer: -532; text: "ABCDE"'
+  # integer - without "+"
+  # text without sign at all
+  integer = word2str(word, INT, content_type).lstrip("+")
+  text = word2str(word, STR, content_type).lstrip("+-")
+  if text.find('?') != -1:
+    return  'integer: %s' % integer
+  else:
+    return  'integer: %s; text: "%s"' % (integer, text)
 
-def word2str(word, type, content_type):
+def word2str(word, type = WORD, content_type = BASIC):
   if content_type != REGJ:
     line = "+" if word[0] == 1 else "-"
   else:
