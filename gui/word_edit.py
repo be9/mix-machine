@@ -6,7 +6,8 @@ from cell_edit_ui import Ui_Dialog
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 from word import *
-from device import *
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+import charset
 
 # types
 WORD  = 0
@@ -45,10 +46,7 @@ def word2str(word, type = WORD, content_type = BASIC):
 
   elif type == STR:
     for byte in xrange(1 if content_type == BASIC else 4, 6):
-      try:
-        line += Device._chr(word[byte])
-      except:
-        line += "?"
+      line += charset.chr(word[byte], "?")
   return line
 
 def str2word(line, type, content_type, allow_mesgBox = False):
@@ -90,7 +88,7 @@ def str2word(line, type, content_type, allow_mesgBox = False):
       line = "   " + line + " " * (2 - len(line)) # set len(line) to 5
     for byte in xrange(1, 6):
       assert( line[byte - 1] != '?')
-      word[byte] = Device._ord(line[byte - 1])
+      word[byte] = charset.ord(line[byte - 1])
   return word
 
 class WordEdit(QDialog, Ui_Dialog):

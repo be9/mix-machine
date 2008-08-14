@@ -27,6 +27,10 @@ from operations import *
 from errors import *
 from memory import Memory
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+import charset
+
 def parse_argument(line, symbol_table, cur_addr, npass = 1):
   return ArgumentParser(line, symbol_table, cur_addr, npass).parse()
 
@@ -44,24 +48,6 @@ class ArgumentParser:
     "/":  lambda x,y : x / y,
     "//": lambda x,y : (x * 64**5) / y,
     ":":  lambda x,y : 8*x + y
-  }
-
-  charset = {
-  # table is copied from mdk manual (10, 20, 21 = delta, sigma, pi)
-    " ":  0,      "A":  1,      "B":  2,      "C":  3,
-    "D":  4,      "E":  5,      "F":  6,      "G":  7,
-    "H":  8,      "I":  9,      "~":  10,     "J":  11,
-    "K":  12,     "L":  13,     "M":  14,     "N":  15,
-    "O":  16,     "P":  17,     "Q":  18,     "R":  19,
-    "[":  20,     "#":  21,     "S":  22,     "T":  23,
-    "U":  24,     "V":  25,     "W":  26,     "X":  27,
-    "Y":  28,     "Z":  29,     "0":  30,     "1":  31,
-    "2":  32,     "3":  33,     "4":  34,     "5":  35,
-    "6":  36,     "7":  37,     "8":  38,     "9":  39,
-    ".":  40,     ",":  41,     "(":  42,     ")":  43,
-    "+":  44,     "-":  45,     "*":  46,     "/":  47,
-    "=":  48,     "$":  49,     "<":  50,     ">":  51,
-    "@":  52,     ";":  53,     ":":  54,     "'":  55
   }
 
   def __init__(self, line, symbol_table, cur_addr, npass = 1):
@@ -228,11 +214,10 @@ class ArgumentParser:
     # now s - string with len = 5
 
     word = Memory.positive_zero()
-    try:
-      for i in xrange(1,6):
-        word[i] = self.charset[s[i-1]]
-    except KeyError, ch:
-      raise InvalidCharError(ch)
+    for i in xrange(1,6):
+      word[i] = charset.ord(s[i-1])
+      if word[i] is None:
+        raise InvalidCharError(s[i-1])
     return Memory.mix2dec(word)
 
 
