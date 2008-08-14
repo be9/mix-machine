@@ -108,3 +108,11 @@ class ListingModel(QAbstractTableModel):
     indexTopLeft = self.index(0, 0)
     indexBottomRight = self.index(self.rowCount(None) - 1, 2)
     self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), indexTopLeft, indexBottomRight)
+
+  def find_strnum_by_addr(self, addr):
+    lines = self.listing.lines
+    for i in xrange(len(lines)):
+      if lines[i].addr == addr:
+        return i + 1 # numbers of lines started from 1
+    else:
+      return None

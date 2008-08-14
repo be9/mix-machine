@@ -68,7 +68,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_model = gui_listing.ListingModel(parent = self)
     self.listing_view.setModel(self.listing_model) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
-    self.listing_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+    self.listing_view.setSelectionMode(QAbstractItemView.NoSelection)
     self.resetSizes()
 
     self.slot_cur_tab_changed(0)
@@ -219,6 +219,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.setCurrentFile(filename)
 
+  def slot_clickOnError(self, item):
+    line = unicode(item.text())
+    line_num = int( line[0:line.find(':')] ) # cut all before ':'
+
+    # find absolute position
+    text = unicode(self.txt_source.toPlainText())
+    pos = 0
+    for _ in xrange(line_num - 1):
+      pos = text.find('\n', pos) + 1
+
+    cursor = self.txt_source.textCursor()
+    cursor.setPosition(pos)
+    cursor.select(QTextCursor.LineUnderCursor)
+    self.txt_source.setTextCursor(cursor)
+
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunWidgetsEnabled(False)
@@ -234,7 +249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.listing_model = gui_listing.ListingModel(vm_data = self.vm_data, parent = self)
       self.listing_view.setModel(self.listing_model)
-
+      self.listing_goto_ca()
 
       self.setRunWidgetsEnabled(True)
       self.tabWidget.setCurrentIndex(1)
@@ -254,24 +269,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.statusBar().showMessage(err_mesg, 2000)
 
-  def slot_clickOnError(self, item):
-    line = unicode(item.text())
-    line_num = int( line[0:line.find(':')] ) # cut all before ':'
-
-    # find absolute position
-    text = unicode(self.txt_source.toPlainText())
-    pos = 0
-    for _ in xrange(line_num - 1):
-      pos = text.find('\n', pos) + 1
-
-    cursor = self.txt_source.textCursor()
-    cursor.setPosition(pos)
-    cursor.select(QTextCursor.LineUnderCursor)
-    self.txt_source.setTextCursor(cursor)
-
   def doStepOrRun(self, action):
     if self.vm_data.halted():
-      QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted"))
+      QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted."))
       return
     try:
       action()
@@ -280,15 +280,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     else:
       self.mem_dock.memChanged()
       self.listing_model.memAndAddrChanged()
+      self.listing_goto_ca()
       self.cpu_dock.loadFromVM()
       if self.vm_data.halted():
-        QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted"))
+        QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted."))
 
   def slot_Step(self):
     self.doStepOrRun(self.vm_data.step)
 
   def slot_Run(self):
     self.doStepOrRun(self.vm_data.run)
+
+  def listing_goto_ca(self):
+    """Selects row near ca"""
+    num = self.listing_model.find_strnum_by_addr(self.vm_data.ca())
+    if num is None:
+      self.statusBar().showMessage(self.tr("Mix machine's current address is out of listing."))
+    else:
+      # num-1 - number of row
+      self.listing_view.setCurrentIndex(self.listing_model.index(num-1, 0))
 
 app = QApplication(sys.argv)
 
