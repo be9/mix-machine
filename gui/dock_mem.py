@@ -46,6 +46,8 @@ class MemoryDockWidget(QDockWidget):
     self.goto_word.setText(str(self.vm_data.ca())) # mem_view will be set to this row too
 
   def slot_mem_view_edit(self, index):
+    if not self.vm_data.is_writeable(index.row()):
+      return QMessageBox.information(self, self.tr("Mix machine"), self.tr("This memory cell is locked for writing."))
     cell_edit = WordEdit(self.vm_data.mem(index.row()), parent = self)
     if cell_edit.exec_():
       self.vm_data.setMem(index.row(), cell_edit.word)

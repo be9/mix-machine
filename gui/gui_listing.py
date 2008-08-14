@@ -81,7 +81,10 @@ class ListingModel(QAbstractTableModel):
       elif column == 1:
         if listing_line.addr is not None:
           self.listing.updateRow(index.row())
-          return QVariant(listing_line.word.addr_str()) # print first two bytes as one address
+          if self.vm_data.is_readable(listing_line.addr):
+            return QVariant(listing_line.word.addr_str()) # print first two bytes as one address
+          else:
+            return QVariant(self.tr("LOCKED"))
         else:
           return QVariant(u"")
       else:

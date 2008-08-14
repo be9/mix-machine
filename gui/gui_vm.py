@@ -13,6 +13,7 @@ class MemoryModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
     if vm_data is not None:
+      self.vm_data = vm_data
       self.memory = vm_data.vm.memory
       self.mem_len = vm_data.vm.MEMORY_SIZE
       self.inited = True
@@ -36,7 +37,10 @@ class MemoryModel(QAbstractTableModel):
       return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
 
     elif role == Qt.DisplayRole:
-      return QVariant(  word2str(     self.memory[index.row()]  ))
+      if self.vm_data.is_readable(index.row()):
+        return QVariant(  word2str(     self.memory[index.row()]  ))
+      else:
+        return QVariant(self.tr("LOCKED"))
     elif role == Qt.ToolTipRole:
       return QVariant(  word2toolTip( self.memory[index.row()]  ))
 
@@ -83,3 +87,9 @@ class VMData:
   def run(self):
     while not self.vm.halted:
       self.vm.step()
+
+  def is_readable(self, addr):
+    return self.vm.is_readable(addr)
+
+  def is_writeable(self, addr):
+    return self.vm.is_writeable(addr)
