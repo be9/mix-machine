@@ -10,11 +10,30 @@ class MemoryDockWidget(QDockWidget):
     QDockWidget.__init__(self, parent)
     self.setWindowTitle(self.tr("Memory"))
 
-    self.mem_view = QTableView(self)
+    self.widget = QWidget(self)
+
+    self.goto_label = QLabel(self.tr("Goto:"), self.widget)
+    self.goto_word = QLineEdit(self.widget)
+    self.goto_word.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+    self.goto_layout = QHBoxLayout()
+    self.goto_layout.addWidget(self.goto_label)
+    self.goto_layout.addWidget(self.goto_word)
+
+    self.mem_view = QTableView(self.widget)
     self.mem_view.setModel(gui_vm.MemoryModel(parent = self))
     self.mem_view.horizontalHeader().setStretchLastSection(True)
 
-    self.setWidget(self.mem_view)
+    self.layout = QVBoxLayout()
+    self.layout.addLayout(self.goto_layout)
+    self.layout.addWidget(self.mem_view)
+
+    self.widget.setLayout(self.layout)
+    self.setWidget(self.widget)
+    
+    self.connect(self.mem_view, SIGNAL("pressed(QModelIndex)"),\
+        lambda index: self.goto_word.setText(str(index.row())))
+    self.connect(self.goto_word, SIGNAL("textChanged(QString)"),\
+        lambda text:  self.mem_view.selectRow(int("0"+text))) # "0"+text - to avoid empty lines
 
     self.connect(self.mem_view, SIGNAL("doubleClicked(QModelIndex)"), self.slot_mem_view_edit)
 
@@ -22,6 +41,9 @@ class MemoryDockWidget(QDockWidget):
     self.vm_data = vm_data
     self.model = gui_vm.MemoryModel(vm_data = self.vm_data, parent = self)
     self.mem_view.setModel(self.model)
+    assert(vm_data.vm.MEMORY_SIZE == 4000)
+    self.goto_word.setValidator(QRegExpValidator(QRegExp("[0-3]?[0-9]{1,3}"), self)) # 9, 99, 999, 3999
+    self.goto_word.setText(str(self.vm_data.ca())) # mem_view will be set to this row too
 
   def slot_mem_view_edit(self, index):
     cell_edit = WordEdit(self.vm_data.mem(index.row()), parent = self)

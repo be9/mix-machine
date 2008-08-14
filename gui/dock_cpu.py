@@ -21,7 +21,7 @@ class CPUDockWidget(QDockWidget):
     self.initConnections()
 
   def setVMData(self, vm_data):
-    self.edit_ca.setMaximum(vm_data.vm.MEMORY_SIZE)
+    self.edit_ca.setMaximum(vm_data.vm.MEMORY_SIZE - 1)
     self.vm_data = vm_data
     self.loadFromVM()
 
