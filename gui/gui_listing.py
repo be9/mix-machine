@@ -48,9 +48,6 @@ class ListingModel(QAbstractTableModel):
     if not index.isValid():
       return QVariant()
 
-    changed_row = self.listing.updateRow(index.row())
-    ca_row = self.listing.lines[index.row()].addr == self.vm_data.ca()
-
     if role == Qt.TextAlignmentRole:
       if index.column() in (0,1):
         # address, mix word
@@ -60,12 +57,25 @@ class ListingModel(QAbstractTableModel):
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
 
     elif role == Qt.BackgroundRole:
-      if changed_row and ca_row:
-        return QVariant(QColor(200, 200, 0))
+      changed_row = self.listing.updateRow(index.row())
+      ca_row = self.listing.lines[index.row()].addr == self.vm_data.ca()
+      locked_row = not self.vm_data.is_readable(self.listing.lines[index.row()].addr)
+      if changed_row and ca_row and locked_row:
+        return QVariant(QColor(200, 150, 0))
+
+      elif changed_row and ca_row:
+        return QVariant(QColor(220, 220, 0))
+      elif changed_row and locked_row:
+        return QVariant(QColor(200, 25, 0))
+      elif locked_row and ca_row:
+        return QVariant(QColor(255, 175, 0))
+
       elif changed_row:
         return QVariant(QColor(200, 200, 200))
       elif ca_row:
         return QVariant(QColor(255, 255, 0))
+      elif locked_row:
+        return QVariant(QColor(255, 50, 0))
       else:
         return QVariant()
 
