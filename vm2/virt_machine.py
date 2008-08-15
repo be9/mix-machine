@@ -41,7 +41,7 @@ class VMachine:
       # we are working with memory
       self.memory[item][left:right] = value
       if self.mem_hook is not None and old_value != self.memory[item]:
-        self.mem_hook(index, old_value, self.memory[item])
+        self.mem_hook(item, old_value, self.memory[item])
     else:
       # we are working with registers or triggers
       if item in TRIGGERS:
