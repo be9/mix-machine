@@ -93,3 +93,9 @@ class VMData:
 
   def is_writeable(self, addr):
     return self.vm.is_writeable(addr)
+
+  def setCPUHook(self, hook):
+    self.vm.set_cpu_hook(hook)
+
+  def setMemHook(self, hook):
+    self.vm.set_mem_hook(hook)

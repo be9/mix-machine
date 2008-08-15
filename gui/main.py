@@ -242,6 +242,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.asm_data = content # mem, start_addr, listing
       self.vm_data = gui_vm.VMData(self.asm_data) # vm, listing
 
+      # todo smth like this :)
+      #self.vm_data.setCPUHook(lambda x, y, z: sys.stdout.write("%s: %s > %s\n" % (x, y, z)))
+      #self.vm_data.setMemHook(lambda x, y, z: sys.stdout.write("%s: %s > %s\n" % (x, y, z)))
+
       self.mem_dock.initModel(self.vm_data)
 
       self.cpu_dock.setVMData(self.vm_data)
