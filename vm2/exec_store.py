@@ -16,10 +16,10 @@ def _st(vmachine, reg):
  
   left, right = WordParser.get_field_spec(vmachine)
 
-  vmachine[addr][max(1, left):right] = src[1:5]
+  vmachine[addr:max(1, left):right] = src[1:5]
 
   if left == 0:
-    vmachine[addr][0] = src[0]
+    vmachine[addr:0:0] = src[0]
 
 def sta(vmachine):  _st(vmachine, "A")
 def st1(vmachine):  _st(vmachine, "1")

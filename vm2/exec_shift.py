@@ -33,16 +33,16 @@ def _s(vmachine, src, dir, cycle = False):
 
 
 def _sa(vmachine, dir):
-  vmachine.rA.word_list[1:6] = _s(vmachine, vmachine.rA.word_list[1:6], dir)
+  vmachine["A":1:5] = [+1] + _s(vmachine, vmachine["A"].word_list[1:6], dir) # +1 added like a sign to word
 
 def sla(vmachine):    _sa(vmachine, LEFT)
 def sra(vmachine):    _sa(vmachine, RIGHT)
 
 
 def _sax(vmachine, dir, cycle = False):
-  res = _s(vmachine, vmachine.rA.word_list[1:6] + vmachine.rX.word_list[1:6], dir, cycle)
-  vmachine.rA.word_list[1:6] = res[0:5]
-  vmachine.rX.word_list[1:6] = res[5:10]
+  res = _s(vmachine, vmachine["A"].word_list[1:6] + vmachine["X"].word_list[1:6], dir, cycle)
+  vmachine["A":1:5] = [+1] + res[0:5] # +1 added like a sign to word
+  vmachine["X":1:5] = [+1] + res[5:10] # +1 added like a sign to word
 
 def slax(vmachine):   _sax(vmachine, LEFT)
 def srax(vmachine):   _sax(vmachine, RIGHT)

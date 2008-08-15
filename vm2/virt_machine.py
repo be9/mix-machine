@@ -10,13 +10,45 @@ class VMachine:
   W_LOCKED = 0 # this cells are locked for write but you can read them
   RW_LOCKED = 1 # this cells are locked for read and write
 
-  def __getitem__(self, index):
+  def __getitem__(self, x):
     """Can raise exception"""
-    return self.memory[index]
+    if isinstance(x, slice): # slice, vm[2000:2:4] = ...
+      item = x.start
+      left = x.stop if x.stop is not None else 0
+      right = x.step if x.step is not None else 5
+    else: # vm[2000] = ...
+      item = x
+      left = 0
+      right = 5
+    return (self.memory[item] if isinstance(item, int) else self.reg(item))[left:right]
 
-  def __setitem__(self, index, word):
+  def __setitem__(self, x, value):
     """Can raise exception"""
-    self.memory[index] = word
+    if isinstance(x, slice): # slice, vm[2000:2:4] = ...
+      item = x.start
+      left = x.stop if x.stop is not None else 0
+      right = x.step if x.step is not None else 5
+    else: # vm[2000] = ...
+      item = x
+      left = 0
+      right = 5
+    old_word = self[item]
+    if isinstance(item, int):
+      # we are working with memory
+      self.memory[item][left:right] = value
+      if self.mem_hook is not None and old_word != self.memory[item]:
+        self.mem_hook(index, old_word, self.memory[item])
+    else:
+      # we are working with registers
+      self.reg(item)[left:right] = value
+      if self.cpu_hook is not None and old_word != self.reg(item):
+        self.cpu_hook(item, old_word, self.reg(item))
+
+  def reg(self, r):
+    return self.__dict__["r" + r]
+  def set_reg(self, r, w):
+    self.__dict__["r" + r] = Word(w)
+
 
   @staticmethod
   def check_mem_addr(addr):
@@ -32,12 +64,6 @@ class VMachine:
       return False
     else:
       return True
-
-  def reg(self, r):
-    return self.__dict__["r" + r]
-
-  def set_reg(self, r, w):
-    self.__dict__["r" + r] = Word(w)
 
   def get_cur_word(self):
     return self[self.cur_addr]
@@ -60,12 +86,13 @@ class VMachine:
       # checking for correct input done in read_memory
       self[addr] = word
 
-  def init_stuff(self):
+  def init_stuff(self, start_address):
     self.rA, self.rX, self.r0, self.r1, self.r2, self.r3, self.r4, self.r5, self.r6, self.rJ =\
         [Word(0) for _ in xrange(10)]
     self.cf = 0
     self.of = False
-    # self.devices = ... TODO
+    self.cur_addr = start_address
+    self.halted = False
 
   def set_device(self, number, device_instance):
     if 0 <= number < MAX_BYTE:
@@ -85,12 +112,12 @@ class VMachine:
 
   def __init__(self, memory, start_address):
     self.errors = []
+    self.set_cpu_hook(None)
+    self.set_mem_hook(None)
     self.set_memory(memory, reset = True)
-    self.init_stuff()
+    self.init_stuff(start_address)
     self.devices = {}
     self.locked_cells = [set(), set()]
-    self.cur_addr = start_address
-    self.halted = False
     self.cycles = 0
 
   def debug_state(self, file):
@@ -144,3 +171,9 @@ class VMachine:
           return # ioc busy
         # unlock memory
         self.locked_cells[mode] -= set(range(unlock[1][0], unlock[1][1] + 1))
+
+  def set_cpu_hook(self, hook):
+    self.cpu_hook = hook
+
+  def set_mem_hook(self, hook):
+    self.mem_hook = hook

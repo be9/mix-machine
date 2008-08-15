@@ -13,10 +13,10 @@ def _ld(vmachine, reg, sign = 1):
   left, right = WordParser.get_field_spec(vmachine)
 
   # result will be loaded to reg
-  result = Word(src[max(1, left):right])
+  result = src[max(1, left):right]
   result[0] = sign * (src[0] if left == 0 else +1)
 
-  vmachine.set_reg(reg, result)
+  vmachine[reg] = result
   if vmachine.clear_rI(reg):
     # overflow, but nothing do (see Knuth)
     pass

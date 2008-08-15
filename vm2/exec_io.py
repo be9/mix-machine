@@ -47,7 +47,7 @@ def in_(vmachine):
   bytes = dev.read((addr, addr + words_num - 1))
   # write them to memory
   for i in xrange(words_num):
-    vmachine[addr + i].word_list[1:6] = bytes[5*i: 5*(i + 1)]
+    vmachine[(addr + i):1:5] = [+1] + bytes[5*i: 5*(i + 1)] # +1 added like a sign to word
   # and lock memory for any actions
   vmachine.locked_cells[vmachine.RW_LOCKED] |= set(range( addr, addr + words_num ))
 
