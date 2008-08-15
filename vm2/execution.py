@@ -29,9 +29,9 @@ def execute(vmachine):
     proc(vmachine)
 
     if vmachine.jump_to is None:
-      vmachine.cur_addr += 1
+      vmachine["cur_addr"] += 1
     else:
-      vmachine.cur_addr = vmachine.jump_to
+      vmachine["cur_addr"] = vmachine.jump_to
 
     return vmachine.cycles - before_cycles
   else:

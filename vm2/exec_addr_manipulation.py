@@ -19,7 +19,7 @@ def _linear_manipulation(vmachine, reg, sign, inc_action):
   else:
     if abs(result) >= MAX_BYTE**2:
       result = Word.norm_2bytes(result)
-      vmachine.of = True
+      vmachine["of"] = True
     w_result = Word(result)
   vmachine[reg] = w_result
 

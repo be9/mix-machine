@@ -11,7 +11,7 @@ def _cmp(vmachine, reg):
     raise MemReadLockedError( (addr, addr) )
   left, right = WordParser.get_field_spec(vmachine)
 
-  vmachine.cf = cmp(int(vmachine[reg:left:right]), int(vmachine[addr:left:right]))
+  vmachine["cf"] = cmp(int(vmachine[reg:left:right]), int(vmachine[addr:left:right]))
 
 def cmpa(vmachine):  _cmp(vmachine, "A")
 def cmp1(vmachine):  _cmp(vmachine, "1")

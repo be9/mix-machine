@@ -14,7 +14,7 @@ def _add(vmachine, sign = 1):
   result = int(vmachine["A"]) + sign * int(vmachine[addr:left:right])
 
   if abs(result) >= MAX_BYTE**5:
-    vmachine.of = True
+    vmachine["of"] = True
 
   # "if result == 0 than we should save previous sign" - Knuth
   sign_word = vmachine["A":0:0]
@@ -50,7 +50,7 @@ def div(vmachine):
   u_divisor = int(vmachine[addr:max(1, left):right])
   divisor_sign = vmachine[addr][0] if left == 0 else 1
   if u_divisor == 0 or int(vmachine["A":1:5]) >= u_divisor: # from Knuth book
-    vmachine.of = True
+    vmachine["of"] = True
     return
   u_dividend = int(vmachine["A":1:5]) * MAX_BYTE**5 + int(vmachine["X":1:5])
 

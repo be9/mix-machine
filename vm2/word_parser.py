@@ -9,11 +9,11 @@ class WordParser:
     ind = word[3]
     if ind > 6:
       raise InvalidIndError(ind)
-    addr += int(vmachine.reg(str(ind)))
+    addr += int(vmachine[str(ind)])
     if abs(addr) >= MAX_BYTE**2:
       addr = Word.norm_2bytes(addr)
       if check_overflow:
-        vmachine.of = True
+        vmachine["of"] = True
     if check_mix_addr and not vmachine.check_mem_addr(addr):
       raise InvalidMemAddrError(addr)
     return addr

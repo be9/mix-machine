@@ -11,7 +11,7 @@ def nop(vmachine):
 def hlt(vmachine):
   vmachine.cycles += 10
 
-  vmachine.halted = True
+  vmachine["halted"] = True
   vmachine.jump_to = vmachine.cur_addr
 
 def num(vmachine):

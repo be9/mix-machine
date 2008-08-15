@@ -3,6 +3,8 @@ from execution import *
 from word_parser import *
 from word import *
 
+TRIGGERS = "cf of cur_addr halted".split()
+
 class VMachine:
   MEMORY_SIZE = 4000
 
@@ -12,6 +14,8 @@ class VMachine:
 
   def __getitem__(self, x):
     """Can raise exception"""
+    if x in TRIGGERS:
+      return self.__dict__[x]
     if isinstance(x, slice): # slice, vm[2000:2:4] = ...
       item = x.start
       left = x.stop if x.stop is not None else 0
@@ -32,17 +36,20 @@ class VMachine:
       item = x
       left = 0
       right = 5
-    old_word = self[item]
+    old_value = self[item]
     if isinstance(item, int):
       # we are working with memory
       self.memory[item][left:right] = value
-      if self.mem_hook is not None and old_word != self.memory[item]:
-        self.mem_hook(index, old_word, self.memory[item])
+      if self.mem_hook is not None and old_value != self.memory[item]:
+        self.mem_hook(index, old_value, self.memory[item])
     else:
-      # we are working with registers
-      self.reg(item)[left:right] = value
-      if self.cpu_hook is not None and old_word != self.reg(item):
-        self.cpu_hook(item, old_word, self.reg(item))
+      # we are working with registers or triggers
+      if item in TRIGGERS:
+        self.__dict__[item] = value
+      else: # register
+        self.reg(item)[left:right] = value
+      if self.cpu_hook is not None and old_value != self[item]:
+        self.cpu_hook(item, old_value, self[item])
 
   def reg(self, r):
     return self.__dict__["r" + r]
