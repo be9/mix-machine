@@ -5,11 +5,11 @@ class WordParser:
   @staticmethod
   def get_full_addr(vmachine, check_overflow = False, check_mix_addr = False):
     word = vmachine.get_cur_word()
-    addr = word[0:2]
+    addr = int(word[0:2])
     ind = word[3]
     if ind > 6:
       raise InvalidIndError(ind)
-    addr += vmachine.reg(str(ind))[:]
+    addr += int(vmachine.reg(str(ind)))
     if abs(addr) >= MAX_BYTE**2:
       addr = Word.norm_2bytes(addr)
       if check_overflow:

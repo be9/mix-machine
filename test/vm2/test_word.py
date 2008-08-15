@@ -28,6 +28,7 @@ class WordTestCase(unittest.TestCase):
     self.assertEqual(word.word_list, [-1, 0, 4, 45, 26, 7])
 
     word = Word()
+    self.assertEqual(word, Word([-1, 0, 0, 0, 0, 0]))
     word[3] = 5
     word[1] = 3
     word[0] = -1
@@ -35,25 +36,25 @@ class WordTestCase(unittest.TestCase):
     self.assertEqual(word[1], 3)
     self.assertEqual(word[5], 0)
 
-    self.assertEqual(word[1:3], 3 * MAX_BYTE**2 + 5)
-    self.assertEqual(word[0:3], -(3 * MAX_BYTE**2 + 5))
-    self.assertEqual(word[:3], -(3 * MAX_BYTE**2 + 5))
-    self.assertEqual(word[1:], 3 * MAX_BYTE**4 + 5 * MAX_BYTE**2)
-    self.assertEqual(word[0:0], 0)
-    self.assertEqual(word[1:0], 0)
-    self.assertEqual(word[3:2], 0)
-    self.assertEqual(word[5:1], 0)
+    self.assertEqual(word[1:3], Word([+1, 0, 0, 3, 0, 5]))
+    self.assertEqual(word[0:3], Word([-1, 0, 0, 3, 0, 5]))
+    self.assertEqual(word[:3],  Word([-1, 0, 0, 3, 0, 5]))
+    self.assertEqual(word[1:],  Word([+1, 3, 0, 5, 0, 0]))
+    self.assertEqual(word[0:0], Word([-1, 0, 0, 0, 0, 0]))
+    self.assertEqual(word[1:0], Word([+1, 0, 0, 0, 0, 0]))
+    self.assertEqual(word[3:2], Word([+1, 0, 0, 0, 0, 0]))
+    self.assertEqual(word[5:1], Word([+1, 0, 0, 0, 0, 0]))
 
     word[1:1] = 4
     self.assertEqual(word, Word([-1, 4, 0, 5 ,0 ,0]))
-    word[1:3] = 1 * MAX_BYTE**2 + 1
+    word[1:3] = [1, 0, 0, 1, 0, 1]
     self.assertEqual(word, Word([-1, 1, 0, 1 ,0 ,0]))
     word[0:3] = 1 * MAX_BYTE**2 + 1
     self.assertEqual(word, Word([+1, 1, 0, 1 ,0 ,0]))
     word[1:0] = -1
     self.assertEqual(word, Word([+1, 1, 0, 1 ,0 ,0]))
 
-    self.assertEqual(word[:], 1 * MAX_BYTE**4 + 1 * MAX_BYTE**2)
+    self.assertEqual(word[:], Word([+1, 1, 0, 1 ,0 ,0]))
 
 
 suite = unittest.makeSuite(WordTestCase, 'test')

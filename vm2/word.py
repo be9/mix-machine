@@ -17,8 +17,7 @@ class Word:
   def norm_2bytes(addr):
     return Word.sign(addr) * (abs(addr) % MAX_BYTE**2)
 
-  # or you can write word[:]
-  def to_dec(self):
+  def __int__(self):
     return self.word_list[0] * reduce(lambda x,y: (x << 6) | y, self.word_list[1:], 0)
 
   @staticmethod
@@ -41,19 +40,19 @@ class Word:
       new[0] = self[0]
     for i in xrange(r, max(l-1, 0), -1):
       new[5 - r + i] = self[i]
-    return new.to_dec()
+    return new
 
   def __setslice__(self, l, r, value):
     l = max(l, 0)
     r = min(r, 5)
-    new = Word(value)
+    word = Word(value)
     if l == 0:
-      self[0] = new[0]
+      self[0] = word[0]
     for i in xrange(r, max(l-1, 0), -1):
-      self[i] = new[5 - r + i]
+      self[i] = word[5 - r + i]
 
   def is_zero(self):
-    return self[1:5] == 0
+    return self.word_list[1:] == ([0] * 5)
 
   def __cmp__(self, cmp_word):
     if self.is_zero() and cmp_word.is_zero():
