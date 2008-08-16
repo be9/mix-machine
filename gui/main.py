@@ -257,6 +257,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.cpu_dock.setVMData(self.vm_data)
       self.cpu_dock.loadFromVM()
+      self.cpu_dock.resetHighlight()
 
       self.listing_model = gui_listing.ListingModel(vm_data = self.vm_data, parent = self)
       self.listing_view.setModel(self.listing_model)
@@ -284,7 +285,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     if self.vm_data.halted():
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted."))
       return
-    self.cpu_dock.resetChanges()
+    self.cpu_dock.resetHighlight()
     try:
       action()
     except Exception, err:
