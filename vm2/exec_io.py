@@ -13,7 +13,7 @@ def _get_device(vmachine):
     raise InvalidDeviceError(WordParser.get_field(vmachine))
 
 def ioc(vmachine):
-  vmachine.cycles += 1
+  vmachine["cycles"] += 1
   
   dev = _get_device(vmachine)
   

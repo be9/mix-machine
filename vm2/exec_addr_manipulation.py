@@ -5,7 +5,7 @@
 from word_parser import *
 
 def _linear_manipulation(vmachine, reg, sign, inc_action):
-  vmachine.cycles += 1
+  vmachine["cycles"] += 1
 
   """Inc-Action is 1 or 0"""
   result = inc_action * int(vmachine[reg]) + sign * WordParser.get_full_addr(vmachine, check_overflow = True)

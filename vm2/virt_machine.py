@@ -3,7 +3,7 @@ from execution import *
 from word_parser import *
 from word import *
 
-TRIGGERS = "cf of cur_addr halted".split()
+TRIGGERS = "cf of cur_addr halted cycles".split()
 
 class VMachine:
   MEMORY_SIZE = 4000

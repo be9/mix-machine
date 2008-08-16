@@ -6,7 +6,7 @@ from word import *
 from word_parser import *
 
 def _add(vmachine, sign = 1):
-  vmachine.cycles += 2
+  vmachine["cycles"] += 2
 
   addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)
@@ -27,7 +27,7 @@ def add(vmachine): _add(vmachine)
 def sub(vmachine): _add(vmachine, -1)
 
 def mul(vmachine):
-  vmachine.cycles += 10
+  vmachine["cycles"] += 10
 
   addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)
@@ -42,7 +42,7 @@ def mul(vmachine):
 
 
 def div(vmachine):
-  vmachine.cycles += 12
+  vmachine["cycles"] += 12
 
   addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
   left, right = WordParser.get_field_spec(vmachine)

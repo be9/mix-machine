@@ -6,16 +6,16 @@ from word import *
 from word_parser import *
 
 def nop(vmachine):
-  vmachine.cycles += 1
+  vmachine["cycles"] += 1
 
 def hlt(vmachine):
-  vmachine.cycles += 10
+  vmachine["cycles"] += 10
 
   vmachine["halted"] = True
   vmachine.jump_to = vmachine.cur_addr
 
 def num(vmachine):
-  vmachine.cycles += 10
+  vmachine["cycles"] += 10
 
   # vmachine.rA.word_list[1:6] + vmachine.rX.word_list[1:6] - array of all bytes
   # reduce - create string of all digits
@@ -24,7 +24,7 @@ def num(vmachine):
   vmachine["A":1:5] = int(reduce(lambda x, y : x+str(y % 10), vmachine["A"].word_list[1:6] + vmachine["X"].word_list[1:6], "")) % MAX_BYTE**10
 
 def char(vmachine):
-  vmachine.cycles += 10
+  vmachine["cycles"] += 10
 
   # vmachine.rA[1:5] - num for convert
   # str(num) - convert to string
@@ -36,7 +36,7 @@ def char(vmachine):
 
 def move(vmachine):
   # T = 1 + 2*F
-  vmachine.cycles += 1
+  vmachine["cycles"] += 1
 
   num = WordParser.get_field(vmachine)
   if num == 0:
@@ -56,7 +56,7 @@ def move(vmachine):
     for i in xrange(num):
       vmachine[dst] = vmachine[src+i]
       dst += 1 # dst - like r1 always contains address of next destination word
-      vmachine.cycles += 2
+      vmachine["cycles"] += 2
   except IndexError:
     vmachine["1"] = dst # it's not written in Knuth book, but it's very logically,
     raise InvalidMoveError( (num, src, int(vmachine["1"])) )

@@ -6,7 +6,7 @@ from exec_io import _get_device
 from word_parser import *
 
 def _j(vmachine, condition, save_j = True, reset_of = False):
-  vmachine.cycles += 1
+  vmachine["cycles"] += 1
 
   if not condition(vmachine):
     return
