@@ -42,7 +42,7 @@ def word2str(word, type = WORD, content_type = BASIC):
       line = line[1:] # remove first space
 
   elif type == INT:
-    line += str(word[1 if content_type == BASIC else 4:5])
+    line += str(int(word[1 if content_type == BASIC else 4:5]))
 
   elif type == STR:
     for byte in xrange(1 if content_type == BASIC else 4, 6):
