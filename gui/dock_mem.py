@@ -1,9 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-from word_edit import WordEdit
-
-import gui_vm
+from word_edit import WordEdit, word2str, word2toolTip
 
 class MemoryDockWidget(QDockWidget):
   def __init__(self, parent = None):
@@ -20,7 +18,7 @@ class MemoryDockWidget(QDockWidget):
     self.goto_layout.addWidget(self.goto_word)
 
     self.mem_view = QTableView(self.widget)
-    self.mem_view.setModel(gui_vm.MemoryModel(parent = self))
+    self.mem_view.setModel(MemoryModel(parent = self))
     self.mem_view.horizontalHeader().setStretchLastSection(True)
 
     self.layout = QVBoxLayout()
@@ -39,7 +37,7 @@ class MemoryDockWidget(QDockWidget):
 
   def initModel(self, vm_data):
     self.vm_data = vm_data
-    self.model = gui_vm.MemoryModel(vm_data = self.vm_data, parent = self)
+    self.model = MemoryModel(vm_data = self.vm_data, parent = self)
     self.mem_view.setModel(self.model)
     assert(vm_data.vm.MEMORY_SIZE == 4000)
     self.goto_word.setValidator(QRegExpValidator(QRegExp("[0-3]?[0-9]{1,3}"), self)) # 9, 99, 999, 3999
@@ -48,11 +46,65 @@ class MemoryDockWidget(QDockWidget):
   def slot_mem_view_edit(self, index):
     if not self.vm_data.is_writeable(index.row()):
       return QMessageBox.information(self, self.tr("Mix machine"), self.tr("This memory cell is locked for writing."))
-    cell_edit = WordEdit(self.vm_data.mem(index.row()), parent = self)
-    if cell_edit.exec_():
-      self.vm_data.setMem(index.row(), cell_edit.word)
+    word_edit = WordEdit(self.vm_data.mem(index.row()), parent = self)
+    if word_edit.exec_():
+      self.vm_data.setMem(index.row(), word_edit.word)
 
-  def memChanged(self):
-    indexTopLeft = self.model.index(0, 0)
-    indexBottomRight = self.model.index(self.model.rowCount(None) - 1, 0)
-    self.model.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), indexTopLeft, indexBottomRight)
+  def hook(self, addr, old, new):
+    self.model.memChanged(addr)
+
+
+class MemoryModel(QAbstractTableModel):
+  def __init__(self, vm_data = None, parent = None):
+    QAbstractTableModel.__init__(self, parent)
+    if vm_data is not None:
+      self.memory = vm_data.vm.memory
+      self.is_readable = vm_data.is_readable
+      self.mem_len = vm_data.vm.MEMORY_SIZE
+      self.inited = True
+    else:
+      self.inited = False
+
+  def rowCount(self, parent):
+    if self.inited:
+      return self.mem_len
+    else:
+      return 0
+
+  def columnCount(self, parent):
+    return 1 # word
+
+  def data(self, index, role = Qt.DisplayRole):
+    if not index.isValid():
+      return QVariant()
+
+    if role == Qt.TextAlignmentRole:
+      return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
+
+    elif role == Qt.DisplayRole:
+      if self.is_readable(index.row()):
+        return QVariant(  word2str(     self.memory[index.row()]  ))
+      else:
+        return QVariant(self.tr("LOCKED"))
+    elif role == Qt.ToolTipRole:
+      return QVariant(  word2toolTip( self.memory[index.row()]  ))
+
+    else:
+      return QVariant()
+
+  def headerData(self, section, orientation, role = Qt.DisplayRole):
+    if role == Qt.TextAlignmentRole:
+      return QVariant(Qt.AlignHCenter | Qt.AlignVCenter)
+
+    elif role == Qt.DisplayRole:
+      if orientation == Qt.Horizontal:
+        return QVariant(self.tr("Mix word"))
+      else:
+        return QVariant(str(section))
+
+    else:
+      return QVariant()
+
+  def memChanged(self, addr):
+    index = self.index(addr, 0)
+    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), index, index)

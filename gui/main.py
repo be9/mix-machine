@@ -239,7 +239,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.listing_goto_ca()
 
   def mem_hook(self, addr, old, new):
-    #self.mem_dock.hook(addr, old, new)
+    self.mem_dock.hook(addr, old, new)
     self.listing_model.hook(addr, old, new)
 
   def slot_Assemble(self):
