@@ -3,41 +3,29 @@ from PyQt4.QtGui import *
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
-from virt_machine import *
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'assembler'))
-from listing import *
-
-class ListingUpdatable_withWords(Listing):
-  def __init__(self, vm_data):
-    Listing.init_copy(self, vm_data.listing)
-    for line in self.lines:
-      if line.addr != None:
-        line.word = Word(line.word)
-    self.vm_data = vm_data
-
-  def updateRow(self, num):
-    """True - if row changed while running, else False"""
-    addr = self.lines[num].addr
-    if addr is None:
-      return False
-    if self.lines[num].word != self.vm_data.mem(addr):
-      self.lines[num].word = Word(self.vm_data.mem(addr))
-    return self.vm_data.is_addr_changed(addr)
+from word import Word
 
 class ListingModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
     if vm_data is not None:
-      self.vm_data = vm_data
-      self.listing = ListingUpdatable_withWords(vm_data)
+      self.lines = vm_data.listing.lines[:]
+      # new lines where word is Word (class), not list
+      for line in self.lines:
+        line.modified = False
+        if line.addr != None:
+          line.word = Word(line.word)
+
+      self.is_readable = vm_data.is_readable
+      self.create_addr2num_data() # creates data for addr2num(...)
+      self.current_line = self.addr2num(vm_data.ca())
       self.inited = True
     else:
       self.inited = False
 
   def rowCount(self, parent):
     if self.inited:
-      return len(self.listing.lines)
+      return len(self.lines)
     else:
       return 0
 
@@ -57,9 +45,9 @@ class ListingModel(QAbstractTableModel):
         return QVariant(Qt.AlignLeft | Qt.AlignVCenter)
 
     elif role == Qt.BackgroundRole:
-      changed_row = self.listing.updateRow(index.row())
-      ca_row = self.listing.lines[index.row()].addr == self.vm_data.ca()
-      locked_row = not self.vm_data.is_readable(self.listing.lines[index.row()].addr)
+      changed_row = self.lines[index.row()].modified
+      ca_row = index.row() == self.current_line
+      locked_row = not self.is_readable(self.lines[index.row()].addr)
       if changed_row and ca_row and locked_row:
         return QVariant(QColor(200, 150, 0))
 
@@ -80,7 +68,7 @@ class ListingModel(QAbstractTableModel):
         return QVariant()
 
     elif role == Qt.DisplayRole:
-      listing_line = self.listing.lines[index.row()]
+      listing_line = self.lines[index.row()]
       column = index.column()
 
       if column == 0:
@@ -88,17 +76,19 @@ class ListingModel(QAbstractTableModel):
           return QVariant(listing_line.addr2str())
         else:
           return QVariant(u"")
+
       elif column == 1:
         if listing_line.addr is not None:
-          self.listing.updateRow(index.row())
-          if self.vm_data.is_readable(listing_line.addr):
+          if self.is_readable(listing_line.addr):
             return QVariant(listing_line.word.addr_str()) # print first two bytes as one address
           else:
             return QVariant(self.tr("LOCKED"))
         else:
           return QVariant(u"")
+
       else:
         return QVariant(listing_line.line)
+
     else:
       return QVariant()
 
@@ -116,16 +106,36 @@ class ListingModel(QAbstractTableModel):
     else:
       return QVariant()
 
-  def memAndAddrChanged(self):
-    # change all
-    indexTopLeft = self.index(0, 0)
-    indexBottomRight = self.index(self.rowCount(None) - 1, 2)
-    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), indexTopLeft, indexBottomRight)
+  def lineChanged(self, num):
+    """dataChange for all line"""
+    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"),
+        self.index(num-1, 0),
+        self.index(num-1, 2))
 
-  def find_strnum_by_addr(self, addr):
-    lines = self.listing.lines
-    for i in xrange(len(lines)):
-      if lines[i].addr == addr:
-        return i + 1 # numbers of lines started from 1
+  def hook(self, item, old, new):
+    if item == "cur_addr":
+      old_num = self.addr2num(old)
+      if old_num is not None:
+        self.lineChanged(old_num)
+      self.current_line = num = self.addr2num(new)
+      if num is None:
+        return
+    elif isinstance(item, int):
+      num = self.addr2num(item)
+      if num is None:
+        return
+      self.lines[num].word = new
+      self.lines[num].modified = True
     else:
-      return None
+      return # any cpu hook but cur_addr
+    # dataChange for all line
+    self.lineChanged(num)
+
+  def create_addr2num_data(self):
+    self.addr2num_data = dict([
+        (self.lines[i].addr, i)
+        for i in xrange(len(self.lines)) if self.lines[i].addr is not None
+    ])
+
+  def addr2num(self, addr):
+    return self.addr2num_data.get(addr)

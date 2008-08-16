@@ -14,6 +14,8 @@ from word import *
 registers = "a x i1 i2 i3 i4 i5 i6 j".split()
 flags = "ca cf of hlt cycles".split()
 
+BOLD_PREFIX = "<b><font color=red>"
+
 class CPUDockWidget(QDockWidget):
   def __init__(self, parent = None):
     QDockWidget.__init__(self, parent)
@@ -27,34 +29,77 @@ class CPUDockWidget(QDockWidget):
 
   def loadFromVM(self):
     for s in "a x j".split():
-      self.__dict__["edit_" + s].setWord(self.vm_data.vm.__dict__["r" + s.upper()])
+      self.__dict__["edit_" + s].setWord(self.vm_data.vm[s.upper()])
     for s in "i1 i2 i3 i4 i5 i6".split():
-      self.__dict__["edit_" + s].setWord(self.vm_data.vm.__dict__["r" + s[1:].upper()])
-    self.edit_ca.setValue(self.vm_data.vm.cur_addr)
-    self.edit_cf.setCurrentIndex(self.vm_data.vm.cf + 1)
-    self.edit_of.setCurrentIndex(int(self.vm_data.vm.of))
-    self.edit_hlt.setCurrentIndex(int(self.vm_data.vm.halted))
-    self.edit_cycles.display(self.vm_data.vm.cycles)
+      self.__dict__["edit_" + s].setWord(self.vm_data.vm[s[1:].upper()])
+    self.edit_ca.setValue(self.vm_data.vm["cur_addr"])
+    self.edit_cf.setCurrentIndex(self.vm_data.vm["cf"] + 1)
+    self.edit_of.setCurrentIndex(int(self.vm_data.vm["of"]))
+    self.edit_hlt.setCurrentIndex(int(self.vm_data.vm["halted"]))
+    self.edit_cycles.display(self.vm_data.vm["cycles"])
+
+  def boldLabel(self, object, bold):
+    if not bold and str(object.text()).startswith(BOLD_PREFIX):
+      object.setText(object.text()[len(BOLD_PREFIX):])
+    elif bold and not str(object.text()).startswith(BOLD_PREFIX):
+      object.setText(BOLD_PREFIX + object.text())
+
+  def resetChanges(self):
+    map(lambda obj: self.boldLabel(obj, False), self.all_labels)
+
+  def hook(self, item, old, new):
+    if item == "cur_addr":
+      self.edit_ca.setValue(new)
+      self.boldLabel(self.label_ca, True)
+
+    elif item in "axj":
+      self.__dict__["edit_" + item].setWord(new)
+      self.boldLabel(self.__dict__["label_" + item], True)
+
+    elif item in "123456":
+      self.__dict__["edit_i" + item].setWord(new)
+      self.boldLabel(self.__dict__["label_i" + item], True)
+
+    elif item == "cf":
+      self.edit_cf.setCurrentIndex(new + 1)
+      self.boldLabel(self.label_cf, True)
+
+    elif item == "of":
+      self.edit_of.setCurrentIndex(int(new))
+      self.boldLabel(self.label_of, True)
+
+    elif item == "halted":
+      self.edit_hlt.setCurrentIndex(int(new))
+      self.boldLabel(self.label_hlt, True)
+
+    elif item == "cycles":
+      self.edit_cycles.display(new)
+      #self.boldLabel(self.label_cycles, True)
 
   def setVM(self, what, value = None):
-    if what in "a x j".split():
-      self.vm_data.vm.__dict__["r"+what.upper()] = Word(self.__dict__["edit_"+what].word)
+    if what in "axj":
+      if value is None:
+        self.vm_data.vm["r"+what.upper()] = Word(self.__dict__["edit_"+what].word)
+      else:
+        self.vm_data.vm["r"+what.upper()] = Word(value)
 
     elif what in "i1 i2 i3 i4 i5 i6".split():
-      self.vm_data.vm.__dict__["r"+what[1:].upper()] = Word(self.__dict__["edit_"+what].word)
+      if value is None:
+        self.vm_data.vm["r"+what[1:]] = Word(self.__dict__["edit_"+what].word)
+      else:
+        self.vm_data.vm_["r"+what[1:]] = Word(value)
 
     elif what == "ca":
-      self.vm_data.vm.cur_addr = value
-      self.emit(SIGNAL("caChanged()"))
+      self.vm_data.vm["cur_addr"] = value
 
     elif what == "cf":
-      self.vm_data.vm.cf = value - 1
+      self.vm_data.vm["cf"] = value - 1
 
     elif what == "of":
-      self.vm_data.vm.of = bool(value)
+      self.vm_data.vm["of"] = bool(value)
 
     elif what == "hlt":
-      self.vm_data.vm.halted = bool(value)
+      self.vm_data.vm["halted"] = bool(value)
 
   def initConnections(self):
     for s in registers:
@@ -78,10 +123,14 @@ class CPUDockWidget(QDockWidget):
 
     self.widget = QWidget()
 
+    # it will be need in resetChanges
+    self.all_labels = []
+
     # create and lay all registers
     current_row_in_grid = 0
     for reg in registers:
       label   = self.__dict__["label_" + reg]   = QLabel("r" + reg.upper(), self)
+      self.all_labels.append(label)
       if reg in "ax":
         type = BASIC
       elif reg == "j":
@@ -101,6 +150,7 @@ class CPUDockWidget(QDockWidget):
     # first create all labels
     for flag in flags:
       label = self.__dict__["label_" + flag]   = QLabel(self.tr(flag.upper()), self)
+      self.all_labels.append(label)
       label.setObjectName("label_" + flag)
       label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 

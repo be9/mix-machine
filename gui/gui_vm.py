@@ -64,10 +64,6 @@ class VMData:
   def __init__(self, asm_data):
     self.vm = VMachine(asm_data.mem_list, asm_data.start_addr)
     self.listing = asm_data.listing
-    self.starting_mem = [Word(x) for x in asm_data.mem_list]
-
-  def is_addr_changed(self, addr):
-    return self.mem(addr) != self.starting_mem[addr]
 
   def mem(self, addr):
     return self.vm.memory[addr]

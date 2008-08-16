@@ -59,8 +59,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.slot_cur_tab_changed)
 
-    self.connect(self.cpu_dock, SIGNAL("caChanged()"), lambda: self.listing_model.memAndAddrChanged())
-
     self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
 
@@ -234,6 +232,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     cursor.select(QTextCursor.LineUnderCursor)
     self.txt_source.setTextCursor(cursor)
 
+  def cpu_hook(self, item, old, new):
+    self.cpu_dock.hook(item, old, new)
+    self.listing_model.hook(item, old, new)
+    if item == "cur_addr":
+      self.listing_goto_ca()
+
+  def mem_hook(self, addr, old, new):
+    #self.mem_dock.hook(addr, old, new)
+    self.listing_model.hook(addr, old, new)
+
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunWidgetsEnabled(False)
@@ -242,9 +250,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.asm_data = content # mem, start_addr, listing
       self.vm_data = gui_vm.VMData(self.asm_data) # vm, listing
 
-      # todo smth like this :)
-      #self.vm_data.setCPUHook(lambda x, y, z: sys.stdout.write("%s: %s > %s\n" % (x, y, z)))
-      #self.vm_data.setMemHook(lambda x, y, z: sys.stdout.write("%s: %s > %s\n" % (x, y, z)))
+      self.vm_data.setCPUHook(self.cpu_hook)
+      self.vm_data.setMemHook(self.mem_hook)
 
       self.mem_dock.initModel(self.vm_data)
 
@@ -277,15 +284,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     if self.vm_data.halted():
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted."))
       return
+    self.cpu_dock.resetChanges()
     try:
       action()
     except Exception, err:
       QMessageBox.critical(self, self.tr("Runtime error"), str(err))
     else:
-      self.mem_dock.memChanged()
-      self.listing_model.memAndAddrChanged()
       self.listing_goto_ca()
-      self.cpu_dock.loadFromVM()
       if self.vm_data.halted():
         QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted."))
 
@@ -297,12 +302,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def listing_goto_ca(self):
     """Selects row near ca"""
-    num = self.listing_model.find_strnum_by_addr(self.vm_data.ca())
+    num = self.listing_model.current_line
     if num is None:
       self.statusBar().showMessage(self.tr("Mix machine's current address is out of listing."))
     else:
-      # num-1 - number of row
-      self.listing_view.setCurrentIndex(self.listing_model.index(num-1, 0))
+      self.listing_view.setCurrentIndex(self.listing_model.index(num, 0))
 
 app = QApplication(sys.argv)
 
