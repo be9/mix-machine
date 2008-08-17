@@ -17,6 +17,7 @@ from dock_cpu import CPUDockWidget
 from asm_data import *
 from vm_data import VMData
 from listing_model import ListingModel
+from disasm_model import DisassemblerModel
 
 PROGRAM_NAME = "Mix Machine"
 
@@ -62,11 +63,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setRunWidgetsEnabled(False)
     self.errors_list.setVisible(False)
 
-    # init listing view
+    # init listing and disasmmler view
     self.listing_model = ListingModel(parent = self)
     self.listing_view.setModel(self.listing_model) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
     self.listing_view.setSelectionMode(QAbstractItemView.NoSelection)
+
+    self.disasm_model = DisassemblerModel(parent = self)
+    self.disasm_view.setModel(self.disasm_model) # add model to set size of header
+    self.disasm_view.horizontalHeader().setStretchLastSection(True) # for column with disasm line
+    self.disasm_view.setSelectionMode(QAbstractItemView.NoSelection)
+
     self.resetSizes()
 
     self.slot_cur_tab_changed(0)
@@ -76,6 +83,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.mem_dock.hide()
       self.cpu_dock.hide()
     else: # listing or disassembler
+      self.listing_and_disasm_goto_ca()
       self.mem_dock.show()
       self.cpu_dock.show()
 
@@ -87,6 +95,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     h_header = self.listing_view.horizontalHeader()
     h_header.setStretchLastSection(True) # for column with source line
+    h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
+    h_header.resizeSection(h_header.logicalIndex(1), word + 20)
+
+    h_header = self.disasm_view.horizontalHeader()
+    h_header.setStretchLastSection(True) # for column with disasm line
     h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
     h_header.resizeSection(h_header.logicalIndex(1), word + 20)
 
@@ -235,16 +248,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def cpu_hook(self, item, old, new):
     self.cpu_dock.hook(item, old, new)
     self.listing_model.hook(item, old, new)
+    self.disasm_model.hook(item, old, new)
     if item == "cur_addr":
-      self.listing_goto_ca()
+      self.listing_and_disasm_goto_ca()
 
   def mem_hook(self, addr, old, new):
     self.mem_dock.hook(addr, old, new)
     self.listing_model.hook(addr, old, new)
+    self.disasm_model.hook(addr, old, new)
 
   def lock_hook(self, mode, old, new):
     self.mem_dock.hook(mode, old, new)
     self.listing_model.hook(mode, old, new)
+    self.disasm_model.hook(mode, old, new)
 
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
@@ -266,7 +282,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.listing_model = ListingModel(vm_data = self.vm_data, parent = self)
       self.listing_view.setModel(self.listing_model)
-      self.listing_goto_ca()
+
+      self.disasm_model = DisassemblerModel(vm_data = self.vm_data, parent = self)
+      self.disasm_view.setModel(self.disasm_model)
+
+      self.listing_and_disasm_goto_ca()
 
       self.setRunWidgetsEnabled(True)
       self.tabWidget.setCurrentIndex(1)
@@ -296,7 +316,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     except Exception, err:
       QMessageBox.critical(self, self.tr("Runtime error"), str(err))
     else:
-      self.listing_goto_ca()
+      self.listing_and_disasm_goto_ca()
       if self.vm_data.halted():
         QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted."))
 
@@ -306,13 +326,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def slot_Run(self):
     self.doStepOrRun(self.vm_data.run)
 
-  def listing_goto_ca(self):
+  def listing_and_disasm_goto_ca(self):
     """Selects row near ca"""
-    num = self.listing_model.current_line
-    if num is None:
-      self.statusBar().showMessage(self.tr("Mix machine's current address is out of listing."))
-    else:
-      self.listing_view.setCurrentIndex(self.listing_model.index(num, 0))
+    if self.tabWidget.currentIndex() == 1: # listing
+      num = self.listing_model.current_line
+      if num is None:
+          self.statusBar().showMessage(self.tr("Mix machine's current address is out of listing."))
+      else:
+        self.listing_view.setCurrentIndex(self.listing_model.index(num, 0))
+    elif self.tabWidget.currentIndex() == 2: # disasm
+      self.disasm_view.setCurrentIndex(self.disasm_model.index(self.disasm_model.ca, 0))
 
 app = QApplication(sys.argv)
 

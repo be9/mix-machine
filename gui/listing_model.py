@@ -62,7 +62,7 @@ class ListingModel(QAbstractTableModel):
         return QVariant(QColor(255, 175, 0))
 
       elif changed_row:
-        return QVariant(QColor(160, 160, 164)) # gray - #a0a0a4
+        return QVariant(QColor(Qt.gray))
       elif ca_row:
         return QVariant(QColor(255, 255, 0))
       elif locked_row:

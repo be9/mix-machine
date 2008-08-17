@@ -58,6 +58,11 @@
        <attribute name="title" >
         <string>Disassembler</string>
        </attribute>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QTableView" name="disasm_view" />
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
