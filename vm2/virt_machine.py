@@ -117,47 +117,29 @@ class VMachine:
   def is_writeable_set(self, _set):
     return len(_set & ( self.locked_cells[self.W_LOCKED] | self.locked_cells[self.RW_LOCKED] )) == 0
 
+  def lock_cells(self, mode, add = None, sub = None):
+    assert( (add is not None) ^ (sub is not None) )
+    if self.lock_hook is not None:
+      old = set(self.locked_cells[mode])
+    if add is not None:
+      # add set to self.locked_cells[mode]
+      self.locked_cells[mode] |= add
+    else:
+      # subtract set from self.locked_cells[mode]
+      self.locked_cells[mode] -= sub
+    if self.lock_hook is not None and self.locked_cells[mode] != old:
+      self.lock_hook(mode, old, self.locked_cells[mode])
+
   def __init__(self, memory, start_address):
     self.errors = []
     self.set_cpu_hook(None)
     self.set_mem_hook(None)
+    self.set_lock_hook(None)
     self.set_memory(memory, reset = True)
     self.init_stuff(start_address)
     self.devices = {}
     self.locked_cells = [set(), set()]
     self.cycles = 0
-
-  def debug_state(self, file):
-    try:
-      file.write("CUR: %s\n" % self.get_cur_word())
-    except:
-      file.write("CUR: None\n")
-    file.write("CYCLES: %s\n" % self.cycles)
-    file.write("HLT: %s\n" % self.halted)
-    file.write("CA:  %s\n" % self.cur_addr)
-    file.write("rA:  %s\n" % self.rA)
-    file.write("rX:  %s\n" % self.rX)
-    for i in xrange(1, 7):
-      file.write("rI%i: %s\n" % (i, self.__dict__["r"+str(i)]))
-    file.write("rJ:  %s\n" % self.rJ)
-    file.write("CF:  ")
-    assert(self.cf in (-1, 0, 1))
-    if self.cf == -1:
-      file.write("LESS")
-    elif self.cf == 0:
-      file.write("EQUAL")
-    elif self.cf == 1:
-      file.write("GREATER")
-    file.write("\n")
-    file.write("OF:  %s\n" % self.of)
-    file.write("W_LOCKED: %s\n" % list(self.locked_cells[self.W_LOCKED]))
-    file.write("RW_LOCKED: %s\n" % list(self.locked_cells[self.RW_LOCKED]))
-
-  def debug_mem(self, file, begin, end):
-    if begin > end:
-      return
-    for i in xrange(begin, end + 1):
-      file.write("%04i %s\n" % (i, self[i]))
 
   def step(self):
     if not self.check_mem_addr(self.cur_addr):
@@ -177,10 +159,13 @@ class VMachine:
         else:
           return # ioc busy
         # unlock memory
-        self.locked_cells[mode] -= set(range(unlock[1][0], unlock[1][1] + 1))
+        self.lock_cells(mode, sub = set(range(unlock[1][0], unlock[1][1] + 1)))
 
   def set_cpu_hook(self, hook):
     self.cpu_hook = hook
 
   def set_mem_hook(self, hook):
     self.mem_hook = hook
+
+  def set_lock_hook(self, hook):
+    self.lock_hook = hook

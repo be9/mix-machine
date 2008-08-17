@@ -49,7 +49,7 @@ def in_(vmachine):
   for i in xrange(words_num):
     vmachine[(addr + i):1:5] = [+1] + bytes[5*i: 5*(i + 1)] # +1 added like a sign to word
   # and lock memory for any actions
-  vmachine.locked_cells[vmachine.RW_LOCKED] |= set(range( addr, addr + words_num ))
+  vmachine.lock_cells(vmachine.RW_LOCKED, add = set(range( addr, addr + words_num )))
 
 def out(vmachine):
   dev, addr, words_num = _in_out(vmachine)
@@ -69,4 +69,4 @@ def out(vmachine):
   # write them to file
   dev.write(bytes, (addr, addr + words_num - 1))
   # and lock memory for writing (any instructions can read this memory)
-  vmachine.locked_cells[vmachine.W_LOCKED] |= set(range( addr, addr + words_num ))
+  vmachine.lock_cells(vmachine.W_LOCKED, add = set(range( addr, addr + words_num )))
