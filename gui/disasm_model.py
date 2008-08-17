@@ -3,6 +3,10 @@ from PyQt4.QtGui import *
 
 from word_edit import word2toolTip
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+from disasm import disasm2str
+
 class DisassemblerModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
@@ -75,7 +79,11 @@ class DisassemblerModel(QAbstractTableModel):
 
       else:
         if self.is_readable(i):
-          return QVariant(self.tr("NOP 0"))
+          line = disasm2str(self.words[i], "\t")
+          if line is not None:
+            return QVariant(line)
+          else:
+            return QVariant("\tcan't dissamble")
         else:
           return QVariant(self.tr("LOCKED"))
 

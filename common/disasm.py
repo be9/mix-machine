@@ -5,15 +5,24 @@ def disasm(word):
   instruction_name = codes.get(c, codes.get((c,f), None))
   return (instruction_name, int(word[0:2]), word[3], word[4])
 
-def disasm2str(word):
+def disasm2str(word, separator):
   instr, addr, ind, f = disasm(word)
   if instr is None:
     return None
+  addr_str = str(abs(addr))
+  if word[0] == -1:
+    addr_str = "-" + addr_str
+  ind_str = ","+str(ind) if ind != 0 else ""
   if instr in instructions_with_field_spec:
-    f_str = "%i:%i" % (f/8, f%8)
+    f_str = "(%i:%i)" % (f/8, f%8)
   else:
-    f_str = str(f)
-  return "%s %i,%i(%s)" % (instr.upper(), addr, ind, f_str)
+    f_str = "("+str(f)+")" if f != 0 else ""
+  return "".join((separator,
+                  instr.upper(),
+                  separator,
+                  addr_str,
+                  ind_str,
+                  f_str))
 
 
 instructions_with_field_spec = ( # such as (3:4)
