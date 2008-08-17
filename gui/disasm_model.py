@@ -3,10 +3,6 @@ from PyQt4.QtGui import *
 
 from word_edit import word2toolTip
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
-from word import Word
-
 class DisassemblerModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
