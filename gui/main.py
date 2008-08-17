@@ -14,9 +14,9 @@ from main_ui import Ui_MainWindow
 from dock_mem import MemoryDockWidget
 from dock_cpu import CPUDockWidget
 
-import gui_asm
-import gui_vm
-import gui_listing
+from asm_data import *
+from vm_data import VMData
+from listing_model import ListingModel
 
 PROGRAM_NAME = "Mix Machine"
 
@@ -63,7 +63,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.errors_list.setVisible(False)
 
     # init listing view
-    self.listing_model = gui_listing.ListingModel(parent = self)
+    self.listing_model = ListingModel(parent = self)
     self.listing_view.setModel(self.listing_model) # add model to set size of header
     self.listing_view.horizontalHeader().setStretchLastSection(True) # for column with source line
     self.listing_view.setSelectionMode(QAbstractItemView.NoSelection)
@@ -245,10 +245,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunWidgetsEnabled(False)
-    ret_type, content = gui_asm.asm(unicode(self.txt_source.toPlainText()))
-    if ret_type == gui_asm.NO_ERRORS:
+    ret_type, content = asm(unicode(self.txt_source.toPlainText()))
+    if ret_type == ASM_NO_ERRORS:
       self.asm_data = content # mem, start_addr, listing
-      self.vm_data = gui_vm.VMData(self.asm_data) # vm, listing
+      self.vm_data = VMData(self.asm_data) # vm, listing
 
       self.vm_data.setCPUHook(self.cpu_hook)
       self.vm_data.setMemHook(self.mem_hook)
@@ -259,7 +259,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.cpu_dock.loadFromVM()
       self.cpu_dock.resetHighlight()
 
-      self.listing_model = gui_listing.ListingModel(vm_data = self.vm_data, parent = self)
+      self.listing_model = ListingModel(vm_data = self.vm_data, parent = self)
       self.listing_view.setModel(self.listing_model)
       self.listing_goto_ca()
 
@@ -269,7 +269,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       return
 
     # we have errors!
-    if ret_type == gui_asm.SYNTAX_ERRORS:
+    if ret_type == ASM_SYNTAX_ERRORS:
       err_mesg = self.tr("There are syntax errors")
     else:
       err_mesg = self.tr("There are assemble errors")

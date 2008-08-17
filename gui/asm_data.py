@@ -7,9 +7,9 @@ from listing import *
 #from errors import *
 
 # types of returning value
-NO_ERRORS =         0
-SYNTAX_ERRORS =     1
-ASSEMBLER_ERRORS =  2
+ASM_NO_ERRORS =         0
+ASM_SYNTAX_ERRORS =     1
+ASM_ASSEMBLER_ERRORS =  2
 
 class AsmData:
   def __init__(self, mem_list, start_addr, listing):
@@ -22,7 +22,7 @@ def asm(text):
 
   lines, errors = parse_lines(src_lines)
   if len(errors) > 0: # we have errors
-    return (SYNTAX_ERRORS, errors)
+    return (ASM_SYNTAX_ERRORS, errors)
 
   asm = Assembler()
   asm.run(lines)
@@ -32,8 +32,8 @@ def asm(text):
   errors = asm.errors
 
   if len(errors) > 0: # we have errors
-    return (ASSEMBLER_ERRORS, errors)
+    return (ASM_ASSEMBLER_ERRORS, errors)
 
   listing = Listing(src_lines, lines, memory_list, asm.symtable.literals, asm.end_address)
 
-  return (NO_ERRORS, AsmData(memory_list, start_address, listing))
+  return (ASM_NO_ERRORS, AsmData(memory_list, start_address, listing))
