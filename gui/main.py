@@ -282,10 +282,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.statusBar().showMessage(err_mesg, 2000)
 
   def doStepOrRun(self, action):
+    self.cpu_dock.resetHighlight()
     if self.vm_data.halted():
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted."))
       return
-    self.cpu_dock.resetHighlight()
     try:
       action()
     except Exception, err:

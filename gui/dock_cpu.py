@@ -31,7 +31,7 @@ class CPUDockWidget(QDockWidget):
     for s in "a x j".split():
       self.__dict__["edit_" + s].setWord(self.vm_data.vm[s.upper()])
     for s in "i1 i2 i3 i4 i5 i6".split():
-      self.__dict__["edit_" + s].setWord(self.vm_data.vm[s[1:].upper()])
+      self.__dict__["edit_" + s].setWord(self.vm_data.vm[s[1].upper()])
     self.edit_ca.setValue(self.vm_data.vm["cur_addr"])
     self.edit_cf.setCurrentIndex(self.vm_data.vm["cf"] + 1)
     self.edit_of.setCurrentIndex(int(self.vm_data.vm["of"]))
