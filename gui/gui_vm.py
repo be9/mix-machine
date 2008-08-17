@@ -13,10 +13,10 @@ class VMData:
     self.listing = asm_data.listing
 
   def mem(self, addr):
-    return self.vm.memory[addr]
+    return self.vm[addr]
 
   def setMem(self, addr, word):
-    self.vm.memory[addr] = word
+    self.vm[addr] = word
 
   def ca(self):
     return self.vm.cur_addr
