@@ -16,6 +16,14 @@ class WordParserTestCase(unittest.TestCase):
       self.r6 = Word(r6)
       self.of = False
 
+    def __getitem__(self, item):
+      if item in "0123456":
+        return self.__dict__["r"+item]
+
+    def __setitem__(self, item, value):
+      if item == "of":
+        self.of = value
+
     def reg(self, r):
       return self.__dict__["r" + r]
 
