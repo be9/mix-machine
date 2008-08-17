@@ -1,6 +1,8 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from word_edit import word2toolTip
+
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 from word import Word
@@ -89,6 +91,15 @@ class ListingModel(QAbstractTableModel):
 
       else:
         return QVariant(listing_line.line)
+
+    elif role == Qt.ToolTipRole:
+        if self.lines[index.row()].addr is not None and index.column() == 1:
+          if self.is_readable(self.lines[index.row()].addr):
+            return QVariant(word2toolTip( self.lines[index.row()].word ))
+          else:
+            return QVariant(self.tr("This memory cell is locked for reading"))
+        else:
+          return QVariant(u"")
 
     else:
       return QVariant()
