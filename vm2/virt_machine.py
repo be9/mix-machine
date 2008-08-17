@@ -128,7 +128,7 @@ class VMachine:
       # subtract set from self.locked_cells[mode]
       self.locked_cells[mode] -= sub
     if self.lock_hook is not None and self.locked_cells[mode] != old:
-      self.lock_hook(mode, old, self.locked_cells[mode])
+      self.lock_hook("rw" if mode ==self.RW_LOCKED else "w", old, self.locked_cells[mode])
 
   def __init__(self, memory, start_address):
     self.errors = []
