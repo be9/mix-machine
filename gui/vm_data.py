@@ -42,3 +42,6 @@ class VMData:
 
   def setMemHook(self, hook):
     self.vm.set_mem_hook(hook)
+
+  def setLockHook(self, hook):
+    self.vm.set_lock_hook(hook)

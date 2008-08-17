@@ -50,8 +50,12 @@ class MemoryDockWidget(QDockWidget):
     if word_edit.exec_():
       self.vm_data.setMem(index.row(), word_edit.word)
 
-  def hook(self, addr, old, new):
-    self.model.memChanged(addr)
+  def hook(self, item, old, new):
+    if isinstance(item, int):
+      self.model.memChanged(item)
+    elif item == "rw":
+      for addr in old.symmetric_difference(new):
+        self.model.memChanged(addr)
 
 
 class MemoryModel(QAbstractTableModel):
@@ -87,7 +91,10 @@ class MemoryModel(QAbstractTableModel):
       else:
         return QVariant(self.tr("LOCKED"))
     elif role == Qt.ToolTipRole:
-      return QVariant(  word2toolTip( self.memory[index.row()]  ))
+      if self.is_readable(index.row()):
+        return QVariant(  word2toolTip( self.memory[index.row()]  ))
+      else:
+        return QVariant(self.tr("This memory cell is locked for reading"))
 
     else:
       return QVariant()

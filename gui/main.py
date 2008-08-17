@@ -242,6 +242,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.mem_dock.hook(addr, old, new)
     self.listing_model.hook(addr, old, new)
 
+  def lock_hook(self, mode, old, new):
+    self.mem_dock.hook(mode, old, new)
+    self.listing_model.hook(mode, old, new)
+
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunWidgetsEnabled(False)
@@ -252,6 +256,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.vm_data.setCPUHook(self.cpu_hook)
       self.vm_data.setMemHook(self.mem_hook)
+      self.vm_data.setLockHook(self.lock_hook)
 
       self.mem_dock.initModel(self.vm_data)
 

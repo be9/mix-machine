@@ -17,6 +17,7 @@ class ListingModel(QAbstractTableModel):
           line.word = Word(line.word)
 
       self.is_readable = vm_data.is_readable
+      self.is_locked = lambda x: not (vm_data.is_readable(x) and vm_data.is_writeable(x))
       self.create_addr2num_data() # creates data for addr2num(...)
       self.current_line = self.addr2num(vm_data.ca())
       self.inited = True
@@ -47,7 +48,7 @@ class ListingModel(QAbstractTableModel):
     elif role == Qt.BackgroundRole:
       changed_row = self.lines[index.row()].modified
       ca_row = index.row() == self.current_line
-      locked_row = not self.is_readable(self.lines[index.row()].addr)
+      locked_row = self.is_locked(self.lines[index.row()].addr)
       if changed_row and ca_row and locked_row:
         return QVariant(QColor(200, 150, 0))
 
@@ -108,28 +109,30 @@ class ListingModel(QAbstractTableModel):
 
   def lineChanged(self, num):
     """dataChange for all line"""
-    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"),
-        self.index(num-1, 0),
-        self.index(num-1, 2))
+    if num is not None:
+      self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"),
+          self.index(num-1, 0),
+          self.index(num-1, 2))
 
   def hook(self, item, old, new):
-    if item == "cur_addr":
+    if item == "cur_addr": # cpu hook
       old_num = self.addr2num(old)
       if old_num is not None:
         self.lineChanged(old_num)
       self.current_line = num = self.addr2num(new)
-      if num is None:
-        return
-    elif isinstance(item, int):
+      self.lineChanged(num)
+    elif isinstance(item, int): # mem hook
       num = self.addr2num(item)
       if num is None:
         return
       self.lines[num].word = new
       self.lines[num].modified = True
-    else:
-      return # any cpu hook but cur_addr
-    # dataChange for all line
-    self.lineChanged(num)
+      self.lineChanged(num)
+    elif item in ("rw", "w"): # lock hook
+      for addr in old.symmetric_difference(new):
+        self.lineChanged(self.addr2num(addr))
+    # else any cpu hook but cur_addr
+
 
   def create_addr2num_data(self):
     self.addr2num_data = dict([
