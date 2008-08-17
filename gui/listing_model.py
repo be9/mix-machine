@@ -122,8 +122,8 @@ class ListingModel(QAbstractTableModel):
     """dataChange for all line"""
     if num is not None:
       self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"),
-          self.index(num-1, 0),
-          self.index(num-1, 2))
+          self.index(num, 0),
+          self.index(num, 2))
 
   def hook(self, item, old, new):
     if item == "cur_addr": # cpu hook
