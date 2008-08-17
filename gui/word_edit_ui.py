@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'cell_edit.ui'
+# Form implementation generated from reading ui file 'word_edit.ui'
 #
-# Created: Sun Aug 10 20:38:23 2008
+# Created: Mon Aug 18 03:56:08 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
