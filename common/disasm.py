@@ -6,17 +6,32 @@ def disasm(word):
   return (instruction_name, int(word[0:2]), word[3], word[4])
 
 def disasm2str(word, separator):
-  instr, addr, ind, f = disasm(word)
+  instr, _, ind, f = disasm(word)
+
   if instr is None:
     return None
-  addr_str = str(abs(addr))
-  if word[0] == -1:
-    addr_str = "-" + addr_str
+
+  is_field_fixed = codes.get((word[5], f)) is not None
+
+  # addr_str = str(int(word[0:2])) - this variant doesn't show "-0"
+  addr_str = ("-" if word[0] == -1 else "") + str(abs(int(  word[1:2]  )))
+
   ind_str = ","+str(ind) if ind != 0 else ""
-  if instr in instructions_with_field_spec:
-    f_str = "(%i:%i)" % (f/8, f%8)
+
+  if not is_field_fixed:
+    if instr in instructions_with_field_spec:
+      if instr == "stj" and f == 2: # 2 = (0:2)
+        f_str = "" # don't show f_part for STJ, because it's default
+      elif f == 5: # 5 = (0:5) - default for all but STJ
+        f_str = "" # don't show f_part (it's default for this instruction)
+      else:
+        f_str = "(%i:%i)" % (f/8, f%8)
+
+    else:
+      f_str = "("+str(f)+")" if f != 0 else ""
   else:
-    f_str = "("+str(f)+")" if f != 0 else ""
+    f_str = "" # don't show f_part for instructions with fixed field
+
   return "".join((separator,
                   instr.upper(),
                   separator,
