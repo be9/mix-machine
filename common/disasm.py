@@ -31,7 +31,8 @@ class Disasm:
       i = 0
       self.literals = {}
       for (value,sign) in symtable.literals:
-        self.literals[end_addr+i] = ("LITCON%04i" % i, sign*value)
+        self.literals[end_addr+i] = "LITCON%04i" % i
+        i += 1
 
       self.locals = {}
       for (label,addrs) in symtable.local_labels.items():
@@ -42,7 +43,7 @@ class Disasm:
     label = self.literals.get(addr)
     if label is not None:
       # we try to diassemble literal
-      return self.returnCon(label[0], word, separator)
+      return self.returnCon(label, word, separator)
 
     # search in locals, labels - else no label
     label = self.locals.get(addr, self.labels.get(addr, ""))
@@ -59,7 +60,7 @@ class Disasm:
 
     if addr_str is None:
       # try to find addr in literals
-      addr_str = self.literals.get(instr_addr, (None, None))[0]
+      addr_str = self.literals.get(instr_addr)
 
     if addr_str is None:
       # try to find addr in simple labels
