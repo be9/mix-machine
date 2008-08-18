@@ -8,6 +8,8 @@ class MemoryDockWidget(QDockWidget):
     QDockWidget.__init__(self, parent)
     self.setWindowTitle(self.tr("Memory"))
 
+    self.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
+
     self.widget = QWidget(self)
 
     self.goto_label = QLabel(self.tr("Goto:"), self.widget)

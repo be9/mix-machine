@@ -127,6 +127,8 @@ class CPUDockWidget(QDockWidget):
   def initWidgets(self):
     self.setWindowTitle(self.tr("CPU"))
 
+    self.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
+
     self.widget = QWidget()
 
     # it will be need in resetHighlight

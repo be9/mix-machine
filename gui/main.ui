@@ -21,7 +21,7 @@
       </property>
       <widget class="QWidget" name="tab_src" >
        <attribute name="title" >
-        <string>Source</string>
+        <string>&amp;Source</string>
        </attribute>
        <layout class="QVBoxLayout" >
         <item>
@@ -41,7 +41,7 @@
       </widget>
       <widget class="QWidget" name="tab_dbg" >
        <attribute name="title" >
-        <string>Listing</string>
+        <string>&amp;Listing</string>
        </attribute>
        <layout class="QVBoxLayout" >
         <item>
@@ -56,7 +56,7 @@
       </widget>
       <widget class="QWidget" name="tab" >
        <attribute name="title" >
-        <string>Disassembler</string>
+        <string>&amp;Disassembler</string>
        </attribute>
        <layout class="QVBoxLayout" >
         <item>

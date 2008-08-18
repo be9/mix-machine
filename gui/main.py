@@ -13,6 +13,7 @@ from main_ui import Ui_MainWindow
 
 from dock_mem import MemoryDockWidget
 from dock_cpu import CPUDockWidget
+from devices import DevDockWidget
 
 from asm_data import *
 from vm_data import VMData
@@ -32,6 +33,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.cpu_dock = CPUDockWidget(self)
     # dock areas really would be Left and Right :)
     self.addDockWidget(Qt.LeftDockWidgetArea, self.cpu_dock)
+
+    self.dev_dock = DevDockWidget(self)
+    # dock areas really would be Left and Right :)
+    self.addDockWidget(Qt.RightDockWidgetArea, self.dev_dock)
 
     self.setAttribute(Qt.WA_DeleteOnClose)
     self.setupUi(self)
@@ -79,13 +84,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.slot_cur_tab_changed(0)
 
   def slot_cur_tab_changed(self, index):
-    if index == 0: # source editing tab
-      self.mem_dock.hide()
-      self.cpu_dock.hide()
-    else: # listing or disassembler
+    visible = index != 0 # hide dock widgets at source editing tab
+    self.mem_dock.setVisible(visible)
+    self.cpu_dock.setVisible(visible)
+    self.dev_dock.setVisible(visible)
+    if visible:
       self.listing_and_disasm_goto_ca()
-      self.mem_dock.show()
-      self.cpu_dock.show()
 
   def resetSizes(self):
     """Call after font changes"""
