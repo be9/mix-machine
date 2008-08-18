@@ -65,3 +65,23 @@ class SymbolTable:
       raise InvalidLocalLabelError(label)
 
     return None
+
+  def find_local_by_address(self, label, addr):
+    """Used by disassembler"""
+    if is_local_label_reference(label):
+      local_label = label[0] + 'H'
+      if local_label in self.local_labels:
+        b_label, f_label = None, None
+        for x in self.local_labels[local_label]:
+          if x[0] < addr:
+            b_label = x
+          if x[0] > addr:
+            f_label = x
+            break
+
+        if label[1] == 'B' and b_label is not None:
+          return b_label[0]
+        elif label[1] == 'F' and f_label is not None:
+          return f_label[0]
+
+    return None

@@ -27,10 +27,16 @@ class Disasm:
       self.labels = {}
       for (label,addr) in symtable.labels.items():
         self.labels[addr] = label
+
       i = 0
       self.literals = {}
-      for word_sign in symtable.literals:
-        self.literals[end_addr+i] = ("LITCON%04i" % i, word_sign[0]*word_sign[1])
+      for (value,sign) in symtable.literals:
+        self.literals[end_addr+i] = ("LITCON%04i" % i, sign*value)
+
+      self.locals = {}
+      for (label,addrs) in symtable.local_labels.items():
+        for (addr,_) in addrs:
+          self.locals[addr] = label
 
     # -------------LABEL_FIND-------------
     label = self.literals.get(addr)
@@ -38,7 +44,8 @@ class Disasm:
       # we try to diassemble literal
       return self.returnCon(label[0], word, separator)
 
-    label = self.labels.get(addr, "")
+    # search in locals, labels - else no label
+    label = self.locals.get(addr, self.labels.get(addr, ""))
 
     # -------------TWO_CASES-------------
     if instr is None:
@@ -49,9 +56,22 @@ class Disasm:
     # -------------ADDR_PART-------------
     # try to find addr in literals
     addr_str = self.literals.get(instr_addr, (None, None))[0]
+
     if addr_str is None:
       # try to find addr in simple labels
       addr_str = self.labels.get(instr_addr)
+
+    if addr_str is None:
+      # try to find addr in local labels
+      if addr != instr_addr: # local labels can't point to self line
+
+        addr_str = self.locals.get(instr_addr)
+        if addr_str is not None:
+          addr_str = addr_str[0]+("F" if addr < instr_addr else "B")
+          if symtable.find_local_by_address(addr_str, addr) != instr_addr:
+            # set addr_str to None if this local label can't be here
+            addr_str = None
+
     if addr_str is None:
       # addr_str = str(int(word[0:2])) - this variant doesn't show "-0"
       addr_str = ("-" if word[0] == -1 else "") + str(int(  word[1:2]  ))
