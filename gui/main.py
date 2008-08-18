@@ -143,7 +143,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
 
     if button == QMessageBox.Save:
-      self.saveFile()
+      self.slot_File_Save()
     elif button == QMessageBox.Cancel:
       return False
 
@@ -283,7 +283,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.listing_model = ListingModel(vm_data = self.vm_data, parent = self)
       self.listing_view.setModel(self.listing_model)
 
-      self.disasm_model = DisassemblerModel(vm_data = self.vm_data, parent = self)
+      self.disasm_model = DisassemblerModel(vm_data = self.vm_data, asm_data = self.asm_data, parent = self)
       self.disasm_view.setModel(self.disasm_model)
 
       self.listing_and_disasm_goto_ca()
