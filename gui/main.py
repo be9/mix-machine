@@ -13,7 +13,7 @@ from main_ui import Ui_MainWindow
 
 from dock_mem import MemoryDockWidget
 from dock_cpu import CPUDockWidget
-from devices import DevDockWidget
+from devices import DevDockWidget, QTextEditDevice
 
 from asm_data import *
 from vm_data import VMData
@@ -176,7 +176,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cur_file, self.file_filters)
 
     if fn != "":
-      fn = unicode(QDir.toNativeSeparators(fn))    
+      fn = unicode(QDir.toNativeSeparators(fn))
+
+      base, ext = os.path.splitext(unicode(fn))
+      if ext == '' or ext == '.':
+        fn = base + '.mix'
+
       if self.saveToFile(fn):
         self.setCurrentFile(fn)
 
@@ -197,11 +202,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def saveToFile(self, filename):
     try:
-      base, ext = os.path.splitext(unicode(filename))
-
-      if ext == '' or ext == '.':
-        filename = base + '.mix'
-
       with codecs.open(filename, "w", "UTF-8") as f:
         f.write(unicode(self.txt_source.toPlainText()))
 
@@ -273,6 +273,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     if ret_type == ASM_NO_ERRORS:
       self.asm_data = content # mem, start_addr, listing
       self.vm_data = VMData(self.asm_data) # vm, listing
+
+      # add printer
+      self.vm_data.addDevice(18, QTextEditDevice(
+        mode = "w", block_size = 24 * 5, lock_time = 24*2, text_edit = self.dev_dock.text_printer
+      ))
 
       self.vm_data.setCPUHook(self.cpu_hook)
       self.vm_data.setMemHook(self.mem_hook)

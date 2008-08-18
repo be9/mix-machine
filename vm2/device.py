@@ -89,9 +89,9 @@ class Device:
 
 class FileDevice(Device):
   """Device that can read(write) from(to) files"""
-  def __init__(self, mode, block_size, busy_time, file_object):
+  def __init__(self, mode, block_size, lock_time, file_object):
     assert( ('r' in mode) ^ ('w' in mode) )
-    Device.__init__(self, mode, block_size, busy_time)
+    Device.__init__(self, mode, block_size, lock_time)
     self.file_object = file_object
 
   def read(self, limits):

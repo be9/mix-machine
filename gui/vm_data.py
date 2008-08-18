@@ -45,3 +45,6 @@ class VMData:
 
   def setLockHook(self, hook):
     self.vm.set_lock_hook(hook)
+
+  def addDevice(self, number, device):
+    self.vm.set_device(number, device)
