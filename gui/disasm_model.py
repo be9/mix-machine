@@ -130,6 +130,6 @@ class DisassemblerModel(QAbstractTableModel):
       self.lineChanged(item)
     elif item in ("rw", "w"): # lock hook
       for addr in old.symmetric_difference(new):
-        self.lineChanged(adr)
+        self.lineChanged(addr)
     # else any cpu hook but cur_addr
 
