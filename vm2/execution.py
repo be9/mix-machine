@@ -13,6 +13,8 @@ def execute(vmachine):
     raise MemReadLockedError( (vmachine.cur_addr, vmachine.cur_addr) )
 
   proc_name = Disasm.disasm(vmachine.get_cur_word())[0]
+  if proc_name == "in":
+    proc_name = "in_" # it's done, because can't define function with name "in"
 
   if proc_name is not None:
     vmachine.jump_to = None
@@ -27,4 +29,4 @@ def execute(vmachine):
 
     return vmachine["cycles"] - before_cycles
   else:
-    raise UnknownInstructionError(tuple(word))
+    raise UnknownInstructionError(tuple(vmachine.get_cur_word()))
