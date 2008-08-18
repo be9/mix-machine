@@ -24,17 +24,17 @@ def word2toolTip(word, content_type = BASIC):
   # integer - without "+"
   # text without sign at all
   integer = word2str(word, INT, content_type).lstrip("+")
-  text = word2str(word, STR, content_type).lstrip("+-")
+  text = word2str(word, STR, content_type)
   if text.find('?') != -1:
     return  'integer: %s' % integer
   else:
     return  'integer: %s; text: "%s"' % (integer, text)
 
 def word2str(word, type = WORD, content_type = BASIC):
-  if content_type != REGJ:
-    line = "+" if word[0] == 1 else "-"
+  if content_type == REGJ or type == STR:
+    line = "" # rJ hasn't sign, text hasn't sign
   else:
-    line = "" # rJ hasn't sign
+    line = "+" if word[0] == 1 else "-"
   if type == WORD:
     for byte in xrange(1 if content_type == BASIC else 4, 6):
       line += " %02i" % word[byte]
@@ -54,7 +54,7 @@ def str2word(line, type, content_type, allow_mesgBox = False):
   word = Word()
   if len(line) == 0:
     return word
-  if line[0] in "+-":
+  if line[0] in "+-" and type != STR: # text - always is positive :)
     word[0] = 1 if line[0] == '+' else -1
     line = line[1:]
   else:
@@ -109,12 +109,12 @@ class WordEdit(QDialog, Ui_Dialog):
       ( # BASIC
         QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,4}$"),
         QRegExp("^[+-]?[0-9]+$"),
-        QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,5}$") # ? - for invalid chars
+        QRegExp("^[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,5}$") # ? - for invalid chars
       ),
       ( # INDEX
         QRegExp("^([+-] )?[0-6]?[0-9]( [0-6]?[0-9]){0,1}$"),
         QRegExp("^[+-]?[0-9]+$"),
-        QRegExp("^[+-]?[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,2}$") # ? - for invalid chars
+        QRegExp("^[ A-Za-z0-9~[#.,()+-*/=$<>@;:'?]{0,2}$") # ? - for invalid chars
       ),
       ( # REGJ
         QRegExp("^[0-6]?[0-9]( [0-6]?[0-9]){0,1}$"),
@@ -127,12 +127,12 @@ class WordEdit(QDialog, Ui_Dialog):
       (
         "+ xx xx xx xx xx",
         "+dddddddddd",
-        "+ccccc"
+        "ccccc"
       ),
       (
         "+ xx xx",
         "+dddd",
-        "+cc"
+        "cc"
       ),
       (
         "xx xx",
