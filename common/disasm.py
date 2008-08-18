@@ -54,8 +54,12 @@ class Disasm:
       return self.returnNop(label, separator)
 
     # -------------ADDR_PART-------------
-    # try to find addr in literals
-    addr_str = self.literals.get(instr_addr, (None, None))[0]
+    # maybe addr_str is "*"
+    addr_str = "*" if addr == instr_addr else None
+
+    if addr_str is None:
+      # try to find addr in literals
+      addr_str = self.literals.get(instr_addr, (None, None))[0]
 
     if addr_str is None:
       # try to find addr in simple labels
@@ -63,14 +67,12 @@ class Disasm:
 
     if addr_str is None:
       # try to find addr in local labels
-      if addr != instr_addr: # local labels can't point to self line
-
-        addr_str = self.locals.get(instr_addr)
-        if addr_str is not None:
-          addr_str = addr_str[0]+("F" if addr < instr_addr else "B")
-          if symtable.find_local_by_address(addr_str, addr) != instr_addr:
-            # set addr_str to None if this local label can't be here
-            addr_str = None
+      addr_str = self.locals.get(instr_addr)
+      if addr_str is not None:
+        addr_str = addr_str[0]+("F" if addr < instr_addr else "B")
+        if symtable.find_local_by_address(addr_str, addr) != instr_addr:
+          # set addr_str to None if this local label can't be here
+          addr_str = None
 
     if addr_str is None:
       # addr_str = str(int(word[0:2])) - this variant doesn't show "-0"
@@ -90,7 +92,10 @@ class Disasm:
         else:
           f_str = "(%i:%i)" % (f/8, f%8)
       else:
-        f_str = "("+str(f)+")" if f != 0 else ""
+        if f in self.labels:
+          f_str = "("+self.labels[f]+")"
+        else:
+          f_str = "("+str(f)+")" if f != 0 else ""
     else:
       f_str = "" # don't show f_part for instructions with fixed field
 
