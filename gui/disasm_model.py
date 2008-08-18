@@ -5,10 +5,10 @@ from word_edit import word2toolTip
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
-from disasm import disasm2str
+from disasm import Disasm
 
 class DisassemblerModel(QAbstractTableModel):
-  def __init__(self, vm_data = None, parent = None):
+  def __init__(self, vm_data = None, asm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
     if vm_data is not None:
       self.words = vm_data.vm
@@ -17,6 +17,11 @@ class DisassemblerModel(QAbstractTableModel):
       self.is_readable = vm_data.is_readable
       self.is_locked = lambda x: not (vm_data.is_readable(x) and vm_data.is_writeable(x))
       self.ca = vm_data.ca()
+
+      self.symtable = asm_data.symtable
+      self.end_addr = asm_data.end_address
+
+      self.disasm = Disasm()
       self.inited = True
     else:
       self.inited = False
@@ -79,11 +84,7 @@ class DisassemblerModel(QAbstractTableModel):
 
       else:
         if self.is_readable(i):
-          line = disasm2str(self.words[i], "\t")
-          if line is not None:
-            return QVariant(line)
-          else:
-            return QVariant("\tcan't dissamble")
+          return QVariant(self.disasm.disasm2str(self.words[i], i, self.symtable, self.end_addr, "\t"))
         else:
           return QVariant(self.tr("LOCKED"))
 

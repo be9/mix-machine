@@ -5,14 +5,14 @@ import exec_all
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
-from disasm import disasm
+from disasm import Disasm
 
 def execute(vmachine):
   # some common stuff
   if not vmachine.is_readable(vmachine.cur_addr):
     raise MemReadLockedError( (vmachine.cur_addr, vmachine.cur_addr) )
 
-  proc_name = disasm(vmachine.get_cur_word())[0]
+  proc_name = Disasm.disasm(vmachine.get_cur_word())[0]
 
   if proc_name is not None:
     vmachine.jump_to = None

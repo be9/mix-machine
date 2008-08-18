@@ -12,10 +12,12 @@ ASM_SYNTAX_ERRORS =     1
 ASM_ASSEMBLER_ERRORS =  2
 
 class AsmData:
-  def __init__(self, mem_list, start_addr, listing):
+  def __init__(self, mem_list, start_addr, listing, symtable, end_address):
     self.mem_list = mem_list
     self.start_addr = start_addr
     self.listing = listing
+    self.symtable = symtable
+    self.end_address = end_address
 
 def asm(text):
   src_lines = text.splitlines()
@@ -36,4 +38,4 @@ def asm(text):
 
   listing = Listing(src_lines, lines, memory_list, asm.symtable.literals, asm.end_address)
 
-  return (ASM_NO_ERRORS, AsmData(memory_list, start_address, listing))
+  return (ASM_NO_ERRORS, AsmData(memory_list, start_address, listing, asm.symtable, asm.end_address))

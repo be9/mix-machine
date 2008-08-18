@@ -1,43 +1,87 @@
-def disasm(word):
-  """Returns (instruction_name, address, index, field)"""
-  c = word[5]
-  f = word[4]
-  instruction_name = codes.get(c, codes.get((c,f), None))
-  return (instruction_name, int(word[0:2]), word[3], word[4])
+class Disasm:
+  @staticmethod
+  def disasm(word):
+    """Returns (instruction_name, address, index, field)"""
+    c = word[5]
+    f = word[4]
+    instruction_name = codes.get(c, codes.get((c,f), None))
+    return (instruction_name, int(word[0:2]), word[3], word[4])
 
-def disasm2str(word, separator):
-  instr, _, ind, f = disasm(word)
+  @staticmethod
+  def returnCon(label, word, separator):
+    # word_str = str(int(word[0:5])) - this variant doesn't show "-0"
+    word_str = ("-" if word[0] == -1 else "") + str(int(  word[1:5]  ))
+    return "".join(( label, separator, "CON", separator, word_str ))
 
-  if instr is None:
-    return None
+  @staticmethod
+  def returnNop(label, separator):
+      return "".join(( label, separator, "NOP" ))
 
-  is_field_fixed = codes.get((word[5], f)) is not None
+  def disasm2str(self, word, addr, symtable, end_addr, separator):
+    instr, instr_addr, ind, f = self.disasm(word)
 
-  # addr_str = str(int(word[0:2])) - this variant doesn't show "-0"
-  addr_str = ("-" if word[0] == -1 else "") + str(abs(int(  word[1:2]  )))
+    # -------------CREATE_LABELS_TABLE-------------
+    # if it doesn't exists yet
+    if self.__dict__.get("labels") is None:
+      # create dict, where k=address, v=label
+      self.labels = {}
+      for (label,addr) in symtable.labels.items():
+        self.labels[addr] = label
+      i = 0
+      self.literals = {}
+      for word_sign in symtable.literals:
+        self.literals[end_addr+i] = ("LITCON%04i" % i, word_sign[0]*word_sign[1])
 
-  ind_str = ","+str(ind) if ind != 0 else ""
+    # -------------LABEL_FIND-------------
+    label = self.literals.get(addr)
+    if label is not None:
+      # we try to diassemble literal
+      return self.returnCon(label[0], word, separator)
 
-  if not is_field_fixed:
-    if instr in instructions_with_field_spec:
-      if instr == "stj" and f == 2: # 2 = (0:2)
-        f_str = "" # don't show f_part for STJ, because it's default
-      elif f == 5: # 5 = (0:5) - default for all but STJ
-        f_str = "" # don't show f_part (it's default for this instruction)
+    label = self.labels.get(addr, "")
+
+    # -------------TWO_CASES-------------
+    if instr is None:
+      return self.returnCon(label[0], word, separator)
+    if int(word) == 0:
+      return self.returnNop(label, separator)
+
+    # -------------ADDR_PART-------------
+    # try to find addr in literals
+    addr_str = self.literals.get(instr_addr, (None, None))[0]
+    if addr_str is None:
+      # try to find addr in simple labels
+      addr_str = self.labels.get(instr_addr)
+    if addr_str is None:
+      # addr_str = str(int(word[0:2])) - this variant doesn't show "-0"
+      addr_str = ("-" if word[0] == -1 else "") + str(int(  word[1:2]  ))
+
+    # -------------IND_PART-------------
+    ind_str = ","+str(ind) if ind != 0 else ""
+
+    # -------------F_PART-------------
+    is_field_fixed = codes.get((word[5], f)) is not None
+    if not is_field_fixed:
+      if instr in instructions_with_field_spec:
+        if instr == "stj" and f == 2: # 2 = (0:2)
+          f_str = "" # don't show f_part for STJ, because it's default
+        elif f == 5: # 5 = (0:5) - default for all but STJ
+          f_str = "" # don't show f_part (it's default for this instruction)
+        else:
+          f_str = "(%i:%i)" % (f/8, f%8)
       else:
-        f_str = "(%i:%i)" % (f/8, f%8)
-
+        f_str = "("+str(f)+")" if f != 0 else ""
     else:
-      f_str = "("+str(f)+")" if f != 0 else ""
-  else:
-    f_str = "" # don't show f_part for instructions with fixed field
+      f_str = "" # don't show f_part for instructions with fixed field
 
-  return "".join((separator,
-                  instr.upper(),
-                  separator,
-                  addr_str,
-                  ind_str,
-                  f_str))
+    # -------------RESULT-------------
+    return "".join((label,
+                    separator,
+                    instr.upper(),
+                    separator,
+                    addr_str,
+                    ind_str,
+                    f_str))
 
 
 instructions_with_field_spec = ( # such as (3:4)
