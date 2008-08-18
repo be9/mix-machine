@@ -13,7 +13,7 @@ from main_ui import Ui_MainWindow
 
 from dock_mem import MemoryDockWidget
 from dock_cpu import CPUDockWidget
-from devices import DevDockWidget, QTextEditDevice
+from devices import DevDockWidget, QTextEditInputDevice, QTextEditOutputDevice
 
 from asm_data import *
 from vm_data import VMData
@@ -82,6 +82,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.resetSizes()
 
     self.slot_cur_tab_changed(0)
+
+    self.output_device = QTextEditOutputDevice(
+        mode = "w", block_size = 24 * 5, lock_time = 24*2, text_edit = self.dev_dock.text_printer
+    )
+    self.input_device = QTextEditInputDevice(
+        mode = "r", block_size = 14 * 5, lock_time = 14*2, text_edit = self.dev_dock.text_terminal
+    )
 
   def slot_cur_tab_changed(self, index):
     visible = index != 0 # hide dock widgets at source editing tab
@@ -275,9 +282,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.vm_data = VMData(self.asm_data) # vm, listing
 
       # add printer
-      self.vm_data.addDevice(18, QTextEditDevice(
-        mode = "w", block_size = 24 * 5, lock_time = 24*2, text_edit = self.dev_dock.text_printer
-      ))
+      self.output_device.reset()
+      self.vm_data.addDevice(18, self.output_device)
+      # add input terminal
+      self.input_device.reset()
+      self.vm_data.addDevice(19, self.input_device)
 
       self.vm_data.setCPUHook(self.cpu_hook)
       self.vm_data.setMemHook(self.mem_hook)
