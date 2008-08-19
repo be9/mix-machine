@@ -23,12 +23,14 @@ class MixWordWidget(QLineEdit):
   def setWord(self, word = None):
     self.word = Word(word)
 
+    type = WORD
     if self.type == INDEX:
       self.word[1:3] = 0
     elif self.type == REGJ:
       self.word[0:3] = 0
+      type = INT
 
-    self.setText(     word2str(self.word, WORD, self.type)  )
+    self.setText(     word2str(self.word, type, self.type)  )
     self.setToolTip(  word2toolTip(self.word, self.type)    )
 
   def mouseDoubleClickEvent(self, event): # overload doubleclick event

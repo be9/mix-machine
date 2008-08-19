@@ -23,12 +23,17 @@ def word2toolTip(word, content_type = BASIC):
   # toolTip = 'integer: -532; text: "ABCDE"'
   # integer - without "+"
   # text without sign at all
-  integer = word2str(word, INT, content_type).lstrip("+")
-  text = word2str(word, STR, content_type)
-  if text.find('?') != -1:
-    return  'integer: %s' % integer
+  if content_type == REGJ:
+    # for rJ main - is INT type, for toolTip - WORD and STR
+    line = 'word: %s' % word2str(word, WORD, content_type)
   else:
-    return  'integer: %s; text: "%s"' % (integer, text)
+    # for others main - is WORD type, for toolTip - INT and STR
+    line = 'integer: %s' % word2str(word, INT, content_type).lstrip("+")
+  text = word2str(word, STR, content_type)
+  if text.find('?') == -1:
+    line += '; text: "%s"' % text
+  return line
+
 
 def word2str(word, type = WORD, content_type = BASIC):
   if content_type == REGJ or type == STR:
