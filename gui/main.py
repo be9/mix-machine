@@ -57,6 +57,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
     self.connect(self.action_Step, SIGNAL("triggered()"), self.slot_Step)
     self.connect(self.action_Run, SIGNAL("triggered()"), self.slot_Run)
+    self.connect(self.action_Break, SIGNAL("triggered()"), self.slot_Break)
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
 
@@ -127,6 +128,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.action_Step.setEnabled(enable)
     self.action_Run.setEnabled(enable)
 
+  def setBreakEnabledOnly(self, enable):
+    self.menu_File.setEnabled(not enable)
+    self.menu_Options.setEnabled(not enable)
+    self.action_Step.setEnabled(not enable)
+    self.action_Run.setEnabled(not enable)
+    self.action_Assemble.setEnabled(not enable)
+    self.action_Break.setEnabled(enable)
+
   def setNewSource(self):
     self.setRunWidgetsEnabled(False)
     self.tabWidget.setCurrentIndex(0)
@@ -193,6 +202,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setCurrentFile(fn)
 
   def closeEvent(self, ce):
+    self.slot_Break()
     if self.checkUnsaved():
       ce.accept()
     else:
@@ -276,6 +286,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunWidgetsEnabled(False)
+    self.setBreakEnabledOnly(False)
     ret_type, content = asm(unicode(self.txt_source.toPlainText()))
     if ret_type == ASM_NO_ERRORS:
       self.asm_data = content # mem, start_addr, listing
@@ -326,9 +337,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def doStepOrRun(self, action):
     self.cpu_dock.resetHighlight()
+    self.breaked = False
     if self.vm_data.halted():
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted."))
       return
+    self.setBreakEnabledOnly(True)
     try:
       action()
     except Exception, err:
@@ -337,12 +350,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.listing_and_disasm_goto_ca()
       if self.vm_data.halted():
         QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine was halted."))
+    self.setBreakEnabledOnly(False)
 
   def slot_Step(self):
     self.doStepOrRun(self.vm_data.step)
 
+  def run_vm(self):
+    while not self.vm_data.halted() and not self.breaked:
+      self.vm_data.step()
+      QCoreApplication.processEvents()
+
   def slot_Run(self):
-    self.doStepOrRun(self.vm_data.run)
+    self.doStepOrRun(self.run_vm)
 
   def listing_and_disasm_goto_ca(self):
     """Selects row near ca"""
@@ -355,8 +374,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     elif self.tabWidget.currentIndex() == 2: # disasm
       self.disasm_view.setCurrentIndex(self.disasm_model.index(self.disasm_model.ca, 0))
 
-app = QApplication(sys.argv)
+  def slot_Break(self):
+    self.breaked = True
 
-mw = MainWindow()
-mw.show()
-sys.exit(app.exec_())
+if __name__ == "__main__":
+  app = QApplication(sys.argv)
+
+  mw = MainWindow()
+  mw.show()
+  sys.exit(app.exec_())

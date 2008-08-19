@@ -27,10 +27,6 @@ class VMData:
   def step(self):
     self.vm.step()
 
-  def run(self):
-    while not self.vm.halted:
-      self.vm.step()
-
   def is_readable(self, addr):
     return self.vm.is_readable(addr)
 

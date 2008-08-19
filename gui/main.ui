@@ -89,7 +89,7 @@
     <addaction name="separator" />
     <addaction name="action_Quit" />
    </widget>
-   <widget class="QMenu" name="menuRun" >
+   <widget class="QMenu" name="menu_Run" >
     <property name="title" >
      <string>&amp;Run</string>
     </property>
@@ -97,16 +97,18 @@
     <addaction name="separator" />
     <addaction name="action_Step" />
     <addaction name="action_Run" />
+    <addaction name="separator" />
+    <addaction name="action_Break" />
    </widget>
-   <widget class="QMenu" name="menuOptions" >
+   <widget class="QMenu" name="menu_Options" >
     <property name="title" >
      <string>&amp;Options</string>
     </property>
     <addaction name="action_Change_font" />
    </widget>
    <addaction name="menu_File" />
-   <addaction name="menuRun" />
-   <addaction name="menuOptions" />
+   <addaction name="menu_Run" />
+   <addaction name="menu_Options" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="action_New" >
@@ -197,6 +199,14 @@
    </property>
    <property name="shortcut" >
     <string>F9</string>
+   </property>
+  </action>
+  <action name="action_Break" >
+   <property name="text" >
+    <string>&amp;Break</string>
+   </property>
+   <property name="shortcut" >
+    <string>Shift+F5, Ctrl+S</string>
    </property>
   </action>
  </widget>
