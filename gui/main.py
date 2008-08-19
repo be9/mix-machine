@@ -56,7 +56,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
     self.connect(self.action_Step, SIGNAL("triggered()"), self.slot_Step)
-    self.connect(self.action_Run, SIGNAL("triggered()"), self.slot_Run)
+    self.connect(self.action_Trace, SIGNAL("triggered()"), self.slot_Trace)
     self.connect(self.action_Break, SIGNAL("triggered()"), self.slot_Break)
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
@@ -126,13 +126,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.tabWidget.setTabEnabled(1, enable)
     self.tabWidget.setTabEnabled(2, enable)
     self.action_Step.setEnabled(enable)
-    self.action_Run.setEnabled(enable)
+    self.action_Trace.setEnabled(enable)
 
   def setBreakEnabledOnly(self, enable):
     self.menu_File.setEnabled(not enable)
     self.menu_Options.setEnabled(not enable)
     self.action_Step.setEnabled(not enable)
-    self.action_Run.setEnabled(not enable)
+    self.action_Trace.setEnabled(not enable)
     self.action_Assemble.setEnabled(not enable)
     self.action_Break.setEnabled(enable)
 
@@ -335,7 +335,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.statusBar().showMessage(err_mesg, 2000)
 
-  def doStepOrRun(self, action):
+  def doStepOrTrace(self, action):
     self.cpu_dock.resetHighlight()
     self.breaked = False
     if self.vm_data.halted():
@@ -353,15 +353,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setBreakEnabledOnly(False)
 
   def slot_Step(self):
-    self.doStepOrRun(self.vm_data.step)
+    self.doStepOrTrace(self.vm_data.step)
 
   def run_vm(self):
     while not self.vm_data.halted() and not self.breaked:
       self.vm_data.step()
       QCoreApplication.processEvents()
 
-  def slot_Run(self):
-    self.doStepOrRun(self.run_vm)
+  def slot_Trace(self):
+    self.doStepOrTrace(self.run_vm)
 
   def listing_and_disasm_goto_ca(self):
     """Selects row near ca"""
