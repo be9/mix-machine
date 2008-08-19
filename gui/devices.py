@@ -79,6 +79,7 @@ class QTextEditInputDevice(Device):
   def reset(self):
     # add all read lines to front of TextEdit
     text = "\n".join(self.read_lines)
+    self.read_lines = []
     if len(self.edit.toPlainText()) != 0:
       text += "\n" + self.edit.toPlainText()
     self.edit.setPlainText(text)
