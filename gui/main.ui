@@ -99,6 +99,8 @@
     <addaction name="action_Trace" />
     <addaction name="separator" />
     <addaction name="action_Break" />
+    <addaction name="separator" />
+    <addaction name="action_Run" />
    </widget>
    <widget class="QMenu" name="menu_Options" >
     <property name="title" >
@@ -206,7 +208,15 @@
     <string>&amp;Break</string>
    </property>
    <property name="shortcut" >
-    <string>Shift+F5, Ctrl+S</string>
+    <string>Shift+F5</string>
+   </property>
+  </action>
+  <action name="action_Run" >
+   <property name="text" >
+    <string>&amp;Run</string>
+   </property>
+   <property name="shortcut" >
+    <string>F9</string>
    </property>
   </action>
  </widget>

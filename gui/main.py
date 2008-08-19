@@ -57,6 +57,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.action_Assemble, SIGNAL("triggered()"), self.slot_Assemble)
     self.connect(self.action_Step, SIGNAL("triggered()"), self.slot_Step)
     self.connect(self.action_Trace, SIGNAL("triggered()"), self.slot_Trace)
+    self.connect(self.action_Run, SIGNAL("triggered()"), self.slot_Run)
     self.connect(self.action_Break, SIGNAL("triggered()"), self.slot_Break)
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
@@ -127,13 +128,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.tabWidget.setTabEnabled(2, enable)
     self.action_Step.setEnabled(enable)
     self.action_Trace.setEnabled(enable)
+    self.action_Run.setEnabled(enable)
+    self.action_Break.setEnabled(enable)
 
   def setBreakEnabledOnly(self, enable):
     self.menu_File.setEnabled(not enable)
     self.menu_Options.setEnabled(not enable)
+    self.action_Assemble.setEnabled(not enable)
     self.action_Step.setEnabled(not enable)
     self.action_Trace.setEnabled(not enable)
-    self.action_Assemble.setEnabled(not enable)
+    self.action_Run.setEnabled(not enable)
     self.action_Break.setEnabled(enable)
 
   def setNewSource(self):
@@ -283,10 +287,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.listing_model.hook(mode, old, new)
     self.disasm_model.hook(mode, old, new)
 
+  def resetListingAndDisasm(self):
+    self.listing_model = ListingModel(vm_data = self.vm_data, parent = self)
+    self.listing_view.setModel(self.listing_model)
+
+    self.disasm_model = DisassemblerModel(vm_data = self.vm_data, asm_data = self.asm_data, parent = self)
+    self.disasm_view.setModel(self.disasm_model)
+
+    self.listing_and_disasm_goto_ca()
+
   def slot_Assemble(self):
     self.errors_list.setVisible(False)
     self.setRunWidgetsEnabled(False)
-    self.setBreakEnabledOnly(False)
     ret_type, content = asm(unicode(self.txt_source.toPlainText()))
     if ret_type == ASM_NO_ERRORS:
       self.asm_data = content # mem, start_addr, listing
@@ -299,25 +311,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.input_device.reset()
       self.vm_data.addDevice(19, self.input_device)
 
-      self.vm_data.setCPUHook(self.cpu_hook)
-      self.vm_data.setMemHook(self.mem_hook)
-      self.vm_data.setLockHook(self.lock_hook)
-
       self.mem_dock.initModel(self.vm_data)
 
       self.cpu_dock.setVMData(self.vm_data)
       self.cpu_dock.loadFromVM()
       self.cpu_dock.resetHighlight()
 
-      self.listing_model = ListingModel(vm_data = self.vm_data, parent = self)
-      self.listing_view.setModel(self.listing_model)
-
-      self.disasm_model = DisassemblerModel(vm_data = self.vm_data, asm_data = self.asm_data, parent = self)
-      self.disasm_view.setModel(self.disasm_model)
-
-      self.listing_and_disasm_goto_ca()
+      self.resetListingAndDisasm()
 
       self.setRunWidgetsEnabled(True)
+      self.setBreakEnabledOnly(False)
       self.tabWidget.setCurrentIndex(1)
       self.statusBar().showMessage(self.tr("Source assembled and virtual machine initialized"), 2000)
       return
@@ -335,12 +338,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.statusBar().showMessage(err_mesg, 2000)
 
-  def doStepOrTrace(self, action):
-    self.cpu_dock.resetHighlight()
+  def enableHooks(self, enable = True):
+    if enable:
+      self.vm_data.setCPUHook(self.cpu_hook)
+      self.vm_data.setMemHook(self.mem_hook)
+      self.vm_data.setLockHook(self.lock_hook)
+    else:
+      self.vm_data.setCPUHook(None)
+      self.vm_data.setMemHook(None)
+      self.vm_data.setLockHook(None)
+
+  def doVMAction(self, action):
     self.breaked = False
     if self.vm_data.halted():
       QMessageBox.information(self, self.tr("Mix machine"), self.tr("Mix machine is halted."))
       return
+
+    self.cpu_dock.resetHighlight()
     self.setBreakEnabledOnly(True)
     try:
       action()
@@ -353,7 +367,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setBreakEnabledOnly(False)
 
   def slot_Step(self):
-    self.doStepOrTrace(self.vm_data.step)
+    self.enableHooks()
+    self.doVMAction(self.vm_data.step)
 
   def run_vm(self):
     while not self.vm_data.halted() and not self.breaked:
@@ -361,7 +376,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       QCoreApplication.processEvents()
 
   def slot_Trace(self):
-    self.doStepOrTrace(self.run_vm)
+    self.enableHooks()
+    self.doVMAction(self.run_vm)
+
+  def enableAllWidgetsButDev(self, enable):
+    self.tabWidget.setEnabled(enable)
+    self.cpu_dock.setEnabled(enable)
+    self.mem_dock.setEnabled(enable)
+
+  def slot_Run(self):
+    self.enableHooks(False)
+    self.enableAllWidgetsButDev(False)
+
+    self.doVMAction(self.run_vm)
+
+    self.enableAllWidgetsButDev(True)
+    self.cpu_dock.loadFromVM()
+    self.resetListingAndDisasm()
+
 
   def listing_and_disasm_goto_ca(self):
     """Selects row near ca"""
