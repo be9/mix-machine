@@ -108,9 +108,19 @@
     </property>
     <addaction name="action_Change_font" />
    </widget>
+   <widget class="QMenu" name="menu_Help" >
+    <property name="title" >
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_Mix_machine_documentation" />
+    <addaction name="separator" />
+    <addaction name="action_About_Mix_Machine" />
+    <addaction name="action_About_Qt" />
+   </widget>
    <addaction name="menu_File" />
    <addaction name="menu_Run" />
    <addaction name="menu_Options" />
+   <addaction name="menu_Help" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="action_New" >
@@ -217,6 +227,24 @@
    </property>
    <property name="shortcut" >
     <string>F9</string>
+   </property>
+  </action>
+  <action name="action_Mix_machine_documentation" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Mix Machine &amp;Help</string>
+   </property>
+  </action>
+  <action name="action_About_Mix_Machine" >
+   <property name="text" >
+    <string>About Mix Machine</string>
+   </property>
+  </action>
+  <action name="action_About_Qt" >
+   <property name="text" >
+    <string>About Qt</string>
    </property>
   </action>
  </widget>

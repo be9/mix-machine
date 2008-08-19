@@ -62,6 +62,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
 
+
+    about_text = self.tr("""
+    <h2>Mix Machine</h2><br><br>
+    An implementation of Don Knuth's MIX machine in Python with GUI<br>
+    Project's homepage - <a href="http://github.com/be9/mix-machine">http://github.com/be9/mix-machine</a>
+    """)
+    self.connect(self.action_About_Mix_Machine, SIGNAL("triggered()"), lambda: QMessageBox.about(self, self.tr("About Mix Machine"), about_text))
+    self.connect(self.action_About_Qt, SIGNAL("triggered()"), qApp, SLOT("aboutQt()"))
+
     self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
         self.slot_clickOnError)
 
