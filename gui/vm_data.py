@@ -21,6 +21,9 @@ class VMData:
   def ca(self):
     return self.vm.cur_addr
 
+  def cycles(self):
+    return self.vm.cycles
+
   def halted(self):
     return self.vm.halted
 

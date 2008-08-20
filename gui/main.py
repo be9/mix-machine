@@ -152,6 +152,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def setNewSource(self):
     self.setRunWidgetsEnabled(False)
     self.tabWidget.setCurrentIndex(0)
+    self.errors_list.setVisible(False)
 
   def slot_File_New(self):
     if not self.checkUnsaved(): 
@@ -397,12 +398,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.enableHooks(False)
     self.enableAllWidgetsButDev(False)
 
+    self.progress = QProgressDialog(self.tr("Running (%1 cycles passed)").arg(0), self.tr("Break run"), 0, 10, self)
+    self.progress.setMinimumDuration(1000)
+    self.progress.setAutoClose(False)
+    self.progress.setAutoReset(False)
+    self.connect(self.progress, SIGNAL("canceled()"), self.slot_Break)
+
+    self.progress_timer = QTimer(self)
+    self.connect(self.progress_timer, SIGNAL("timeout()"), self.progressTick)
+    self.progress_timer.start(1000)
+
+    self.progress.setValue(0)
     self.doVMAction(self.run_vm)
+
+    self.progress_timer.stop()
+    self.progress.cancel()
+    del self.progress, self.progress_timer
 
     self.enableAllWidgetsButDev(True)
     self.cpu_dock.loadFromVM()
     self.resetListingAndDisasm()
 
+  def progressTick(self):
+    self.progress.setLabelText(self.tr("Running (%1 cycles passed)").arg(self.vm_data.cycles()))
+    if self.progress.value() == self.progress.maximum():
+      self.progress.setValue(0)
+    else:
+      self.progress.setValue(self.progress.value() + 1)
 
   def listing_and_disasm_goto_ca(self):
     """Selects row near ca"""
