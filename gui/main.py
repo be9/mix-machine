@@ -399,14 +399,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.enableAllWidgetsButDev(False)
 
     self.progress = QProgressDialog(self.tr("Running (%1 cycles passed)").arg(0), self.tr("Break run"), 0, 10, self)
-    self.progress.setMinimumDuration(1000)
+    self.progress.setMinimumDuration(0)
     self.progress.setAutoClose(False)
     self.progress.setAutoReset(False)
     self.connect(self.progress, SIGNAL("canceled()"), self.slot_Break)
 
     self.progress_timer = QTimer(self)
     self.connect(self.progress_timer, SIGNAL("timeout()"), self.progressTick)
-    self.progress_timer.start(1000)
+    self.progress_timer.start(100)
 
     self.progress.setValue(0)
     self.doVMAction(self.run_vm)
