@@ -1,6 +1,8 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+from math import log10 # needed to calculate number of digits in Cycles counter
+
 from word_edit import WordEdit
 from mix_word_widget import *
 
@@ -49,7 +51,6 @@ class CPUDockWidget(QDockWidget):
     # item - in UPPER
     if item == "cur_addr":
       self.edit_ca.setValue(new)
-      #self.highlight(self.edit_ca, True)
 
     elif item in "AXJ":
       self.__dict__["edit_" + item.lower()].setWord(new)
@@ -73,7 +74,6 @@ class CPUDockWidget(QDockWidget):
 
     elif item == "cycles":
       self.edit_cycles.display(new)
-      #self.boldLabel(self.label_cycles, True)
 
   def setVM(self, what, value = None):
     # what - in lower
@@ -100,6 +100,11 @@ class CPUDockWidget(QDockWidget):
 
     elif what == "hlt":
       self.vm_data.vm["halted"] = bool(value)
+
+  def slot_cycles_overflow(self):
+    # log10(cycles.value()) rounded up - this is number of digits :) (learn math)
+    self.edit_cycles.setNumDigits(int(log10(self.edit_cycles.intValue()))+1)
+    self.edit_cycles.display(self.edit_cycles.intValue())
 
   def initConnections(self):
     # this DOESN'T work!!! (it seems like all changes are made in rJ)
@@ -201,6 +206,7 @@ class CPUDockWidget(QDockWidget):
     self.edit_cycles.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
     self.edit_cycles.setSegmentStyle(QLCDNumber.Flat)
     #self.all_edits.append(self.edit_cycles) # not edited (readonly)
+    self.connect(self.edit_cycles, SIGNAL("overflow()"), self.slot_cycles_overflow)
 
     # add box with registers to main_layout
     self.main_layout = QGridLayout()
