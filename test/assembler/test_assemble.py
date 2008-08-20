@@ -36,7 +36,7 @@ class AssembleTestCase(unittest.TestCase):
       lines = [
         Line(None,          "ENTA", "8F",       1),
         Line(None,          "LDA",  "LABEL",    2),
-        Line(None,          "LDA",  "LABEL%",   3),
+        Line(None,          "LDA",  "(5)LABEL%",3),
         Line(None,          "HLT",  "64",       4),
         Line(None,          "CON",  "LABEL%",   5),
         Line(None,          "ORIG", "0",        6),
@@ -51,7 +51,7 @@ class AssembleTestCase(unittest.TestCase):
       start_address = None,
       errors = [
         (1, InvalidLocalLabelError("8F")),
-        (2, UnexpectedStrInTheEndError("LABEL")),
+        (2, InvalidAddrError("LABEL")),
         (3, UnexpectedStrInTheEndError("LABEL%")),
         (5, ExpectedWExpError("LABEL%")),
         (7, RepeatedCellError("0")),

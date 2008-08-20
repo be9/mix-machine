@@ -83,7 +83,7 @@ class ParseArgumentTestCase(unittest.TestCase):
     self.assertRaises(InvalidFieldSpecError, parse_argument, Line(None, 'LDA', '+*-2,2(-1)'), self.MockSymbolTable(), 0)
     self.assertRaises(InvalidAddrError, parse_argument, Line(None, 'LDA', '5000,2'), self.MockSymbolTable(), 0)
     self.assertRaises(InvalidIndError, parse_argument, Line(None, 'LDA', '2000,-1'), self.MockSymbolTable(), 0)
-    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', 'LABB'), self.MockSymbolTable(), 0)
+    self.assertRaises(InvalidAddrError, parse_argument, Line(None, 'LDA', 'LABB'), self.MockSymbolTable(), 0)
     self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', '2+3(9)LABB'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3()'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3,(2)'), self.MockSymbolTable(), 0)

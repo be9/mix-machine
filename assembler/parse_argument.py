@@ -394,6 +394,9 @@ class ArgumentParser:
       f_part = self.try_f_part()
       # done self.next() !!!
       if self.get() is not None:
+        if self.get_all_before_this() == "":
+          # this is invalid address: wrong label or something else
+          raise InvalidAddrError(self.get_all_forward_from_this())
         raise UnexpectedStrInTheEndError(self.get_all_forward_from_this())
 
       if not (abs(addr_part < 4000)):
