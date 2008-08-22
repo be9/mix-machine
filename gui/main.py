@@ -45,6 +45,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setCurrentFile("")
     self.txt_source.setPlainText(u"")
 
+    self.errors_list.setBuddyText(self.txt_source)
+
+    self.connect_all()
+
     self.connect(self.action_Quit, SIGNAL("triggered()"), qApp, SLOT("closeAllWindows()"))
     self.connect(self.txt_source, SIGNAL("textChanged()"), lambda: self.setWindowModified(True))
 
@@ -68,9 +72,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     """)
     self.connect(self.action_About_Mix_Machine, SIGNAL("triggered()"), lambda: QMessageBox.about(self, self.tr("About Mix Machine"), about_text))
     self.connect(self.action_About_Qt, SIGNAL("triggered()"), qApp, SLOT("aboutQt()"))
-
-    self.connect(self.errors_list, SIGNAL("itemDoubleClicked(QListWidgetItem *)"),
-        self.slot_clickOnError)
 
     self.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.slot_cur_tab_changed)
 
@@ -205,21 +206,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
       self.setCurrentFile(filename)
 
-  def slot_clickOnError(self, item):
-    line = unicode(item.text())
-    line_num = int( line[0:line.find(':')] ) # cut all before ':'
-
-    # find absolute position
-    text = unicode(self.txt_source.toPlainText())
-    pos = 0
-    for _ in xrange(line_num - 1):
-      pos = text.find('\n', pos) + 1
-
-    cursor = self.txt_source.textCursor()
-    cursor.setPosition(pos)
-    cursor.select(QTextCursor.LineUnderCursor)
-    self.txt_source.setTextCursor(cursor)
-
   def cpu_hook(self, item, old, new):
     self.cpu_dock.hook(item, old, new)
     self.listing_model.hook(item, old, new)
@@ -343,6 +329,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def slot_Break(self):
     self.emit(SIGNAL("breaked()"))
     self.running = False
+
+  def connect_all(self):
+    # errors_list
+    self.connect(self, SIGNAL("inited()"), self.errors_list.hide)
+    self.connect(self, SIGNAL("setNewSource()"), self.errors_list.hide)
+    self.connect(self, SIGNAL("beforeAssemble()"), self.errors_list.hide)
+    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.errors_list.setErrors)
+
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
