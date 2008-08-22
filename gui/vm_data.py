@@ -6,11 +6,15 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 
 from virt_machine import *
+import vm2_errors
+
+vm_errors = vm2_errors.__dict__.values() # all vm errors
 
 class VMData:
   def __init__(self, asm_data):
     self.vm = VMachine(asm_data.mem_list, asm_data.start_addr)
     self.listing = asm_data.listing
+    self.vm_errors = vm_errors
 
   def mem(self, addr):
     return self.vm[addr]
