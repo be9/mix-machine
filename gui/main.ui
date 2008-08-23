@@ -52,7 +52,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="QTableView" name="listing_view" />
+          <widget class="ListingView" name="listing_view" />
          </widget>
         </item>
        </layout>
@@ -262,6 +262,11 @@
    <extends>QTabWidget</extends>
    <header location="global" >tabs</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ListingView</class>
+   <extends>QTableView</extends>
+   <header location="global" >listing_view</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -7,6 +7,31 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 from word import Word
 
+class ListingView(QTableView):
+  def init(self): # slot, not constructor!!!
+    self.listing_model = ListingModel(parent = self)
+    self.setModel(self.listing_model) # add model to set size of header
+    self.horizontalHeader().setStretchLastSection(True) # for column with source line
+    self.setSelectionMode(QAbstractItemView.NoSelection)
+
+  def changeFont(self, new_font):
+    self.setFont(new_font)
+    font_metrics = QFontMetrics(self.font())
+    addr = font_metrics.width("0000")
+    word = font_metrics.width("+ 0000 00 00 00")
+
+    h_header = self.horizontalHeader()
+    h_header.setStretchLastSection(True) # for column with source line
+    h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
+    h_header.resizeSection(h_header.logicalIndex(1), word + 20)
+
+  def hook(self, item, old, new):
+    self.listing_model.hook(item, old, new)
+    if item == "cur_addr":
+      num = self.listing_model.current_line
+      if num is not None:
+        self.setCurrentIndex(self.listing_model.index(num, 0))
+
 class ListingModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)

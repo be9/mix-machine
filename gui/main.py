@@ -17,8 +17,6 @@ from devices import DevDockWidget, QTextEditInputDevice, QTextEditOutputDevice
 
 from asm_data import *
 from vm_data import VMData
-from listing_model import ListingModel
-from disasm_model import DisassemblerModel
 
 PROGRAM_NAME = "Mix Machine"
 
@@ -208,19 +206,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def cpu_hook(self, item, old, new):
     self.cpu_dock.hook(item, old, new)
-    self.listing_model.hook(item, old, new)
+    self.listing_view.hook(item, old, new)
     self.disasm_model.hook(item, old, new)
-    if item == "cur_addr":
-      self.emit(SIGNAL("caChanged(int)"), new)
 
   def mem_hook(self, addr, old, new):
     self.mem_dock.hook(addr, old, new)
-    self.listing_model.hook(addr, old, new)
+    self.listing_view.hook(addr, old, new)
     self.disasm_model.hook(addr, old, new)
 
   def lock_hook(self, mode, old, new):
     self.mem_dock.hook(mode, old, new)
-    self.listing_model.hook(mode, old, new)
+    self.listing_view.hook(mode, old, new)
     self.disasm_model.hook(mode, old, new)
 
   def slot_Assemble(self):
@@ -383,6 +379,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # enable and disable hooks
     self.connect(self, SIGNAL("beforeTrace()"),               lambda: self.enableHooks(True))
     self.connect(self, SIGNAL("beforeRun()"),                 lambda: self.enableHooks(False))
+
+    # txt_source
+    self.connect(self, SIGNAL("fontChanged(QFont)"),                  self.txt_source.setFont)
+
+    # listing
+    self.connect(self, SIGNAL("inited()"),                            self.listing_view.init)
+    self.connect(self, SIGNAL("fontChanged(QFont)"),                  self.listing_view.changeFont)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
