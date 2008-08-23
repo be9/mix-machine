@@ -238,7 +238,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.input_device.reset()
       self.vm_data.addDevice(19, self.input_device)
 
-      self.emit(SIGNAL("assembleSuccess(VMData)"), self.vm_data)
+      self.emit(SIGNAL("assembleSuccess()"))#, self.vm_data)
       return
 
     # we have errors! (emit type of errors and list of errors)
@@ -336,6 +336,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("setNewSource()"), self.errors_list.hide)
     self.connect(self, SIGNAL("beforeAssemble()"), self.errors_list.hide)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.errors_list.setErrors)
+
+    # tabs
+    self.connect(self, SIGNAL("inited()"), self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("setNewSource()"), self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("assembleSuccess()"), self.tabWidget.showRun)
 
 
 if __name__ == "__main__":

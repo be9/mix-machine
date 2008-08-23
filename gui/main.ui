@@ -15,7 +15,7 @@
   <widget class="QWidget" name="centralwidget" >
    <layout class="QHBoxLayout" >
     <item>
-     <widget class="QTabWidget" name="tabWidget" >
+     <widget class="MixTabs" name="tabWidget" >
       <property name="currentIndex" >
        <number>0</number>
       </property>
@@ -256,6 +256,12 @@
    <class>ErrorsList</class>
    <extends>QListWidget</extends>
    <header location="global" >errors_list</header>
+  </customwidget>
+  <customwidget>
+   <class>MixTabs</class>
+   <extends>QTabWidget</extends>
+   <header location="global" >tabs</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
