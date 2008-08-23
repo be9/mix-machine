@@ -380,6 +380,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.tabWidget.hideRun)
     self.connect(self, SIGNAL("assembleSuccess()"),                   self.tabWidget.showRun)
 
+    # enable and disable hooks
+    self.connect(self, SIGNAL("beforeTrace()"),               lambda: self.enableHooks(True))
+    self.connect(self, SIGNAL("beforeRun()"),                 lambda: self.enableHooks(False))
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
