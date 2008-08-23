@@ -330,18 +330,55 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.emit(SIGNAL("breaked()"))
     self.running = False
 
+
+  # menubar slots
+  def menuBarHideRun(self):
+    self.menu_File.setEnabled(        True)
+    self.menu_Options.setEnabled(     True)
+    self.action_Assemble.setEnabled(  True)
+    self.action_Step.setEnabled(      False)
+    self.action_Trace.setEnabled(     False)
+    self.action_Run.setEnabled(       False)
+    self.action_Break.setEnabled(     False)
+  def menuBarShowRun(self):
+    self.menu_File.setEnabled(        True)
+    self.menu_Options.setEnabled(     True)
+    self.action_Assemble.setEnabled(  True)
+    self.action_Step.setEnabled(      True)
+    self.action_Trace.setEnabled(     True)
+    self.action_Run.setEnabled(       True)
+    self.action_Break.setEnabled(     False)
+  def menuBarShowBreak(self):
+    self.menu_File.setEnabled(        False)
+    self.menu_Options.setEnabled(     False)
+    self.action_Assemble.setEnabled(  False)
+    self.action_Step.setEnabled(      False)
+    self.action_Trace.setEnabled(     False)
+    self.action_Run.setEnabled(       False)
+    self.action_Break.setEnabled(     True)
+
   def connect_all(self):
     # errors_list
-    self.connect(self, SIGNAL("inited()"), self.errors_list.hide)
-    self.connect(self, SIGNAL("setNewSource()"), self.errors_list.hide)
-    self.connect(self, SIGNAL("beforeAssemble()"), self.errors_list.hide)
+    self.connect(self, SIGNAL("inited()"),                            self.errors_list.hide)
+    self.connect(self, SIGNAL("setNewSource()"),                      self.errors_list.hide)
+    self.connect(self, SIGNAL("beforeAssemble()"),                    self.errors_list.hide)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.errors_list.setErrors)
 
+    # menubar
+    self.connect(self, SIGNAL("inited()"),                            self.menuBarHideRun)
+    self.connect(self, SIGNAL("setNewSource()"),                      self.menuBarHideRun)
+    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.menuBarHideRun)
+    self.connect(self, SIGNAL("assembleSuccess()"),                   self.menuBarShowRun)
+    self.connect(self, SIGNAL("afterTrace()"),                        self.menuBarShowRun)
+    self.connect(self, SIGNAL("afterRun()"),                          self.menuBarShowRun)
+    self.connect(self, SIGNAL("beforeTrace()"),                       self.menuBarShowBreak)
+    self.connect(self, SIGNAL("beforeRun()"),                         self.menuBarShowBreak)
+
     # tabs
-    self.connect(self, SIGNAL("inited()"), self.tabWidget.hideRun)
-    self.connect(self, SIGNAL("setNewSource()"), self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("inited()"),                            self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("setNewSource()"),                      self.tabWidget.hideRun)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.tabWidget.hideRun)
-    self.connect(self, SIGNAL("assembleSuccess()"), self.tabWidget.showRun)
+    self.connect(self, SIGNAL("assembleSuccess()"),                   self.tabWidget.showRun)
 
 
 if __name__ == "__main__":
