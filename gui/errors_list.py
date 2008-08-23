@@ -4,7 +4,6 @@ from PyQt4.QtGui import *
 class ErrorsList(QListWidget):
   def __init__(self, parent = None):
     QListWidget.__init__(self, parent)
-    self.connect(self, SIGNAL("itemDoubleClicked(QListWidgetItem *)"), self.clickOnError)
 
   def setBuddyText(self, text_edit):
     self.buddy_text = text_edit
@@ -14,7 +13,8 @@ class ErrorsList(QListWidget):
     self.addItems(errors_str)
     self.show()
 
-  def clickOnError(self, item):
+  def mouseDoubleClickEvent(self, mouse_event):
+    item = self.itemAt(mouse_event.pos())
     line = unicode(item.text())
     line_num = int( line[0:line.find(':')] ) # cut all before ':'
 

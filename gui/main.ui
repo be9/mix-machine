@@ -35,6 +35,9 @@
             <height>100</height>
            </size>
           </property>
+          <property name="alternatingRowColors" >
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
