@@ -25,12 +25,20 @@ class ListingView(QTableView):
     h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
     h_header.resizeSection(h_header.logicalIndex(1), word + 20)
 
+  def resetVM(self, vm_data):
+    self.listing_model = ListingModel(vm_data, self)
+    self.setModel(self.listing_model)
+    self.caChanged()
+
+  def caChanged(self):
+    num = self.listing_model.current_line
+    if num is not None:
+      self.setCurrentIndex(self.listing_model.index(num, 0))
+
   def hook(self, item, old, new):
     self.listing_model.hook(item, old, new)
     if item == "cur_addr":
-      num = self.listing_model.current_line
-      if num is not None:
-        self.setCurrentIndex(self.listing_model.index(num, 0))
+      self.caChanged()
 
 class ListingModel(QAbstractTableModel):
   def __init__(self, vm_data = None, parent = None):

@@ -205,19 +205,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.setCurrentFile(filename)
 
   def cpu_hook(self, item, old, new):
-    self.cpu_dock.hook(item, old, new)
+    #self.cpu_dock.hook(item, old, new)
     self.listing_view.hook(item, old, new)
-    self.disasm_model.hook(item, old, new)
+    #self.disasm_model.hook(item, old, new)
 
   def mem_hook(self, addr, old, new):
-    self.mem_dock.hook(addr, old, new)
+    #self.mem_dock.hook(addr, old, new)
     self.listing_view.hook(addr, old, new)
-    self.disasm_model.hook(addr, old, new)
+    #self.disasm_model.hook(addr, old, new)
 
   def lock_hook(self, mode, old, new):
-    self.mem_dock.hook(mode, old, new)
+    #self.mem_dock.hook(mode, old, new)
     self.listing_view.hook(mode, old, new)
-    self.disasm_model.hook(mode, old, new)
+    #self.disasm_model.hook(mode, old, new)
 
   def slot_Assemble(self):
     self.emit(SIGNAL("beforeAssemble()"))
@@ -234,7 +234,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.input_device.reset()
       self.vm_data.addDevice(19, self.input_device)
 
-      self.emit(SIGNAL("assembleSuccess()"))#, self.vm_data)
+      self.emit(SIGNAL("assembleSuccess(PyQt_PyObject)"), self.vm_data)
       return
 
     # we have errors! (emit type of errors and list of errors)
@@ -313,7 +313,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.progress.cancel()
     del self.progress, self.progress_timer
 
-    self.emit(SIGNAL("afterRun()"))
+    self.emit(SIGNAL("afterRun(PyQt_PyObject)"), self.vm_data)
 
   def progressTick(self):
     self.progress.setLabelText(self.tr("Running (%1 cycles passed)").arg(self.vm_data.cycles()))
@@ -364,9 +364,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("inited()"),                            self.menuBarHideRun)
     self.connect(self, SIGNAL("setNewSource()"),                      self.menuBarHideRun)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.menuBarHideRun)
-    self.connect(self, SIGNAL("assembleSuccess()"),                   self.menuBarShowRun)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.menuBarShowRun)
     self.connect(self, SIGNAL("afterTrace()"),                        self.menuBarShowRun)
-    self.connect(self, SIGNAL("afterRun()"),                          self.menuBarShowRun)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),             self.menuBarShowRun)
     self.connect(self, SIGNAL("beforeTrace()"),                       self.menuBarShowBreak)
     self.connect(self, SIGNAL("beforeRun()"),                         self.menuBarShowBreak)
 
@@ -374,7 +374,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("inited()"),                            self.tabWidget.hideRun)
     self.connect(self, SIGNAL("setNewSource()"),                      self.tabWidget.hideRun)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.tabWidget.hideRun)
-    self.connect(self, SIGNAL("assembleSuccess()"),                   self.tabWidget.showRun)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.tabWidget.showRun)
 
     # enable and disable hooks
     self.connect(self, SIGNAL("beforeTrace()"),               lambda: self.enableHooks(True))
@@ -386,6 +386,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # listing
     self.connect(self, SIGNAL("inited()"),                            self.listing_view.init)
     self.connect(self, SIGNAL("fontChanged(QFont)"),                  self.listing_view.changeFont)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.listing_view.resetVM)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),             self.listing_view.resetVM)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
