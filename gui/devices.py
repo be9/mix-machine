@@ -81,5 +81,7 @@ class QTextEditInputDevice(Device):
     text = "\n".join(self.read_lines)
     self.read_lines = []
     if len(self.edit.toPlainText()) != 0:
-      text += "\n" + self.edit.toPlainText()
+      if len(text) != 0:
+        text += "\n"
+      text += self.edit.toPlainText()
     self.edit.setPlainText(text)
