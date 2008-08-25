@@ -307,7 +307,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.progress_timer.start(100)
 
     self.progress.setValue(0)
-    self.doVMAction(self.run_vm)
+    self.doAction(self.run_vm)
 
     self.progress_timer.stop()
     self.progress.cancel()
@@ -387,7 +387,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("inited()"),                            self.listing_view.init)
     self.connect(self, SIGNAL("fontChanged(QFont)"),                  self.listing_view.changeFont)
     self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.listing_view.resetVM)
-    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),             self.listing_view.resetVM)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),             self.listing_view.updateVM)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)

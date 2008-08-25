@@ -30,6 +30,16 @@ class ListingView(QTableView):
     self.setModel(self.listing_model)
     self.caChanged()
 
+  def updateVM(self, vm_data):
+    for line in self.listing_model.lines:
+      if line.addr != None and not line.modified:
+        # check if this line was modified before update or now
+        line.modified = ( line.word != vm_data.mem(line.addr) )
+      if line.modified:
+        line.word = vm_data.mem(line.addr)
+    self.listing_model.current_line = self.listing_model.addr2num(vm_data.ca())
+    self.caChanged()
+
   def caChanged(self):
     num = self.listing_model.current_line
     if num is not None:
