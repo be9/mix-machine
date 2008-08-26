@@ -8,7 +8,8 @@ class MixTabs(QTabWidget):
   def showRun(self):
     self.setTabEnabled(1, True)
     self.setTabEnabled(2, True)
-    self.setCurrentIndex(1)
+    if self.currentIndex() == 0:
+      self.setCurrentIndex(1)
 
   def hideRun(self):
     self.setTabEnabled(1, False)
