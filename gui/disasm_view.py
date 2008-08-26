@@ -3,15 +3,34 @@ from PyQt4.QtGui import *
 
 from word_edit import word2toolTip
 
+from code_view import AbstractCodeView
+
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 from disasm import Disasm
+
+class DisassemblerView(AbstractCodeView):
+  def __init__(self, parent = None):
+    AbstractCodeView.__init__(self, parent)
+    self.ModelClass = DisassemblerModel
+
+  def updateVM(self, vm_data):
+    for i in xrange(self.code_model.mem_len):
+      if not self.code_model.modified[i] and self.snap_mem[i] != self.code_model.words[i]:
+        self.code_model.modified[i] = True
+        self.code_model.lineChanged(i)
+    del self.snap_mem
+    self.code_model.ca = vm_data.ca()
+    self.caChanged()
+
+  def caChanged(self):
+    self.setCurrentIndex(self.code_model.index(self.code_model.ca, 0))
 
 class DisassemblerModel(QAbstractTableModel):
   def __init__(self, vm_data = None, asm_data = None, parent = None):
     QAbstractTableModel.__init__(self, parent)
     if vm_data is not None:
-      self.words = vm_data.vm
+      self.words = vm_data.vm.memory
       self.mem_len = vm_data.vm.MEMORY_SIZE
       self.modified = [False for _ in xrange(self.mem_len)]
       self.is_readable = vm_data.is_readable

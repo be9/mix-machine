@@ -63,7 +63,7 @@
        </attribute>
        <layout class="QVBoxLayout" >
         <item>
-         <widget class="QTableView" name="disasm_view" />
+         <widget class="DisassemblerView" name="disasm_view" />
         </item>
        </layout>
       </widget>
@@ -267,6 +267,11 @@
    <class>ListingView</class>
    <extends>QTableView</extends>
    <header location="global" >listing_view</header>
+  </customwidget>
+  <customwidget>
+   <class>DisassemblerView</class>
+   <extends>QTableView</extends>
+   <header location="global" >disasm_view</header>
   </customwidget>
  </customwidgets>
  <resources/>

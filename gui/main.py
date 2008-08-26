@@ -207,17 +207,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
   def cpu_hook(self, item, old, new):
     #self.cpu_dock.hook(item, old, new)
     self.listing_view.hook(item, old, new)
-    #self.disasm_model.hook(item, old, new)
+    self.disasm_view.hook(item, old, new)
 
   def mem_hook(self, addr, old, new):
     #self.mem_dock.hook(addr, old, new)
     self.listing_view.hook(addr, old, new)
-    #self.disasm_model.hook(addr, old, new)
+    self.disasm_view.hook(addr, old, new)
 
   def lock_hook(self, mode, old, new):
     #self.mem_dock.hook(mode, old, new)
     self.listing_view.hook(mode, old, new)
-    #self.disasm_model.hook(mode, old, new)
+    self.disasm_view.hook(mode, old, new)
 
   def slot_Assemble(self):
     self.emit(SIGNAL("beforeAssemble()"))
@@ -234,7 +234,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.input_device.reset()
       self.vm_data.addDevice(19, self.input_device)
 
-      self.emit(SIGNAL("assembleSuccess(PyQt_PyObject)"), self.vm_data)
+      self.emit(SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"), self.vm_data, self.asm_data)
       return
 
     # we have errors! (emit type of errors and list of errors)
@@ -355,39 +355,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def connect_all(self):
     # errors_list
-    self.connect(self, SIGNAL("inited()"),                            self.errors_list.hide)
-    self.connect(self, SIGNAL("setNewSource()"),                      self.errors_list.hide)
-    self.connect(self, SIGNAL("beforeAssemble()"),                    self.errors_list.hide)
-    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.errors_list.setErrors)
+    self.connect(self, SIGNAL("inited()"),                                        self.errors_list.hide)
+    self.connect(self, SIGNAL("setNewSource()"),                                  self.errors_list.hide)
+    self.connect(self, SIGNAL("beforeAssemble()"),                                self.errors_list.hide)
+    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"),             self.errors_list.setErrors)
 
     # menubar
-    self.connect(self, SIGNAL("inited()"),                            self.menuBarHideRun)
-    self.connect(self, SIGNAL("setNewSource()"),                      self.menuBarHideRun)
-    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.menuBarHideRun)
-    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.menuBarShowRun)
-    self.connect(self, SIGNAL("afterTrace()"),                        self.menuBarShowRun)
-    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),             self.menuBarShowRun)
-    self.connect(self, SIGNAL("beforeTrace()"),                       self.menuBarShowBreak)
-    self.connect(self, SIGNAL("beforeRun()"),                         self.menuBarShowBreak)
+    self.connect(self, SIGNAL("inited()"),                                        self.menuBarHideRun)
+    self.connect(self, SIGNAL("setNewSource()"),                                  self.menuBarHideRun)
+    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"),             self.menuBarHideRun)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.menuBarShowRun)
+    self.connect(self, SIGNAL("afterTrace()"),                                    self.menuBarShowRun)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.menuBarShowRun)
+    self.connect(self, SIGNAL("beforeTrace()"),                                   self.menuBarShowBreak)
+    self.connect(self, SIGNAL("beforeRun()"),                                     self.menuBarShowBreak)
 
     # tabs
-    self.connect(self, SIGNAL("inited()"),                            self.tabWidget.hideRun)
-    self.connect(self, SIGNAL("setNewSource()"),                      self.tabWidget.hideRun)
-    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"), self.tabWidget.hideRun)
-    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.tabWidget.showRun)
+    self.connect(self, SIGNAL("inited()"),                                        self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("setNewSource()"),                                  self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"),             self.tabWidget.hideRun)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.tabWidget.showRun)
 
     # enable and disable hooks
-    self.connect(self, SIGNAL("beforeTrace()"),               lambda: self.enableHooks(True))
-    self.connect(self, SIGNAL("beforeRun()"),                 lambda: self.enableHooks(False))
+    self.connect(self, SIGNAL("beforeTrace()"),                           lambda: self.enableHooks(True))
+    self.connect(self, SIGNAL("beforeRun()"),                             lambda: self.enableHooks(False))
 
     # txt_source
-    self.connect(self, SIGNAL("fontChanged(QFont)"),                  self.txt_source.setFont)
+    self.connect(self, SIGNAL("fontChanged(QFont)"),                              self.txt_source.setFont)
 
-    # listing
-    self.connect(self, SIGNAL("inited()"),                            self.listing_view.init)
-    self.connect(self, SIGNAL("fontChanged(QFont)"),                  self.listing_view.changeFont)
-    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject)"),      self.listing_view.resetVM)
-    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),             self.listing_view.updateVM)
+    # listing and disassembler
+    self.connect(self, SIGNAL("inited()"),                                        self.listing_view.init)
+    self.connect(self, SIGNAL("inited()"),                                        self.disasm_view.init)
+    self.connect(self, SIGNAL("fontChanged(QFont)"),                              self.listing_view.changeFont)
+    self.connect(self, SIGNAL("fontChanged(QFont)"),                              self.disasm_view.changeFont)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.listing_view.resetVM)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.disasm_view.resetVM)
+    self.connect(self, SIGNAL("beforeRun()"),                                     self.listing_view.snapshotMem)
+    self.connect(self, SIGNAL("beforeRun()"),                                     self.disasm_view.snapshotMem)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.listing_view.updateVM)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.disasm_view.updateVM)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)

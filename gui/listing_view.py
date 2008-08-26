@@ -3,64 +3,43 @@ from PyQt4.QtGui import *
 
 from word_edit import word2toolTip
 
+from code_view import AbstractCodeView
+
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
 from word import Word
 
-class ListingView(QTableView):
-  def init(self): # slot, not constructor!!!
-    self.listing_model = ListingModel(parent = self)
-    self.setModel(self.listing_model) # add model to set size of header
-    self.horizontalHeader().setStretchLastSection(True) # for column with source line
-    self.setSelectionMode(QAbstractItemView.NoSelection)
-
-  def changeFont(self, new_font):
-    self.setFont(new_font)
-    font_metrics = QFontMetrics(self.font())
-    addr = font_metrics.width("0000")
-    word = font_metrics.width("+ 0000 00 00 00")
-
-    h_header = self.horizontalHeader()
-    h_header.setStretchLastSection(True) # for column with source line
-    h_header.resizeSection(h_header.logicalIndex(0), addr + 20)
-    h_header.resizeSection(h_header.logicalIndex(1), word + 20)
-
-  def resetVM(self, vm_data):
-    self.listing_model = ListingModel(vm_data, self)
-    self.setModel(self.listing_model)
-    self.caChanged()
+class ListingView(AbstractCodeView):
+  def __init__(self, parent = None):
+    AbstractCodeView.__init__(self, parent)
+    self.ModelClass = ListingModel
 
   def updateVM(self, vm_data):
-    for line in self.listing_model.lines:
-      if line.addr != None and not line.modified:
+    for i in xrange(len(self.code_model.lines)):
+      line = self.code_model.lines[i]
+      if line.addr != None and not line.modified and self.snap_mem[line.addr] != self.code_model.words[line.addr]:
         # check if this line was modified before update or now
-        line.modified = ( line.word != vm_data.mem(line.addr) )
-      if line.modified:
-        line.word = vm_data.mem(line.addr)
-    self.listing_model.current_line = self.listing_model.addr2num(vm_data.ca())
+        line.modified = True
+        self.code_model.lineChanged(i)
+    del self.snap_mem
+    self.code_model.current_line = self.code_model.addr2num(vm_data.ca())
     self.caChanged()
 
   def caChanged(self):
-    num = self.listing_model.current_line
+    num = self.code_model.current_line
     if num is not None:
-      self.setCurrentIndex(self.listing_model.index(num, 0))
-
-  def hook(self, item, old, new):
-    self.listing_model.hook(item, old, new)
-    if item == "cur_addr":
-      self.caChanged()
+      self.setCurrentIndex(self.code_model.index(num, 0))
 
 class ListingModel(QAbstractTableModel):
-  def __init__(self, vm_data = None, parent = None):
+  def __init__(self, vm_data = None, asm_data = None, parent = None): # asm_data not used
     QAbstractTableModel.__init__(self, parent)
     if vm_data is not None:
       self.lines = vm_data.listing.lines[:]
       # new lines where word is Word (class), not list
       for line in self.lines:
         line.modified = False
-        if line.addr != None:
-          line.word = Word(line.word)
 
+      self.words = vm_data.vm.memory
       self.is_readable = vm_data.is_readable
       self.is_locked = lambda x: not (vm_data.is_readable(x) and vm_data.is_writeable(x))
       self.create_addr2num_data() # creates data for addr2num(...)
@@ -126,7 +105,7 @@ class ListingModel(QAbstractTableModel):
       elif column == 1:
         if listing_line.addr is not None:
           if self.is_readable(listing_line.addr):
-            return QVariant(listing_line.word.addr_str()) # print first two bytes as one address
+            return QVariant(self.words[listing_line.addr].addr_str()) # print first two bytes as one address
           else:
             return QVariant(self.tr("LOCKED"))
         else:
@@ -138,7 +117,7 @@ class ListingModel(QAbstractTableModel):
     elif role == Qt.ToolTipRole:
         if self.lines[index.row()].addr is not None and index.column() == 1:
           if self.is_readable(self.lines[index.row()].addr):
-            return QVariant(word2toolTip( self.lines[index.row()].word ))
+            return QVariant(word2toolTip( self.words[self.lines[index.row()].addr] ))
           else:
             return QVariant(self.tr("This memory cell is locked for reading"))
         else:
