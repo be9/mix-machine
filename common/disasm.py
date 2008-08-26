@@ -25,8 +25,8 @@ class Disasm:
     if self.__dict__.get("labels") is None:
       # create dict, where k=address, v=label
       self.labels = {}
-      for (label,addr) in symtable.labels.items():
-        self.labels[addr] = label
+      for (label,address) in symtable.labels.items():
+        self.labels[address] = label
 
       i = 0
       self.literals = {}
@@ -35,9 +35,9 @@ class Disasm:
         i += 1
 
       self.locals = {}
-      for (label,addrs) in symtable.local_labels.items():
-        for (addr,_) in addrs:
-          self.locals[addr] = label
+      for (label,addresses) in symtable.local_labels.items():
+        for (address,_) in addresses:
+          self.locals[address] = label
 
     # -------------LABEL_FIND-------------
     label = self.literals.get(addr)
