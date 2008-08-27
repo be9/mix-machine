@@ -37,7 +37,7 @@ class MemoryDockWidget(QDockWidget):
 
     self.connect(self.mem_view, SIGNAL("doubleClicked(QModelIndex)"), self.slot_mem_view_edit)
 
-  def initModel(self, vm_data):
+  def init(self, vm_data):
     self.vm_data = vm_data
     self.model = MemoryModel(vm_data = self.vm_data, parent = self)
     self.mem_view.setModel(self.model)
@@ -51,6 +51,9 @@ class MemoryDockWidget(QDockWidget):
     word_edit = WordEdit(self.vm_data.mem(index.row()), parent = self)
     if word_edit.exec_():
       self.vm_data.setMem(index.row(), word_edit.word)
+
+  def reload(self):
+    self.model.allMemChanged()
 
   def hook(self, item, old, new):
     if isinstance(item, int):
@@ -113,6 +116,11 @@ class MemoryModel(QAbstractTableModel):
 
     else:
       return QVariant()
+
+  def allMemChanged(self):
+    indexTop = self.index(0, 0)
+    indexBottom = self.index(self.rowCount(), 0)
+    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), index, index)
 
   def memChanged(self, addr):
     index = self.index(addr, 0)

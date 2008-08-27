@@ -210,12 +210,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.disasm_view.hook(item, old, new)
 
   def mem_hook(self, addr, old, new):
-    #self.mem_dock.hook(addr, old, new)
+    self.mem_dock.hook(addr, old, new)
     self.listing_view.hook(addr, old, new)
     self.disasm_view.hook(addr, old, new)
 
   def lock_hook(self, mode, old, new):
-    #self.mem_dock.hook(mode, old, new)
+    self.mem_dock.hook(mode, old, new)
     self.listing_view.hook(mode, old, new)
     self.disasm_view.hook(mode, old, new)
 
@@ -401,7 +401,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.cpu_dock.reload)
     self.connect(self, SIGNAL("beforeRun()"),                                     self.cpu_dock.resetHighlight)
     self.connect(self, SIGNAL("beforeTrace()"),                                   self.cpu_dock.resetHighlight)
-    
+
+    # mem_dock
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.mem_dock.init)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.mem_dock.reload)
+
 if __name__ == "__main__":
   app = QApplication(sys.argv)
 
