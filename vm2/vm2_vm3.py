@@ -52,7 +52,38 @@ class VM3:
     except VMError, e:
       raise error_dict[type(e)]
 
-  def load(self, mega, devs = {}):
+  def hook(self, item, old, new):
+    if self.hook_out is None:
+      return
+    real_new = new
+    if item in "a x j".split():
+      real_item = item.upper()
+      real_new = new.word_list
+    if item == "of":
+      real_item = item.upper()
+      real_new = int(new)
+    elif item in "1 2 3 4 5 6".split():
+      real_item = "I" + item
+      real_new = new.word_list
+    elif item == "halted":
+      real_item = "HLT"
+      real_new = int(new)
+    elif item == "cur_addr":
+      real_item = "CA"
+    elif item == "cycles":
+      return
+    elif item == "cf":
+      real_item = "CF"
+    elif item == "w":
+      real_item = "W_LOCKED"
+    elif item == "rw":
+      real_item = "RW_LOCKED"
+    else:
+      real_item = item
+      real_new = new.word_list
+    self.hook_out(real_item, None, real_new)
+
+  def load(self, mega, devs = {}, hook = None):
     memory_part = {}
 
     for addr, word in mega.iteritems():
@@ -83,6 +114,11 @@ class VM3:
         self.vm.set_device(num, FileDevice(dev_info[1], dev_info[2], dev_info[3], dev_info[4]))
       #elif dev_info[0] == ANOTHER_DEV:
         #self.vm.set_device(num, AnotherDevice(dev_info[1], dev_info[2], dev_info[3]))
+
+    self.hook_out = hook
+    self.vm.set_cpu_hook(self.hook)
+    self.vm.set_mem_hook(self.hook)
+    self.vm.set_lock_hook(self.hook)
 
     assert(len(self.vm.errors) == 0)
 

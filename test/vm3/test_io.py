@@ -42,6 +42,7 @@ class VM3IOTestCase(VM3BaseTestCase):
         18 : (0, 'w', 24*5, 24*2, out_file)
       },
       diff = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
         'CA' : 2,
         'J'  : [+1, 0, 0, 0, 0, 2],
         'HLT': 1
@@ -72,6 +73,7 @@ class VM3IOTestCase(VM3BaseTestCase):
         18 : (0, 'w', 24*5, 24*2, out_file)
       },
       diff = {
+        'W_LOCKED' : set([2000, 2001, 2002]),
         'CA' : 1,
         'W_LOCKED' : set([2000, 2001, 2002] + range(128, 152))
       },
@@ -245,6 +247,7 @@ class VM3IOTestCase(VM3BaseTestCase):
         19 : (0, 'r', 14*5, 14*2, in_file)
       },
       diff = {
+        'RW_LOCKED' : set([3000, 3001, 3002]),
         'CA' : 2,
         'J'  : [+1, 0, 0, 0, 0, 2],
         'HLT': 1,
@@ -265,7 +268,6 @@ class VM3IOTestCase(VM3BaseTestCase):
       },
       cycles = 39
     )
-
 
     in_file = open("19.dev", "r")
     self.check_hlt(
@@ -289,12 +291,13 @@ class VM3IOTestCase(VM3BaseTestCase):
       devs = {
         19 : (0, 'r', 14*5, 14*2, in_file)
       },
-      diff = {
+      diff = dict({
+        'RW_LOCKED' : set([3000, 3001, 3002]),
         'CA' : 6,
         128 : [+1, 0, 1, 2, 3, 4],
         'J'  : [+1, 0, 0, 0, 0, 6],
         'HLT': 1
-      },
+      }.items() + [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(129, 140)]),
       cycles = 97
     )
 
@@ -428,12 +431,13 @@ class VM3IOTestCase(VM3BaseTestCase):
       devs = {
         19 : (0, 'r', 14*5, 14*2, open("19.dev", "r"))
       },
-      diff = {
+      diff = dict({
+        'RW_LOCKED' : set([]),
         'CA' : 4,
         128 : [+1, 0, 1, 2, 3, 4],
         'J'  : [+1, 0, 0, 0, 0, 4],
         'HLT': 1
-      },
+      }.items() + [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(129, 140)]),
       cycles = 95
     )
 
@@ -459,12 +463,14 @@ class VM3IOTestCase(VM3BaseTestCase):
         18 : (0, 'w', 24*5, 24*2, out_file),
         19 : (0, 'r', 14*5, 14*2, open("19.dev", "r"))
       },
-      diff = {
+      diff = dict({
+        'RW_LOCKED' : set([]),
+        'W_LOCKED' : set([]),
         'J' : [+1, 0, 0, 0, 0, 7],
         'CA' : 7,
         'HLT' : 1,
         168 : [+1, 0, 1, 2, 3, 4]
-      },
+      }.items() + [(x, [+1, 0, 0, 0, 0, 0]) for x in xrange(169, 180)]),
       cycles = 165
     )
     out_file.close()

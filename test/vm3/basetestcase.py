@@ -45,6 +45,9 @@ class VM3BaseTestCase(unittest.TestCase):
   def setUp(self):
     self.vm = VM3BaseTestCase.vm_class()
 
+  def hook(self, item, old, new):
+    self.diff[item] = new
+
   def init_vm(self, regs, memory, devs):
     ctx = copy.copy(_initial_context)
     
@@ -54,33 +57,19 @@ class VM3BaseTestCase(unittest.TestCase):
     # fill regs
     ctx.update(regs)
 
-    self.ctx_before = copy.copy(ctx)
 
-    self.vm.load(ctx, devs)
+    self.vm.load(ctx, devs, self.hook)
 
   def execute(self, regs = {}, memory = {}, devs = {}, startadr = 0, exec_at = True):
     self.init_vm(regs, memory, devs)
 
+    self.diff = {}
     if exec_at:
       self.cycles = self.vm.execute(at=startadr)
     else:
       self.cycles = self.vm.execute(start=startadr)
 
-    self.ctx_after = self.vm.state()
-    self.ctx_diff = self.do_diff()
-
-    return self.ctx_diff
-
-  def do_diff(self):
-    diff = {}
-
-    self.assertEqual(sorted(self.ctx_before.keys()), sorted(self.ctx_after.keys()))
-
-    for k, v in self.ctx_after.iteritems():
-      if v != self.ctx_before[k]:
-        diff[k] = v
-
-    return diff
+    return self.diff
 
 # fill memory
 def _memory_value(adr):
