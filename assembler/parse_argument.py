@@ -376,8 +376,6 @@ class ArgumentParser:
     res = self.try_any(
       (self.try_exp, self.try_future_symbol, self.try_literal)
     )
-    if self.line.argument == "=3=n":
-      print self.get()
     if res is None:
       return 0
     else:
