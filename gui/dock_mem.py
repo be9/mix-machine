@@ -142,8 +142,8 @@ class MemoryModel(QAbstractTableModel):
 
   def allMemChanged(self):
     indexTop = self.index(0, 0)
-    indexBottom = self.index(self.rowCount(), 0)
-    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), index, index)
+    indexBottom = self.index(self.rowCount(self), 0)
+    self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"), indexTop, indexBottom)
 
   def memChanged(self, addr):
     index = self.index(addr, 0)
