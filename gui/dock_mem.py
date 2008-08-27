@@ -3,6 +3,10 @@ from PyQt4.QtCore import *
 
 from word_edit import WordEdit, word2str, word2toolTip
 
+class InvertedSpinBox(QSpinBox):
+  def stepBy(self, steps):
+    self.setValue(self.value() - steps)
+
 class MemoryDockWidget(QDockWidget):
   def __init__(self, parent = None):
     QDockWidget.__init__(self, parent)
@@ -13,7 +17,7 @@ class MemoryDockWidget(QDockWidget):
     self.widget = QWidget(self)
 
     self.goto_label = QLabel(self.tr("Goto:"), self.widget)
-    self.goto_word = QLineEdit(self.widget)
+    self.goto_word = InvertedSpinBox(self.widget)
     self.goto_word.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
     self.goto_layout = QHBoxLayout()
     self.goto_layout.addWidget(self.goto_label)
@@ -31,9 +35,9 @@ class MemoryDockWidget(QDockWidget):
     self.setWidget(self.widget)
     
     self.connect(self.mem_view, SIGNAL("pressed(QModelIndex)"),\
-        lambda index: self.goto_word.setText(str(index.row())))
-    self.connect(self.goto_word, SIGNAL("textChanged(QString)"),\
-        lambda text:  self.mem_view.selectRow(int("0"+text))) # "0"+text - to avoid empty lines
+        lambda index: self.goto_word.setValue(index.row()))
+    self.connect(self.goto_word, SIGNAL("valueChanged(int)"),\
+        lambda i:  self.mem_view.selectRow(i))
 
     self.connect(self.mem_view, SIGNAL("doubleClicked(QModelIndex)"), self.slot_mem_view_edit)
 
@@ -41,9 +45,10 @@ class MemoryDockWidget(QDockWidget):
     self.vm_data = vm_data
     self.model = MemoryModel(vm_data = self.vm_data, parent = self)
     self.mem_view.setModel(self.model)
+    self.mem_view.setSelectionMode(QAbstractItemView.NoSelection)
     assert(vm_data.vm.MEMORY_SIZE == 4000)
-    self.goto_word.setValidator(QRegExpValidator(QRegExp("[0-3]?[0-9]{1,3}"), self)) # 9, 99, 999, 3999
-    self.goto_word.setText(str(self.vm_data.ca())) # mem_view will be set to this row too
+    self.goto_word.setRange(0, vm_data.vm.MEMORY_SIZE)
+    self.goto_word.setValue(self.vm_data.ca()) # mem_view will be set to this row too
 
   def slot_mem_view_edit(self, index):
     if not self.vm_data.is_writeable(index.row()):
