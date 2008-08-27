@@ -40,6 +40,10 @@ class ParseArgumentTestCase(unittest.TestCase):
       Line(None, "ALF", 'A B C D E F'),
       ['A B C D E F']
     )
+    self.check_split(
+      Line(None, "LDA", "=3=n"),
+      ["=", "3", "=", "n"]
+    )
 
   class MockSymbolTable:
     def find(self, arg, no):
@@ -85,6 +89,7 @@ class ParseArgumentTestCase(unittest.TestCase):
     self.assertRaises(InvalidIndError, parse_argument, Line(None, 'LDA', '2000,-1'), self.MockSymbolTable(), 0)
     self.assertRaises(InvalidAddrError, parse_argument, Line(None, 'LDA', 'LABB'), self.MockSymbolTable(), 0)
     self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', '2+3(9)LABB'), self.MockSymbolTable(), 0)
+    self.assertRaises(UnexpectedStrInTheEndError, parse_argument, Line(None, 'LDA', '=3=n'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3()'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedExpError, parse_argument, Line(None, 'LDA', '2+3,(2)'), self.MockSymbolTable(), 0)
     self.assertRaises(ExpectedWExpError, parse_argument, Line(None, 'LDA', '='), self.MockSymbolTable(), 0)
