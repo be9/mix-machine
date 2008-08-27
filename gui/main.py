@@ -220,8 +220,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.disasm_view.hook(mode, old, new)
 
   def slot_Assemble(self):
-    self.emit(SIGNAL("beforeAssemble()"))
-
     ret_type, content = asm(unicode(self.txt_source.toPlainText()))
     if ret_type == ASM_NO_ERRORS:
       self.asm_data = content # mem, start_addr, listing
@@ -357,7 +355,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # errors_list
     self.connect(self, SIGNAL("inited()"),                                        self.errors_list.hide)
     self.connect(self, SIGNAL("setNewSource()"),                                  self.errors_list.hide)
-    self.connect(self, SIGNAL("beforeAssemble()"),                                self.errors_list.hide)
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.errors_list.hide)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"),             self.errors_list.setErrors)
 
     # menubar
@@ -375,6 +373,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("setNewSource()"),                                  self.tabWidget.hideRun)
     self.connect(self, SIGNAL("assembleGotErrors(int, QStringList)"),             self.tabWidget.hideRun)
     self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.tabWidget.showRun)
+    self.connect(self, SIGNAL("traceTabFocused()"),                               self.tabWidget.rememberRunTab)
 
     # enable and disable hooks
     self.connect(self, SIGNAL("beforeTrace()"),                           lambda: self.enableHooks(True))
