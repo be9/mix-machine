@@ -280,6 +280,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.doAction(self.vm_data.step)
     self.emit(SIGNAL("afterTrace()"))
 
+  def trace_vm(self):
+    while not self.vm_data.halted() and self.running:
+      self.cpu_dock.resetHighlight() # it's necessary
+      self.vm_data.step()
+      QCoreApplication.processEvents()
+
   def run_vm(self):
     while not self.vm_data.halted() and self.running:
       self.vm_data.step()
@@ -287,7 +293,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   def slot_Trace(self):
     self.emit(SIGNAL("beforeTrace()"))
-    self.doAction(self.run_vm)
+    self.doAction(self.trace_vm)
     self.emit(SIGNAL("afterTrace()"))
 
   def slot_Run(self):
