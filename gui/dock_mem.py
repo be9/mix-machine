@@ -7,6 +7,26 @@ class InvertedSpinBox(QSpinBox):
   def stepBy(self, steps):
     self.setValue(self.value() - steps)
 
+  def stepEnabled(self):
+    flag = QAbstractSpinBox.StepNone
+    if self.value() > self.minimum():
+      flag |= QAbstractSpinBox.StepUpEnabled
+    if self.value() < self.maximum():
+      flag |= QAbstractSpinBox.StepDownEnabled
+    return flag
+
+class TableViewWithKeys(QTableView):
+  def __init__(self, parent, keyController):
+    QTableView.__init__(self, parent)
+    self.keyController = keyController
+
+  def keyPressEvent(self, event):
+    self.keyController.keyPressEvent(event)
+    event.ignore()
+  def keyReleaseEvent(self, event):
+    self.keyController.keyReleaseEvent(event)
+    event.ignore()
+
 class MemoryDockWidget(QDockWidget):
   def __init__(self, parent = None):
     QDockWidget.__init__(self, parent)
@@ -23,7 +43,7 @@ class MemoryDockWidget(QDockWidget):
     self.goto_layout.addWidget(self.goto_label)
     self.goto_layout.addWidget(self.goto_word)
 
-    self.mem_view = QTableView(self.widget)
+    self.mem_view = TableViewWithKeys(self.widget, self.goto_word)
     self.mem_view.setModel(MemoryModel(parent = self))
     self.mem_view.horizontalHeader().setStretchLastSection(True)
 
@@ -33,7 +53,7 @@ class MemoryDockWidget(QDockWidget):
 
     self.widget.setLayout(self.layout)
     self.setWidget(self.widget)
-    
+
     self.connect(self.mem_view, SIGNAL("pressed(QModelIndex)"),\
         lambda index: self.goto_word.setValue(index.row()))
     self.connect(self.goto_word, SIGNAL("valueChanged(int)"),\
@@ -45,9 +65,7 @@ class MemoryDockWidget(QDockWidget):
     self.vm_data = vm_data
     self.model = MemoryModel(vm_data = self.vm_data, parent = self)
     self.mem_view.setModel(self.model)
-    self.mem_view.setSelectionMode(QAbstractItemView.NoSelection)
-    assert(vm_data.vm.MEMORY_SIZE == 4000)
-    self.goto_word.setRange(0, vm_data.vm.MEMORY_SIZE)
+    self.goto_word.setRange(0, vm_data.vm.MEMORY_SIZE - 1)
     self.goto_word.setValue(self.vm_data.ca()) # mem_view will be set to this row too
 
   def slot_mem_view_edit(self, index):
