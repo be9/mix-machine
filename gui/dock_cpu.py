@@ -22,23 +22,24 @@ class CPUDockWidget(QDockWidget):
     self.initWidgets()
     self.initConnections()
 
-  def setVMData(self, vm_data):
+  def init(self, vm_data):
     self.edit_ca.setMaximum(vm_data.vm.MEMORY_SIZE - 1)
     self.vm_data = vm_data
-    self.loadFromVM()
+    self.reload()
+    self.resetHighlight()
 
-  def loadFromVM(self):
-    for s in "a x j".split():
-      self.__dict__["edit_" + s].setWord(self.vm_data.vm[s.upper()])
-    for s in "i1 i2 i3 i4 i5 i6".split():
-      self.__dict__["edit_" + s].setWord(self.vm_data.vm[s[1].upper()])
-    self.edit_ca.setValue(self.vm_data.vm["cur_addr"])
-    self.edit_cf.setCurrentIndex(self.vm_data.vm["cf"] + 1)
-    self.edit_of.setCurrentIndex(int(self.vm_data.vm["of"]))
-    self.edit_hlt.setCurrentIndex(int(self.vm_data.vm["halted"]))
-    self.edit_cycles.display(self.vm_data.vm["cycles"])
+  def reload(self):
+    for s in "AXJ":
+      self.setItem(s, self.vm_data.vm[s])
+    for s in "123456":
+      self.setItem(s, self.vm_data.vm[s])
+    self.setItem("cur_addr",  self.vm_data.vm["cur_addr"])
+    self.setItem("cf",        self.vm_data.vm["cf"])
+    self.setItem("of",        self.vm_data.vm["of"])
+    self.setItem("halted",    self.vm_data.vm["halted"])
+    self.setItem("cycles",    self.vm_data.vm["cycles"])
 
-  def highlight(self, object, flag):
+  def highlight(self, object, flag = True):
     if not flag:
       object.setStyleSheet(u"")
     else:
@@ -47,33 +48,30 @@ class CPUDockWidget(QDockWidget):
   def resetHighlight(self):
     map(lambda obj: self.highlight(obj, False), self.all_edits)
 
-  def hook(self, item, old, new):
-    # item - in UPPER
+  def setItem(self, item, value):
     if item == "cur_addr":
-      self.edit_ca.setValue(new)
+      self.edit_ca.setValue(value)
 
     elif item in "AXJ":
-      self.__dict__["edit_" + item.lower()].setWord(new)
-      self.highlight(self.__dict__["edit_" + item.lower()], True)
+      self.__dict__["edit_" + item.lower()].setWord(value)
 
     elif item in "123456":
-      self.__dict__["edit_i" + item].setWord(new)
-      self.highlight(self.__dict__["edit_i" + item], True)
+      self.__dict__["edit_i" + item].setWord(value)
 
     elif item == "cf":
-      self.edit_cf.setCurrentIndex(new + 1)
-      self.highlight(self.edit_cf, True)
+      self.edit_cf.setCurrentIndex(value + 1)
 
     elif item == "of":
-      self.edit_of.setCurrentIndex(int(new))
-      self.highlight(self.edit_of, True)
+      self.edit_of.setCurrentIndex(int(value))
 
     elif item == "halted":
-      self.edit_hlt.setCurrentIndex(int(new))
-      self.highlight(self.edit_hlt, True)
+      self.edit_hlt.setCurrentIndex(int(value))
 
     elif item == "cycles":
-      self.edit_cycles.display(new)
+      self.edit_cycles.display(value)
+
+  def hook(self, item, old, new):
+    self.setItem(item, new)
 
   def setVM(self, what, value = None):
     # what - in lower
@@ -107,14 +105,6 @@ class CPUDockWidget(QDockWidget):
     self.edit_cycles.display(self.edit_cycles.intValue())
 
   def initConnections(self):
-    # this DOESN'T work!!! (it seems like all changes are made in rJ)
-    #for s in registers:
-      #self.connect(self.__dict__["edit_"+s], SIGNAL("valueChanged()"),\
-        #lambda: self.setVM(s))
-    # this DOESN'T work!!! (it seems like all changes are made in hlt)
-    #for s in "cf of hlt".split():
-      #self.connect(self.__dict__["edit_"+s], SIGNAL("currentIndexChanged(int)"),\
-        #lambda index: self.setVM(s, index))
     self.connect(self.edit_a, SIGNAL("valueChanged()"),             lambda: self.setVM("a"))
     self.connect(self.edit_x, SIGNAL("valueChanged()"),             lambda: self.setVM("x"))
     self.connect(self.edit_j, SIGNAL("valueChanged()"),             lambda: self.setVM("j"))
@@ -128,6 +118,19 @@ class CPUDockWidget(QDockWidget):
     self.connect(self.edit_cf, SIGNAL("currentIndexChanged(int)"),  lambda index: self.setVM("cf", index))
     self.connect(self.edit_of, SIGNAL("currentIndexChanged(int)"),  lambda index: self.setVM("of", index))
     self.connect(self.edit_hlt, SIGNAL("currentIndexChanged(int)"), lambda index: self.setVM("hlt", index))
+
+    self.connect(self.edit_a, SIGNAL("valueChanged()"),             lambda: self.highlight(self.edit_a))
+    self.connect(self.edit_x, SIGNAL("valueChanged()"),             lambda: self.highlight(self.edit_x))
+    self.connect(self.edit_j, SIGNAL("valueChanged()"),             lambda: self.highlight(self.edit_j))
+    self.connect(self.edit_i1, SIGNAL("valueChanged()"),            lambda: self.highlight(self.edit_i1))
+    self.connect(self.edit_i2, SIGNAL("valueChanged()"),            lambda: self.highlight(self.edit_i2))
+    self.connect(self.edit_i3, SIGNAL("valueChanged()"),            lambda: self.highlight(self.edit_i3))
+    self.connect(self.edit_i4, SIGNAL("valueChanged()"),            lambda: self.highlight(self.edit_i4))
+    self.connect(self.edit_i5, SIGNAL("valueChanged()"),            lambda: self.highlight(self.edit_i5))
+    self.connect(self.edit_i6, SIGNAL("valueChanged()"),            lambda: self.highlight(self.edit_i6))
+    self.connect(self.edit_cf, SIGNAL("currentIndexChanged(int)"),  lambda: self.highlight(self.edit_cf))
+    self.connect(self.edit_of, SIGNAL("currentIndexChanged(int)"),  lambda: self.highlight(self.edit_of))
+    self.connect(self.edit_hlt, SIGNAL("currentIndexChanged(int)"), lambda: self.highlight(self.edit_hlt))
 
   def initWidgets(self):
     self.setWindowTitle(self.tr("CPU"))

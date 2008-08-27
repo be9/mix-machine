@@ -205,7 +205,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.setCurrentFile(filename)
 
   def cpu_hook(self, item, old, new):
-    #self.cpu_dock.hook(item, old, new)
+    self.cpu_dock.hook(item, old, new)
     self.listing_view.hook(item, old, new)
     self.disasm_view.hook(item, old, new)
 
@@ -383,17 +383,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self, SIGNAL("fontChanged(QFont)"),                              self.txt_source.setFont)
 
     # listing and disassembler
-    self.connect(self, SIGNAL("inited()"),                                        self.listing_view.init)
-    self.connect(self, SIGNAL("inited()"),                                        self.disasm_view.init)
-    self.connect(self, SIGNAL("fontChanged(QFont)"),                              self.listing_view.changeFont)
-    self.connect(self, SIGNAL("fontChanged(QFont)"),                              self.disasm_view.changeFont)
-    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.listing_view.resetVM)
-    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.disasm_view.resetVM)
-    self.connect(self, SIGNAL("beforeRun()"),                                     self.listing_view.snapshotMem)
-    self.connect(self, SIGNAL("beforeRun()"),                                     self.disasm_view.snapshotMem)
-    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.listing_view.updateVM)
-    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.disasm_view.updateVM)
+    for widget in (self.listing_view, self.disasm_view):
+      self.connect(self, SIGNAL("inited()"),                                      widget.init)
+      self.connect(self, SIGNAL("fontChanged(QFont)"),                            widget.changeFont)
+      self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"), widget.resetVM)
+      self.connect(self, SIGNAL("beforeRun()"),                                   widget.snapshotMem)
+      self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                       widget.updateVM)
 
+    # all trace widgets visibility
+    for widget in (self.cpu_dock, self.mem_dock, self.dev_dock):
+      self.connect(self, SIGNAL("inited()"),                                      widget.hide)
+      self.connect(self, SIGNAL("sourceTabFocused()"),                            widget.hide)
+      self.connect(self, SIGNAL("traceTabFocused()"),                             widget.show)
+
+    # cpu_dock
+    self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.cpu_dock.init)
+    self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.cpu_dock.reload)
+    self.connect(self, SIGNAL("beforeRun()"),                                     self.cpu_dock.resetHighlight)
+    self.connect(self, SIGNAL("beforeTrace()"),                                   self.cpu_dock.resetHighlight)
+    
 if __name__ == "__main__":
   app = QApplication(sys.argv)
 

@@ -19,6 +19,7 @@ class MixWordWidget(QLineEdit):
     self.setReadOnly(True)
     self.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
     self.setWord()
+    self.connect(self, SIGNAL("textChanged(QString)"), self, SIGNAL("valueChanged()"))
 
   def setWord(self, word = None):
     self.word = Word(word)
@@ -37,4 +38,3 @@ class MixWordWidget(QLineEdit):
     word_edit = WordEdit(self.word, self.type, self)
     if word_edit.exec_():
       self.setWord(word_edit.word)
-      self.emit(SIGNAL("valueChanged()"))
