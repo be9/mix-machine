@@ -40,15 +40,17 @@ class VMachine:
     if isinstance(item, int):
       # we are working with memory
       self.memory[item][left:right] = value
-      if self.mem_hook is not None and old_value != self.memory[item]:
+      if self.mem_hook is not None and old_value.word_list != self.memory[item].word_list:
         self.mem_hook(item, old_value, self.memory[item])
     else:
       # we are working with registers or triggers
       if item in TRIGGERS:
         self.__dict__[item] = value
+        changed = old_value != self[item]
       else: # register
         self.reg(item)[left:right] = value
-      if self.cpu_hook is not None and old_value != self[item]:
+        changed = old_value.word_list != self[item].word_list
+      if self.cpu_hook is not None and changed:
         self.cpu_hook(item, old_value, self[item])
 
   def reg(self, r):
@@ -77,8 +79,8 @@ class VMachine:
 
   def clear_rI(self, reg):
     """Return True if overflowed"""
-    if reg in "123456" and self.__dict__["r" + reg].word_list[1:4] != [0, 0, 0]:
-      self.__dict__["r" + reg].word_list[1:4] = [0, 0, 0]
+    if reg in "123456" and self[reg:1:3] != Word():
+      self[reg:1:3] = 0
       return True
     else:
       return False
