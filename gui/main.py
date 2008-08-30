@@ -40,8 +40,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setupUi(self)
 
     self.file_filters = self.tr("MIX source files (*.mix);;All files (*.*)");
-    self.setCurrentFile("")
-    self.txt_source.setPlainText(u"")
+    self.slot_File_New()
 
     self.errors_list.setBuddyText(self.txt_source)
 
@@ -285,11 +284,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       self.cpu_dock.resetHighlight() # it's necessary
       self.vm_data.step()
       QCoreApplication.processEvents()
+      if self.vm_data.ca() in self.breaks:
+        break
 
   def run_vm(self):
     while not self.vm_data.halted() and self.running:
       self.vm_data.step()
       QCoreApplication.processEvents()
+      if self.vm_data.ca() in self.breaks:
+        break
 
   def slot_Trace(self):
     self.emit(SIGNAL("beforeTrace()"))
@@ -330,6 +333,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.emit(SIGNAL("breaked()"))
     self.running = False
 
+  def resetBreakpointSet(self):
+    self.breaks = set()
+    self.listing_view.setBreakpointSet(self.breaks)
+    self.disasm_view.setBreakpointSet(self.breaks)
 
   # menubar slots
   def menuBarHideRun(self):
@@ -411,6 +418,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # mem_dock
     self.connect(self, SIGNAL("assembleSuccess(PyQt_PyObject, PyQt_PyObject)"),   self.mem_dock.init)
     self.connect(self, SIGNAL("afterRun(PyQt_PyObject)"),                         self.mem_dock.reload)
+
+    self.connect(self, SIGNAL("setNewSource()"),                                  self.resetBreakpointSet)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)

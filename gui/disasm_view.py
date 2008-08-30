@@ -45,6 +45,14 @@ class DisassemblerModel(QAbstractTableModel):
     else:
       self.inited = False
 
+  def addBreakpoint(self, index):
+    i = index.row()
+    if i in self.breaks:
+      self.breaks.remove(i)
+    else:
+      self.breaks.add(i)
+    self.lineChanged(i)
+
   def rowCount(self, parent):
     if self.inited:
       return self.mem_len
@@ -129,7 +137,10 @@ class DisassemblerModel(QAbstractTableModel):
       if orientation == Qt.Horizontal:
         return QVariant(self.tr(("Addr", "Mix word", "Disassemled word")[section]))
       else:
-        return QVariant()#str(section))
+        return QVariant(u"     ")#str(section))
+    elif role == Qt.BackgroundRole and orientation == Qt.Vertical and section in self.breaks:
+      # breakpoint
+      return QVariant(QColor(Qt.red))
     else:
       return QVariant()
 
@@ -138,6 +149,8 @@ class DisassemblerModel(QAbstractTableModel):
     self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"),
         self.index(addr, 0),
         self.index(addr, 3))
+    self.emit(SIGNAL("headerDataChanged(Qt::Orientation, int, int)"),
+        Qt.Vertical, addr, addr)
 
   def hook(self, item, old, new):
     if item == "cur_addr": # cpu hook

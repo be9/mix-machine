@@ -48,6 +48,15 @@ class ListingModel(QAbstractTableModel):
     else:
       self.inited = False
 
+  def addBreakpoint(self, index):
+    addr = self.lines[index.row()].addr
+    if addr is not None:
+      if addr in self.breaks:
+        self.breaks.remove(addr)
+      else:
+        self.breaks.add(addr)
+      self.lineChanged(index.row())
+
   def rowCount(self, parent):
     if self.inited:
       return len(self.lines)
@@ -137,6 +146,9 @@ class ListingModel(QAbstractTableModel):
         return QVariant(self.tr(("Addr", "Mix word", "Source line")[section]))
       else:
         return QVariant(str(section + 1))
+    elif role == Qt.BackgroundRole and orientation == Qt.Vertical and self.lines[section].addr in self.breaks:
+      # breakpoint
+      return QVariant(QColor(Qt.red))
     else:
       return QVariant()
 
@@ -146,6 +158,8 @@ class ListingModel(QAbstractTableModel):
       self.emit(SIGNAL("dataChanged(QModelIndex, QModelIndex)"),
           self.index(num, 0),
           self.index(num, 2))
+      self.emit(SIGNAL("headerDataChanged(Qt::Orientation, int, int)"),
+          Qt.Vertical, num, num)
 
   def hook(self, item, old, new):
     if item == "cur_addr": # cpu hook
