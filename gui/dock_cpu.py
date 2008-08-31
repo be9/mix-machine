@@ -13,7 +13,7 @@ from word import *
 
 registers = "ax123456j"
 flags = "cur_addr cf of halted cycles".split()
-label_flags = "CA CF OF HLT CyCLES".split()
+label_flags = "CA CF OF HLT CYCLES".split()
 
 HIGHLIGHT_STYLE = "MixWordWidget, QComboBox { background: gray }"
 
@@ -122,7 +122,8 @@ class CPUDockWidget(QDockWidget):
     # create and lay all registers
     current_row_in_grid = 0
     for reg in registers:
-      label   = self.__dict__["label_" + reg]   = QLabel("r" + reg.upper(), self)
+      label_str = "r%s%s" % ("I" if reg in "123456" else "", reg.upper())
+      label   = self.__dict__["label_" + reg]   = QLabel(label_str, self)
       if reg in "ax":
         type = BASIC
       elif reg == "j":
