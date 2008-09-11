@@ -6,7 +6,7 @@ from word_edit import word2toolTip
 from code_view import AbstractCodeView
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 from word import Word
 
 class ListingView(AbstractCodeView):

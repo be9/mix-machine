@@ -3,12 +3,12 @@ from PyQt4.QtCore import *
 from word_edit import word2str, word2toolTip
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 
 from virt_machine import *
-import vm2_errors
+import vm_errors
 
-vm_errors = vm2_errors.__dict__.values() # all vm errors
+vmtest_errors = vm_errors.__dict__.values() # all vm errors
 
 class VMData:
   def __init__(self, asm_data):

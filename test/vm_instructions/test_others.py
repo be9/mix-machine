@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3OthersTestCase(VM3BaseTestCase):
+class VMOthersTestCase(VMBaseTestCase):
   def testCommonErrors(self):
     self.assertRaises(InvalidCA, self.exec1,
       startadr = 4000
@@ -185,7 +185,7 @@ class VM3OthersTestCase(VM3BaseTestCase):
     )
 
 
-suite = unittest.makeSuite(VM3OthersTestCase, 'test')
+suite = unittest.makeSuite(VMOthersTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

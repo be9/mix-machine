@@ -1,4 +1,4 @@
-from vm2_errors import *
+from vm_errors import *
 from word import *
 from virt_machine import *
 

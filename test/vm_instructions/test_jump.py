@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3JumpTestCase(VM3BaseTestCase):
+class VMJumpTestCase(VMBaseTestCase):
   def testBasic(self):
     self.check1(
       memory = { 0 : [+1, 2, 0, 0, 0, 39]},
@@ -152,7 +152,7 @@ class VM3JumpTestCase(VM3BaseTestCase):
       message = "testing bad address (no jump)"
     )
 
-suite = unittest.makeSuite(VM3JumpTestCase, 'test')
+suite = unittest.makeSuite(VMJumpTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

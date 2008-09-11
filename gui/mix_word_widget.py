@@ -4,7 +4,7 @@ from PyQt4.QtCore import *
 from word_edit import *
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 
 from word import *
 

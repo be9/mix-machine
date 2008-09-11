@@ -1,4 +1,4 @@
-from vm2_errors import *
+from vm_errors import *
 
 MAX_BYTE = 64
 

@@ -26,7 +26,7 @@ R_MODE = 'r'
 W_MODE = 'w'
 FILE_DEV = 0
 
-class VM3:
+class VMTesting:
     """ The main interface of abstract VM """
     def __init__(self):
         pass

@@ -2,8 +2,8 @@ import unittest
 import copy
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm3'))
-from vm3_errors import *
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm'))
+from vmtest_errors import *
 
 _initial_context = {
   'A': [+1, 11, 22, 33, 44, 55],
@@ -23,10 +23,10 @@ _initial_context = {
   'RW_LOCKED' : set(),
 }
 
-class VM3BaseTestCase(unittest.TestCase):
+class VMBaseTestCase(unittest.TestCase):
   @staticmethod
   def set_vm_class(klass):
-    VM3BaseTestCase.vm_class = klass
+    VMBaseTestCase.vm_class = klass
 
   def check1(self, regs = {}, memory = {}, devs = {}, startadr = 0, diff = {}, cycles = 0, message = None):
     self.assertEqual(self.exec1(regs, memory, devs, startadr), diff, message)
@@ -43,7 +43,7 @@ class VM3BaseTestCase(unittest.TestCase):
     return self.execute(regs, memory, devs, startadr, exec_at = False)
 
   def setUp(self):
-    self.vm = VM3BaseTestCase.vm_class()
+    self.vm = VMBaseTestCase.vm_class()
 
   def hook(self, item, old, new):
     self.diff[item] = new

@@ -1,10 +1,10 @@
 from helper import *
-from vm2_vm3 import *
+from vmtest_realization import *
 from word import *
 
-class VM3TestCase(unittest.TestCase):
+class VMTestCase(unittest.TestCase):
   def testLoadAndState(self):
-    vm3 = VM3()
+    vm = VMTesting()
     mega = {
       0: [+1, 1, 2, 3, 4, 5],
       2000: [-1, 0, 0, 0, 0, 0],
@@ -23,37 +23,37 @@ class VM3TestCase(unittest.TestCase):
       'OF': 1,
       'HLT': 0
     }
-    vm3.load(mega)
-    self.assertTrue(vm3.vm.cmp_memory({
+    vm.load(mega)
+    self.assertTrue(vm.vm.cmp_memory({
       0: Word([+1, 1, 2, 3, 4, 5]),
       2000: Word([-1, 0, 0, 0, 0, 0]),
       3999: Word([+1, 11 , 22, 33, 44, 55])
     }))
-    self.assertEqual(vm3.vm.rA, Word(mega["A"]))
-    self.assertEqual(vm3.vm.rX, Word(mega["X"]))
-    self.assertEqual(vm3.vm.r1, Word(mega["I1"]))
-    self.assertEqual(vm3.vm.r2, Word(mega["I2"]))
-    self.assertEqual(vm3.vm.r3, Word(mega["I3"]))
-    self.assertEqual(vm3.vm.r4, Word(mega["I4"]))
-    self.assertEqual(vm3.vm.r5, Word(mega["I5"]))
-    self.assertEqual(vm3.vm.r6, Word(mega["I6"]))
-    self.assertEqual(vm3.vm.rJ, Word(mega["J"]))
-    self.assertEqual(vm3.vm.cur_addr, mega["CA"])
-    self.assertEqual(vm3.vm.cf, mega["CF"])
-    self.assertEqual(int(vm3.vm.of), mega["OF"])
-    self.assertEqual(int(vm3.vm.halted), mega["HLT"])
+    self.assertEqual(vm.vm.rA, Word(mega["A"]))
+    self.assertEqual(vm.vm.rX, Word(mega["X"]))
+    self.assertEqual(vm.vm.r1, Word(mega["I1"]))
+    self.assertEqual(vm.vm.r2, Word(mega["I2"]))
+    self.assertEqual(vm.vm.r3, Word(mega["I3"]))
+    self.assertEqual(vm.vm.r4, Word(mega["I4"]))
+    self.assertEqual(vm.vm.r5, Word(mega["I5"]))
+    self.assertEqual(vm.vm.r6, Word(mega["I6"]))
+    self.assertEqual(vm.vm.rJ, Word(mega["J"]))
+    self.assertEqual(vm.vm.cur_addr, mega["CA"])
+    self.assertEqual(vm.vm.cf, mega["CF"])
+    self.assertEqual(int(vm.vm.of), mega["OF"])
+    self.assertEqual(int(vm.vm.halted), mega["HLT"])
 
-    new_mega = vm3.state()
+    new_mega = vm.state()
     self.assertTrue(all(
       (i     in mega and new_mega[i] == mega[i]) or
       (i not in mega and new_mega[i] == [+1, 0, 0, 0, 0, 0])
-      for i in xrange(vm3.vm.MEMORY_SIZE)
+      for i in xrange(vm.vm.MEMORY_SIZE)
     ))
     for arg in "A X I1 I2 I3 I4 I5 I6 J CA CF OF HLT".split():
       self.assertEqual(mega[arg], new_mega[arg])
 
 
-suite = unittest.makeSuite(VM3TestCase, 'test')
+suite = unittest.makeSuite(VMTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.main()

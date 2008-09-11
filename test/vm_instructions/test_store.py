@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3StoreTestCase(VM3BaseTestCase):
+class VMStoreTestCase(VMBaseTestCase):
   def testNormal(self):
     self.check1(
       memory = {
@@ -117,7 +117,7 @@ class VM3StoreTestCase(VM3BaseTestCase):
       )
 
 
-suite = unittest.makeSuite(VM3StoreTestCase, 'test')
+suite = unittest.makeSuite(VMStoreTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

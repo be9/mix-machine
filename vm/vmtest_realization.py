@@ -1,37 +1,35 @@
 from virt_machine import *
 from device import *
-from vm2_errors import *
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm3'))
-import vm3_errors
+from vm_errors import *
+import vmtest_errors
 
 error_dict = {
-  InvalidMemAddrError         : vm3_errors.InvalidAddress,
-  InvalidIndError             : vm3_errors.InvalidIndex,
-  InvalidFieldSpecError       : vm3_errors.InvalidFieldSpec,
+  InvalidMemAddrError         : vmtest_errors.InvalidAddress,
+  InvalidIndError             : vmtest_errors.InvalidIndex,
+  InvalidFieldSpecError       : vmtest_errors.InvalidFieldSpec,
 
-  UnknownInstructionError     : vm3_errors.UnknownInstruction,
-  InvalidCurAddrError         : vm3_errors.InvalidCA,
+  UnknownInstructionError     : vmtest_errors.UnknownInstruction,
+  InvalidCurAddrError         : vmtest_errors.InvalidCA,
 
-  MemReadLockedError          : vm3_errors.ReadLocked,
-  MemWriteLockedError         : vm3_errors.WriteLocked,
+  MemReadLockedError          : vmtest_errors.ReadLocked,
+  MemWriteLockedError         : vmtest_errors.WriteLocked,
 
-  NegativeShiftError          : vm3_errors.NegativeShift,
+  NegativeShiftError          : vmtest_errors.NegativeShift,
 
-  InvalidMoveError            : vm3_errors.InvalidMove,
+  InvalidMoveError            : vmtest_errors.InvalidMove,
 
-  InvalidDeviceError          : vm3_errors.InvalidDevice,
-  UnsupportedDeviceModeError  : vm3_errors.UnsupportedDeviceMode,
-  InvalidCharError            : vm3_errors.InvalidChar,
-  InvaliCharCodeError         : vm3_errors.InvalidCharCode,
-  IOMemRangeError             : vm3_errors.IOMemRange
+  InvalidDeviceError          : vmtest_errors.InvalidDevice,
+  UnsupportedDeviceModeError  : vmtest_errors.UnsupportedDeviceMode,
+  InvalidCharError            : vmtest_errors.InvalidChar,
+  InvaliCharCodeError         : vmtest_errors.InvalidCharCode,
+  IOMemRangeError             : vmtest_errors.IOMemRange
 }
 
 R_MODE = 'r'
 W_MODE = 'w'
 FILE_DEV = 0
 
-class VM3:
+class VMTesting:
   def __init__(self):
     self.vm = VMachine({}, 0)
     assert(len(self.vm.errors) == 0)

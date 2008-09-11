@@ -4,7 +4,7 @@ from PyQt4.QtCore import *
 from devices_ui import Ui_Form
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 from device import Device
 
 class DevDockWidget(QDockWidget, Ui_Form):

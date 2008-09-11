@@ -1,4 +1,4 @@
-from vm2_errors import *
+from vm_errors import *
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))

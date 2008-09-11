@@ -1,7 +1,7 @@
 import sys
 from read_memory import *
 from virt_machine import *
-from vm2_errors import *
+from vm_errors import *
 from device import *
 
 def print_error(line, error):

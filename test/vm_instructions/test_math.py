@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3MathTestCase(VM3BaseTestCase):
+class VMMathTestCase(VMBaseTestCase):
   """ADDandSUB, MUL, DIV"""
   def testDIV(self):
     self.check1(
@@ -299,7 +299,7 @@ class VM3MathTestCase(VM3BaseTestCase):
       startadr = 10
     )
 
-suite = unittest.makeSuite(VM3MathTestCase, 'test')
+suite = unittest.makeSuite(VMMathTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

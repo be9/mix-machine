@@ -3,7 +3,7 @@
 # ALL DONE
 
 from word_parser import *
-from vm2_errors import *
+from vm_errors import *
 
 def _get_device(vmachine):
   """Return device or raise exception"""

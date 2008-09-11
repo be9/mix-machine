@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3IOTestCase(VM3BaseTestCase):
+class VMIOTestCase(VMBaseTestCase):
   def testOUT(self):
     out_file = open("18.dev", "w")
     self.check_hlt(
@@ -478,7 +478,7 @@ class VM3IOTestCase(VM3BaseTestCase):
     self.assertEqual(out_file.read().splitlines(), [" " * 119 + "~", " " * 119 + "~", "<---------NEW-PAGE--------->"] )
     out_file.close()
 
-suite = unittest.makeSuite(VM3IOTestCase, 'test')
+suite = unittest.makeSuite(VMIOTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

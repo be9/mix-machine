@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3ShiftTestCase(VM3BaseTestCase):
+class VMShiftTestCase(VMBaseTestCase):
   def testSLAandSRA(self):
     self.check1(
       regs = {'A' : [-1, 1, 2, 3, 4, 5]},
@@ -118,7 +118,7 @@ class VM3ShiftTestCase(VM3BaseTestCase):
       )
       # what to do if M > 64**2 ? (Knuth haven't said anything )
 
-suite = unittest.makeSuite(VM3ShiftTestCase, 'test')
+suite = unittest.makeSuite(VMShiftTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

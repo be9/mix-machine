@@ -7,7 +7,7 @@ from word_edit import WordEdit
 from mix_word_widget import *
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 
 from word import *
 

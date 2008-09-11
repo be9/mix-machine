@@ -4,7 +4,7 @@ from PyQt4.QtGui import *
 from word_edit_ui import Ui_Dialog
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm2'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 from word import *
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 import charset

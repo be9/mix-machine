@@ -30,9 +30,9 @@ if __name__ == "__main__":
 
   (options, args) = parser.parse_args()
 
-  sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm2'))
-  import vm2_vm3
-  basetestcase.VM3BaseTestCase.set_vm_class(vm2_vm3.VM3)
+  sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'vm'))
+  import vmtest_realization
+  basetestcase.VMBaseTestCase.set_vm_class(vmtest_realization.VMTesting)
 
   if options.profile:
     print ">> Profiling enabled"

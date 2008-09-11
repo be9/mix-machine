@@ -1,7 +1,7 @@
 import unittest
 from basetestcase import *
 
-class VM3CmpTestCase(VM3BaseTestCase):
+class VMCmpTestCase(VMBaseTestCase):
   def testNormal(self):
     # testing normal work
     indexes = {
@@ -76,7 +76,7 @@ class VM3CmpTestCase(VM3BaseTestCase):
         }
       )
 
-suite = unittest.makeSuite(VM3CmpTestCase, 'test')
+suite = unittest.makeSuite(VMCmpTestCase, 'test')
 
 if __name__ == "__main__":
   unittest.TextTestRunner().run(suite)

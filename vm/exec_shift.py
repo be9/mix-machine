@@ -2,7 +2,7 @@
 
 # ALL DONE
 
-from vm2_errors import *
+from vm_errors import *
 from word import *
 from word_parser import *
 
