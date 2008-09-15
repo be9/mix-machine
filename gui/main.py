@@ -39,11 +39,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.setAttribute(Qt.WA_DeleteOnClose)
     self.setupUi(self)
 
-    self.file_filters = self.tr("MIX source files (*.mix);;All files (*.*)");
-    self.slot_File_New()
-
-    self.errors_list.setBuddyText(self.txt_source)
-
     self.connect_all()
 
     self.connect(self.action_Quit, SIGNAL("triggered()"), qApp, SLOT("closeAllWindows()"))
@@ -61,6 +56,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.connect(self.action_Break, SIGNAL("triggered()"), self.slot_Break)
 
     self.connect(self.action_Change_font, SIGNAL("triggered()"), self.slot_Change_font)
+
+    self.errors_list.setBuddyText(self.txt_source)
+
+    self.file_filters = self.tr("MIX source files (*.mix);;All files (*.*)");
+    self.slot_File_New()
 
     about_text = self.tr("""
     <h2>Mix Machine</h2><br><br>
