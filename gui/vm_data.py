@@ -8,13 +8,16 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vm'))
 from virt_machine import *
 import vm_errors
 
-vmtest_errors = vm_errors.__dict__.values() # all vm errors
-
 class VMData:
   def __init__(self, asm_data):
     self.vm = VMachine(asm_data.mem_list, asm_data.start_addr)
     self.listing = asm_data.listing
-    self.vm_errors = vm_errors
+
+    err_dict = vm_errors.__dict__
+    self.vm_errors = map(
+        lambda x : err_dict[x],
+        [item for item in err_dict.keys() if item[-5:] == "Error"]
+    )
 
   def mem(self, addr):
     return self.vm[addr]

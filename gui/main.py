@@ -265,7 +265,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       action()
     except Exception, err:
       self.stop_action()
-      if err in self.vm_data.vm_errors:
+      if type(err) in self.vm_data.vm_errors:
         QMessageBox.critical(self, self.tr("Runtime error"), str(err))
       else:
         raise err

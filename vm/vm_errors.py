@@ -19,7 +19,7 @@ class VMError(Exception):
       return str(self.info)
 
   def __cmp__(self, another):
-    return cmp(self.__str__(), another.__str__())
+    return cmp(str(self), str(another))
 
 
 class InvalidStartAddressError(VMError):
